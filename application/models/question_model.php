@@ -15,9 +15,16 @@ class Question_model extends CI_Model
 	
 	function insert_question($data)
 	{
-		if($this->db->insert('question',$data))
-		return TRUE;
-		else
-		return FALSE;
+		return $this->db->insert('question',$data);
+	}
+	
+	function update_question($where,$data)
+	{
+		return $this->db->where($where)->update('question',$data);	
+	}
+	
+	function delete_question($where)
+	{
+		return $this->db->where($where)->update('question');	
 	}
 }
