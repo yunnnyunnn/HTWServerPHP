@@ -37,5 +37,16 @@ define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
 
+
+/**
+|---------------
+| Money Setting
+|---------------
+|
+| These settings are defined for store items.
+|
+*/
+define('QUESTION_PUSH_PRICE' , 1);
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
