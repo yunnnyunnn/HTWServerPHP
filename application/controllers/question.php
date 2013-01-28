@@ -24,6 +24,7 @@ class Question extends CI_Controller {
 		$current_date = strtotime(date("Y-m-d H:i:s"));
 		$limit_date = $current_date-(60*60*$hr);
 		$time = date("Y-m-d H:i:s", $limit_date);
+		
 		$query1 = $this->location_log_model->get_group_by_location_log($time,'user_id');
 		$question_time = $query->row()->question_time;
 		echo json_encode(array('Hello'=>'World','question_time'=>$question_time,'result' => $query1->result()));
