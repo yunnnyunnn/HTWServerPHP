@@ -19,8 +19,9 @@ class Question extends CI_Controller {
 	{
 		$where = array();
 		$query = $this->question_model->get_question($where);
+		$query1 = $this->location_log_model->get_location_log($where);
 		$question_time = $query->row()->question_time;
-		echo json_encode(array('Hello'=>'World','question_time'=>$question_time,'result' => $query->result()));
+		echo json_encode(array('Hello'=>'World','question_time'=>$question_time,'result' => $query1->result()));
 	}
 	public function insert_question()
 	{
@@ -56,7 +57,9 @@ class Question extends CI_Controller {
 			{
 				if($is_pay)
 				{
+					$this->load->library('geolocation');
 					
+					$distance = $this->geolocation->get_distance(32.9697, -96.80322, 29.46786, -98.53506);
 				}
 				else
 				{
