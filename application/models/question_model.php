@@ -7,9 +7,18 @@ class Question_model extends CI_Model
 		parent::_construct();
 	}
 	
-	function get_question($where)
+	function get_question($field,$where)
 	{		
 		$this->db->order_by('question_time','ASC');
+		$this->db->select($field);
+		return $this->db->where($where)->get('question');
+	}
+	
+	function get_question_with_answer($where)
+	{
+		$this->db->order_by('question.question_id','ASC');
+		$this->db->select('*,question.question_id as question_id');
+		$this->db->join('answer' , 'question.question_id = answer.question_id','left');
 		return $this->db->where($where)->get('question');
 	}
 	
