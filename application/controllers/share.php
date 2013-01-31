@@ -7,11 +7,16 @@
             parent::__construct();
             $this->load->model('share_model');
             $this->load->model('share_comment_model');
+            $this->load->model('share_likes_model');
         }
         public function index()
         {
             echo json_encode(array('Hello'=>'Weather'));
         }
+        
+/////////////////////////////////////////////////////
+        
+////////////////以下為對share本身的操作/////////////////
         
         public function get_share()
         {
@@ -119,6 +124,11 @@
 
         }
         
+//////////////////////////////////////////////////////////
+        
+////////////////以下為對share_comment的操作/////////////////
+
+        
         public function insert_share_comment()
         {
             // 防止沒有傳post value
@@ -144,7 +154,68 @@
             echo json_encode(array('result'=>$result));
         }
         
-        // 以下是參考用的function
+////////////////////////////////////////////////////////
+
+////////////////以下為對share_likes的操作/////////////////
+
+        public function insert_share_likes()
+        {
+            // 防止沒有傳post value
+            if(!isset($_POST['user_id']) OR !isset($_POST['share_id']))
+            {
+                echo json_encode(array('result'=>'wrong post value'));
+                return;
+            }
+            
+            $user_id = $this->input->post('user_id', TRUE);
+            $share_id = $this->input->post('share_id', TRUE);
+            
+            $data = array(
+                          'user_id'=>$user_id,
+                          'share_id'=>$share_id,
+                          );
+            
+            // 先檢查是否已經加過喜歡了，如果有的話就不給加
+            $duplicateChecker = $this->share_likes_model->get_share_likes($data);
+            if($duplicateChecker->num_rows()>0)
+            {
+                echo json_encode(array('result'=>'like share more than once'));
+                return;
+            }
+            
+            $result = $this->share_likes_model->insert_share_likes($data);
+            
+            echo json_encode(array('result'=>$result));
+        }
+        
+        public function delete_share_likes()
+        {
+            // 刪除時必須提供user_id和share_id
+            
+            // 防止沒有傳post value
+            if(!isset($_POST['user_id']) OR !isset($_POST['share_id']))
+            {
+                echo json_encode(array('result'=>'wrong post value'));
+                return;
+            }
+            
+            $user_id = $this->input->post('user_id', TRUE);
+            $share_id = $this->input->post('share_id', TRUE);
+            
+            $data = array(
+                          'user_id'=>$user_id,
+                          'share_id'=>$share_id
+                          );
+            
+            $result = $this->share_likes_model->delete_share_likes($data);
+            
+            echo json_encode(array('result'=>$result));
+            
+        }
+        
+/////////////////////////////////////////////////////
+        
+////////////////參考用/////////////////
         public function get_weather()
         {
             $where = array();
