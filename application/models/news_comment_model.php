@@ -1,5 +1,5 @@
 <?
-class News_comment_model extends CI_Controller
+class News_comment_model extends CI_Model
 {
 	function _construct()
 	{
@@ -9,6 +9,9 @@ class News_comment_model extends CI_Controller
 	function get_comment($get_id)
 	{
 		$this->db->order_by('news_comment_time','desc');
+                
+                $this->db->join('user','user.user_id=news_comment.user_id');
+                $this->db->select(array('news_comment.user_id','user_nickname','news_comment.*'));
 		return $this->db->where($get_id)->get('news_comment');
 	}
 	

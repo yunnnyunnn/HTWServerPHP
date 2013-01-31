@@ -18,6 +18,13 @@ class News_likes_model extends CI_Model
 		return true;
 		return false;
 	}
+
+        function get_likes($get_field)
+        {
+                $this->db->join('user','user.user_id=news_likes.user_id');
+                $this->db->select(array('news_likes.user_id','user_nickname'));
+		return $this->db->where($get_field)->get('news_likes');
+        }
 	
 	
 }

@@ -8,8 +8,7 @@ class News_model extends CI_Model
 	
 	function insert_news($news_data_array)
 	{
-		$this->db->insert('news',$news_data_array);
-		return $this->db->insert_id();
+		return $this->db->insert('news',$news_data_array); 
 	}
 	
 	function get_news($news_id)
@@ -34,9 +33,13 @@ class News_model extends CI_Model
 	
 	function get_news_and_comment($get_field)
 	{
-		$this->db->join('news_comment','news.news_id=news_comment.news_id');
 		$this->db->where($get_field);
-		return $this->db->get('news');
+                $this->db->select('*','news_id as new_news_id')->from('news');
+		//$this->db->join('news_comment','news.news_id=news_comment.news_id','left');
+                $this->db->order_by('news_time','desc');
+
+		
+		return $this->db->get();
 	}
 }
 ?>
