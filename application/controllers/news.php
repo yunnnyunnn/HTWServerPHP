@@ -64,9 +64,10 @@ class news extends CI_Controller {
 	}
 
 	function get_news() {
-		$news_id = $this -> uri -> segment(3);
-		//echo date('Y-m-d H:i:s').'<br/>';
-		if (is_numeric($news_id) && !empty($news_id))
+		$news_id = $this->input->post('news_id',TRUE);
+                
+ 		//echo date('Y-m-d H:i:s').'<br/>';
+		if (!empty($news_id))
 		{
 			$all_news = $this -> news_model -> get_news_and_comment(array('news.news_id' => $news_id));
 			
@@ -160,10 +161,10 @@ class news extends CI_Controller {
 	}
 
 	function insert_news_comment_submit() {
-		while(true){
-		$user_id = rand(1,4);//$this -> input -> post('user_id', TRUE);
-		$news_id = rand(1,30);//$this -> input -> post('news_id', TRUE);
-		$news_comment_content = $this -> input -> post('$news_comment_content', TRUE);
+
+		$user_id = $this -> input -> post('user_id', TRUE);
+		$news_id = $this -> input -> post('news_id', TRUE);
+		$news_comment_content = $this -> input -> post('news_comment_content', TRUE);
 		$news_comment_time = date('Y-m-d H:i:s');
 
 		if (is_numeric($news_id) && !empty($news_id) && is_numeric($user_id) && !empty($user_id)) {
@@ -184,7 +185,7 @@ class news extends CI_Controller {
 			$status = 'fail';
 			$msg = 'field_error';
 		}
-}
+
 		echo json_encode(array('status' => $status, 'msg' => $msg, 'inserted_comment' => $inserted_comment -> result()));
 	}
 
