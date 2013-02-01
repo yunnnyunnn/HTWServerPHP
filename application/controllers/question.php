@@ -35,6 +35,7 @@ class Question extends CI_Controller {
 	}
 	public function get_question()
 	{
+
 		$status = '';
 		$msg = '';
 		$limit_hour = $this->input->post('limit_hour',true);
@@ -49,6 +50,7 @@ class Question extends CI_Controller {
 		$question_rows = $query->result();
 		
 		echo json_encode(array('status'=>$status,'msg' => $msg,'count' => $count ,'result' => $question_rows));
+
 	}
 	public function insert_question()
 	{
@@ -98,6 +100,20 @@ class Question extends CI_Controller {
 			
 			if($this->question_model->insert_question($data))
 			{
+<<<<<<< HEAD
+=======
+				if($is_pay)
+				{
+					$this->load->library('geolocation');
+					
+					$distance = $this->geolocation->get_distance(32.9697, -96.80322, 29.46786, -98.53506);
+				}
+				else
+				{
+					
+					
+				}		
+>>>>>>> upstream/master
 				$status = 'ok';
 				$msg = 'Question insert sucessfully.';
 				if($is_pay)
