@@ -35,22 +35,41 @@ class Question extends CI_Controller {
 	}
 	public function get_question()
 	{
-
+		echo date("Y-m-d H:i:s").'<br/>';
 		$status = '';
 		$msg = '';
 		$limit_hour = $this->input->post('limit_hour',true);
-		$limit_hour = 10;
+		$limit_hour = 79;
 		$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * 60 * $limit_hour));
 		$where = array(
 			'question_time >=' => $time,
 		);
-		$field = array('question_id','user_id');
-		$query = $this->question_model->get_question_with_answer($where);
-		$count = $query->num_rows();
-		$question_rows = $query->result();
+		$field = array('*');
 		
-		echo json_encode(array('status'=>$status,'msg' => $msg,'count' => $count ,'result' => $question_rows));
-
+		
+		$query = $this->question_model->get_question($field,$where);
+		//$count = $query->num_rows();
+		$answer_where = array();
+		$question_rows = $query->result();
+		foreach($question_rows as $row)
+		{
+			$answer_where['question_id'] = $row->question_id;
+			$answer = $this->answer_model->get_answer($answer_where);
+			$row->answer = $answer->result();
+			$answer->free_result();
+		}
+		
+		/*
+		$query = $this->question_model->get_question_with_answer($where);
+		$question_rows = $query->result();
+		*/
+		$count = $query->num_rows();
+		
+		
+		
+		echo '<br/>';
+		echo json_encode(array('status'=>$status,'msg' => $msg,'count'=>$count,'result' => $question_rows));
+		echo date("Y-m-d H:i:s").'<br/>';
 	}
 	public function insert_question()
 	{
