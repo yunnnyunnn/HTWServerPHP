@@ -22,6 +22,13 @@ class Question_model extends CI_Model
 		return $this->db->where($where)->get('question');
 	}
 	
+	function get_question_with_answers($where)
+	{
+		
+		
+		return $this->db->where($where)->get('question');
+	}
+	
 	function insert_question($data)
 	{
 		return $this->db->insert('question',$data);
