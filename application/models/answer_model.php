@@ -14,7 +14,8 @@ class Answer_model extends CI_Model
 	
 	function insert_answer($data)
 	{
-		return $this->db->insert('answer',$data);
+		$this->db->insert('answer',$data);
+		return $this->db->insert_id();
 	}
 	
 	function update_answer($where,$data)
