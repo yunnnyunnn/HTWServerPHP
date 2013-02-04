@@ -19,6 +19,16 @@ class Question_model extends CI_Model
 		$this->db->order_by('question.question_id','ASC');
 		$this->db->select('*,question.question_id as question_id');
 		$this->db->join('answer' , 'question.question_id = answer.question_id','left');
+	
+		/*
+		$query = $this->db->query('select q.*,
+  group_concat(a.answer_id) answer
+from question q
+left join answer a
+  on q.question_id = a.question_id
+group by q.question_id');
+return $query;
+*/
 		return $this->db->where($where)->get('question');
 	}
 	

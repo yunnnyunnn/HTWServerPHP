@@ -21,55 +21,113 @@ class Question extends CI_Controller {
 	public function index()
 	{
 		$value = $this->uri->segment(3);
-
-		print_r($this->session->userdata('user'));	
+		$session = $this->session->userdata('user');
+		$user_id = $session['user_id'];
+		$user_email = $session['user_email'];
 		echo '<br/>'; 
 		echo session_id();
 		echo '<br/>'; 
-		echo rand (1,3).'<br/>';
-		echo rand (-90,90).'.'.rand (1000,9999).'<br/>';
-		echo rand (-180,180).'.'.rand (1000,9999).'<br/>';
-		$this->load->library('geolocation');
+		echo $user_id;
+		echo '<br/>'; 
+		echo $user_email;
+		echo '<br/>'; 
+
 		echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
 	
 	}
 	public function get_question()
 	{
-		echo date("Y-m-d H:i:s").'<br/>';
+		//echo date("Y-m-d H:i:s").'<br/>';
 		$status = '';
 		$msg = '';
 		$limit_hour = $this->input->post('limit_hour',true);
-		$limit_hour = 79;
+		$limit_hour = 180;
 		$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * 60 * $limit_hour));
 		$where = array(
 			'question_time >=' => $time,
+			
 		);
 		$field = array('*');
 		
 		
 		$query = $this->question_model->get_question($field,$where);
-		//$count = $query->num_rows();
+		$count = $query->num_rows();
 		$answer_where = array();
 		$question_rows = $query->result();
+		$i=0;
 		foreach($question_rows as $row)
 		{
 			$answer_where['question_id'] = $row->question_id;
 			$answer = $this->answer_model->get_answer($answer_where);
+			$i+=$answer->num_rows();
 			$row->answer = $answer->result();
 			$answer->free_result();
 		}
 		
+		echo json_encode(array('status'=>$status,'msg' => $msg,'count'=>$i,'result' => $question_rows));
+		
 		/*
-		$query = $this->question_model->get_question_with_answer($where);
-		$question_rows = $query->result();
-		*/
-		$count = $query->num_rows();
-		
-		
-		
 		echo '<br/>';
-		echo json_encode(array('status'=>$status,'msg' => $msg,'count'=>$count,'result' => $question_rows));
-		echo date("Y-m-d H:i:s").'<br/>';
+
+		$query = $this->question_model->get_question_with_answer($where);
+		$count = $query->num_rows();
+		$question_rows = $query->result_array();
+		$result = array();
+		$new_question = array();
+		foreach($question_rows as $key => $row)
+		{
+			$question_id = $row['question_id'];
+			if (array_key_exists($row['question_id'], $new_question))
+			{
+				$answer['answer_id'] = $row['answer_id'];
+				$answer['answer_content'] = $row['answer_content'];
+				$answer['answer_time'] = $row['answer_time'];
+				$answer['answer_photo_url'] = $row['answer_photo_url'];
+				$answer['answer_latitude'] = $row['answer_latitude'];
+				$answer['answer_longitude'] = $row['answer_longitude'];
+				$answer['is_best_answer'] = $row['is_best_answer'];
+				$answer['user_id'] = $row['user_id'];
+				$answer['answer_score'] = $row['answer_score'];
+				$new_question[$question_id]['answer'][] = $answer;		
+			}
+			else
+			{
+				$new_question[$question_id] = $row;
+				
+				if(!is_null($row['answer_id'])){
+					$answer['answer_id'] = $row['answer_id'];
+					$answer['answer_content'] = $row['answer_content'];
+					$answer['answer_time'] = $row['answer_time'];
+					$answer['answer_photo_url'] = $row['answer_photo_url'];
+					$answer['answer_latitude'] = $row['answer_latitude'];
+					$answer['answer_longitude'] = $row['answer_longitude'];
+					$answer['is_best_answer'] = $row['is_best_answer'];
+					$answer['user_id'] = $row['user_id'];
+					$answer['answer_score'] = $row['answer_score'];	
+					$new_question[$question_id]['answer'][] = $answer;	
+				}else
+				{
+					$new_question[$question_id]['answer']=array();
+				}
+				
+				unset($new_question[$question_id]['answer_id']);
+				unset($new_question[$question_id]['answer_content']);
+				unset($new_question[$question_id]['answer_time']);
+				unset($new_question[$question_id]['answer_photo_url']);
+				unset($new_question[$question_id]['answer_latitude']);
+				unset($new_question[$question_id]['answer_longitude']);
+				unset($new_question[$question_id]['is_best_answer']);
+				unset($new_question[$question_id]['user_id']);
+				unset($new_question[$question_id]['answer_score']);
+			}
+			
+			
+		}
+		$result[] =  $new_question;
+		//print_r($result);
+		echo '<br/>';
+		echo json_encode(array('status'=>$status,'msg' => $msg,'count'=>$count,'result' => $result));
+		*/
 	}
 	public function insert_question()
 	{
@@ -87,7 +145,8 @@ class Question extends CI_Controller {
 		$question_reward = $this->input->post('question_reward',true);
 		
 		$is_pay = $this->input->post('is_pay',true);
-		$limit_min = $this->input->post('limit_min',true);*/
+		$limit_min = $this->input->post('limit_min',true);
+		*/
 		
 		$user_id = rand (1,3);
 		$question_latitude = rand (-90,90).'.'.rand (1000,9999);
@@ -162,7 +221,7 @@ class Question extends CI_Controller {
 	function insert_answer()
 	{
 		//while(TRUE){
-		/*
+		
 		$user_id = $this->input->post('user_id',true);
 		$question_id = $this->input->post('question_id',true);
 		$answer_latitude = $this->input->post('answer_latitude',true);
@@ -172,7 +231,8 @@ class Question extends CI_Controller {
 		$answer_content	= $this->input->post('answer_content',true);
 		$is_best_answer = $this->input->post('is_best_answer',true);
 		$answer_score = 0;//$this->input->post('answer_score',true);
-		*/
+		
+		/*
 		$user_id = rand(1,3);
 		$question_id = rand(1,1000);
 		$answer_latitude = rand (-90,90).'.'.rand (1000,9999);
@@ -182,6 +242,7 @@ class Question extends CI_Controller {
 		$answer_content	= iconv('UTF-8', 'BIG5//TRANSLIT//IGNORE',$this->getRandomString(rand (1,50)));
 		$is_best_answer = 0;
 		$answer_score = 0;//$this->input->post('answer_score',true);
+		*/
 		if(!empty($answer_content))
 		{
 			$data = array(
