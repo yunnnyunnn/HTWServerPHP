@@ -2,6 +2,9 @@
 
 class Question extends CI_Controller {
 	
+	private $user_id = NULL;
+	private $user_email = NULL;
+	
 	public function __construct()
 	{
 		parent::__construct();
@@ -11,19 +14,22 @@ class Question extends CI_Controller {
 			redirect('user');
 		}
 		else
-		{
+		{		
+			$this->user_id = $is_login['user_id'];
+			$this->user_email = $is_login['user_email'];
 			$this->load->model('question_model');
 			$this->load->model('answer_model');
+			$this->load->model('answer_scores_model');
 			$this->load->model('location_log_model');
+			
 		}
 		
 	}
 	public function index()
 	{
 		$value = $this->uri->segment(3);
-		$session = $this->session->userdata('user');
-		$user_id = $session['user_id'];
-		$user_email = $session['user_email'];
+		$user_email = $this->user_email;
+		$user_id = $this->user_id;
 		echo '<br/>'; 
 		echo session_id();
 		echo '<br/>'; 
@@ -40,7 +46,7 @@ class Question extends CI_Controller {
 		//echo date("Y-m-d H:i:s").'<br/>';
 		$status = '';
 		$msg = '';
-		$limit_hour = $this->input->post('limit_hour',true);
+		$limit_hour = $this->input->post('limit_hour',TRUE);
 		$limit_hour = 180;
 		$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * 60 * $limit_hour));
 		$where = array(
@@ -133,21 +139,23 @@ class Question extends CI_Controller {
 	{
 		$status = '';
 		$msg = '';
-		/*
-		$user_id = $this->input->post('user_id',true);
-		$question_latitude = $this->input->post('question_latitude',true);
-		$question_longitude = $this->input->post('question_longitude',true);
+		//$user_email = $session['user_email'];
+		//$user_id = $this->input->post('user_id',TRUE);
+		$user_email = $this->user_email;
+		$user_id = $this->user_id;
+		$question_latitude = $this->input->post('question_latitude',TRUE);
+		$question_longitude = $this->input->post('question_longitude',TRUE);
 		$question_time = date("Y-m-d H:i:s");
-		$question_content = $this->input->post('question_content',true);
-		$question_distance_limited = $this->input->post('question_distance_limited',true);
-		$question_is_photo_needed = $this->input->post('question_is_photo_needed',true);
-		$question_time_left = $this->input->post('question_time_left',true);
-		$question_reward = $this->input->post('question_reward',true);
+		$question_content = $this->input->post('question_content',TRUE);
+		$question_distance_limited = $this->input->post('question_distance_limited',TRUE);
+		$question_is_photo_needed = $this->input->post('question_is_photo_needed',TRUE);
+		$question_time_left = $this->input->post('question_time_left',TRUE);
+		$question_reward = $this->input->post('question_reward',TRUE);
 		
-		$is_pay = $this->input->post('is_pay',true);
-		$limit_min = $this->input->post('limit_min',true);
-		*/
+		$is_pay = $this->input->post('is_pay',TRUE);
+		$limit_min = $this->input->post('limit_min',TRUE);
 		
+		/*
 		$user_id = rand (1,3);
 		$question_latitude = rand (-90,90).'.'.rand (1000,9999);
 		$question_longitude = rand (-180,180).'.'.rand (1000,9999);
@@ -161,7 +169,7 @@ class Question extends CI_Controller {
 		
 		$is_pay = 0;
 		$limit_min = 9000;
-
+		*/
 		if(!empty($question_content)||!empty($question_reward))
 		{
 			$data = array(
@@ -186,7 +194,7 @@ class Question extends CI_Controller {
 					$this->load->library('geolocation');
 					$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * $limit_min));
 					$query = $this->location_log_model->get_group_by_location_log($time,'user_id');
-					echo 'count  = '.$query->num_rows() .'<br/>';
+					echo 'count = '.$query->num_rows() .'<br/>';
 					if($query->num_rows()>0)
 					{
 						foreach($query->result() as $row)
@@ -196,6 +204,7 @@ class Question extends CI_Controller {
 							if($distance < $question_distance_limited)
 							{
 								echo 'user_id = '.$row->user_id;
+								//notification
 							}
 						}
 					}else
@@ -221,16 +230,18 @@ class Question extends CI_Controller {
 	function insert_answer()
 	{
 		//while(TRUE){
-		
-		$user_id = $this->input->post('user_id',true);
-		$question_id = $this->input->post('question_id',true);
-		$answer_latitude = $this->input->post('answer_latitude',true);
-		$answer_longitude = $this->input->post('answer_longitude',true);
+		//$user_email = $session['user_email'];
+		//$user_id = $this->input->post('user_id',TRUE);
+		$user_email = $this->user_email;
+		$user_id = $this->user_id;
+		$question_id = $this->input->post('question_id',TRUE);
+		$answer_latitude = $this->input->post('answer_latitude',TRUE);
+		$answer_longitude = $this->input->post('answer_longitude',TRUE);
 		$answer_time = date("Y-m-d H:i:s");
-		$answer_photo_url = $this->input->post('answer_photo_url',true);
-		$answer_content	= $this->input->post('answer_content',true);
-		$is_best_answer = $this->input->post('is_best_answer',true);
-		$answer_score = 0;//$this->input->post('answer_score',true);
+		$answer_photo_url = $this->input->post('answer_photo_url',TRUE);
+		$answer_content	= $this->input->post('answer_content',TRUE);
+		$is_best_answer = $this->input->post('is_best_answer',TRUE);
+		$answer_score = 0;//$this->input->post('answer_score',TRUE);
 		
 		/*
 		$user_id = rand(1,3);
@@ -241,8 +252,9 @@ class Question extends CI_Controller {
 		$answer_photo_url = '';
 		$answer_content	= iconv('UTF-8', 'BIG5//TRANSLIT//IGNORE',$this->getRandomString(rand (1,50)));
 		$is_best_answer = 0;
-		$answer_score = 0;//$this->input->post('answer_score',true);
+		$answer_score = 0;//$this->input->post('answer_score',TRUE);
 		*/
+		$answer_id = NULL;
 		if(!empty($answer_content))
 		{
 			$data = array(
@@ -256,16 +268,17 @@ class Question extends CI_Controller {
 				'is_best_answer' => $is_best_answer,
 				'answer_score' => $answer_score,
 			);
-			
-			if($this->answer_model->insert_answer($data))
+			$answer_id = $this->answer_model->insert_answer($data);
+			if(isset($answer_id))
 			{
 				$status = 'ok';
 				$msg = 'Question insert sucessfully.';
+				//notification
 			}
 			else
 			{
 				$status = 'fail';
-				$msg = 'Answer insert Databse error.';
+				$msg = 'Answer insert : Databse error.';
 			}
 		}
 		else
@@ -273,8 +286,94 @@ class Question extends CI_Controller {
 			$status = 'fail';
 			$msg = 'miss post value';
 		}
+		echo json_encode(array('status' => $status , 'msg' => $msg , 'answer_id' => $answer_id));
 		//}
-		
+	}
+	
+	public function insert_answer_scores()
+	{
+		$status = '';
+		$msg = '';
+		$user_id = $this->user_id;
+		$answer_id = $this->input->post('answer_id',TRUE);
+		$scores = $this->input->post('scores',TRUE);
+		if(!is_numeric($answer_id)||!is_numeric($scores))
+		{
+			$status = 'fail';
+			$msg = 'ID error';
+		}
+		else
+		{
+			if($scores == 1||$scores == -1)
+			{
+				$data = array(
+					'user_id' => $user_id,
+					'answer_id' => $answer_id,
+					'scores' => $scores
+				);
+				$update = FALSE;
+				$field = array('answer_scores_id');
+				$where = array('user_id' => $user_id,'answer_id' => $answer_id);
+				$query = $this->answer_scores_model->get_answer_scores($field , $where);
+				if($query->num_rows()>0)
+				{
+					$data1 = array('scores' => $scores);
+					if($this->answer_scores_model->update_answer_scores($where , $data1))
+					{
+						$status = 'success';
+						$msg = 'Update Score Successfully.';
+						$update = TRUE;
+					}
+					else
+					{
+						$status = 'fail';
+						$msg = 'Update Score : Database Error';
+						$update = FALSE;
+					}
+				}
+				else
+				{
+					if($this->answer_scores_model->insert_answer_scores($data))
+					{
+						$status = 'success';
+						$msg = 'Insert Score Successfully.';
+						$update = TRUE;
+					}
+					else
+					{
+						$status = 'fail';
+						$msg = 'Insert Score : Database Error';
+						$update = FALSE;
+					}
+				}
+				if($update)
+				{
+					$field1 = array('SUM(scores) AS total_scores');
+					$where1 = array(
+						'answer_id' => $answer_id,
+					);
+					$query = $this->answer_scores_model->get_answer_scores($field1 , $where1);
+					if($query->num_rows()>0)
+					{
+						$answer_score = $query->row()->total_scores;
+						$answer_data = array(
+							'answer_score' => $answer_score	
+						);
+						$this->answer_model->update_answer($where1,$answer_data);
+					}
+				}
+				else
+				{
+					$status = 'fail';
+				}
+			}
+			else
+			{
+				$status = 'fail';
+				$msg = 'Scores error';
+			}
+		}	
+		echo json_encode(array('status' => $status , 'msg' => $msg));
 	}
 	
 	function getRandomString($length = 6) 
