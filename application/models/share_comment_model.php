@@ -12,7 +12,7 @@ class Share_comment_model extends CI_Model
     function get_share_comment($where)
     {
         $this->db->order_by('share_comment_time','ASC');
-        $this->db->select('share_comment_id, share_id, share_comment_content, share_comment_time, user_id, (select user_nickname from user where user_id = user_id) as user_nickname');
+        $this->db->select('share_comment_id, share_id, share_comment_content, timediff(share_comment_time, now()) as share_comment_time, user_id, (select user_nickname from user where user_id = user_id) as user_nickname');
 		return $this->db->where($where)->get('share_comment');
     }
     
