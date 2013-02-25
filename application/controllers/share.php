@@ -67,6 +67,41 @@
                                    ));
         }
         
+        public function get_user_share()
+        {
+            // 如果什麼都沒有傳，就全部抓
+            
+            $where = array();
+            
+            // 防止沒有傳user_id
+            if(!isset($_POST['user_id']))
+            {
+                echo json_encode(array('result'=>'wrong post value'));
+                return;
+            }
+            
+            $user_id = $_POST['user_id'];
+            $where['user_id'] = $user_id;
+            
+            $query = $this->share_model->get_share($where);
+            
+            $shares = $query->result();
+            
+            // 這邊開始將每一篇的comment抓下來
+            foreach($shares as $share)
+            {
+                $share_id = $share->share_id;
+                $where_comment = array('share_id'=>$share_id);
+                $query_comment = $this->share_comment_model->get_share_comment($where_comment);
+                $share->share_comment = $query_comment->result();
+            }
+            
+            // 將最後結果送出
+            echo json_encode(array('constraints' => $where,
+                                   'result' => $shares
+                                   ));
+        }
+        
         public function insert_share()
         {
             
