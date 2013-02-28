@@ -80,7 +80,7 @@
                 return;
             }
             
-            $user_id = $_POST['user_id'];
+            $user_id = $this->input->post('user_id', TRUE);
             $where['user_id'] = $user_id;
             
             $query = $this->share_model->get_share($where);
