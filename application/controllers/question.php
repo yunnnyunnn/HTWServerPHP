@@ -20,10 +20,8 @@ class Question extends CI_Controller {
 			$this->load->model('question_model');
 			$this->load->model('answer_model');
 			$this->load->model('answer_scores_model');
-			$this->load->model('location_log_model');
-			
-		}
-		
+			$this->load->model('location_log_model');		
+		}	
 	}
 	public function index()
 	{

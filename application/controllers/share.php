@@ -104,8 +104,7 @@
         
         public function insert_share()
         {
-            
-            
+         
             // 防止沒有傳post value
             if(!isset($_POST['user_id']) OR !isset($_POST['share_content']) OR !isset($_POST['share_weather_type']) OR !isset($_POST['share_latitude']) OR !isset($_POST['share_longitude']))
             {
