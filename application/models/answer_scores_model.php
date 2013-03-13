@@ -1,4 +1,4 @@
-<?
+<?php
 
 class Answer_scores_model extends CI_Model
 {

@@ -1,4 +1,4 @@
-<?
+<?php
 
 class Location_log_model extends CI_Model
 {

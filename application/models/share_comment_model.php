@@ -1,4 +1,4 @@
-<?
+<?php
 
 class Share_comment_model extends CI_Model
 {

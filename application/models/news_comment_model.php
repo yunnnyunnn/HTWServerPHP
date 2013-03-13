@@ -1,4 +1,4 @@
-<?
+<?php
 class News_comment_model extends CI_Model
 {
 	function _construct()

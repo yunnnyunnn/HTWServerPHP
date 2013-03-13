@@ -1,4 +1,4 @@
-<?
+<?php
 
 class Share_model extends CI_Model
 {

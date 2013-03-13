@@ -9,10 +9,8 @@
         {
             parent::__construct();
             
-            
-            
-            
-            $is_login = $this->session->userdata('user');
+                        
+            $is_login = $this->session->all_userdata();
             if(!$is_login||empty($is_login['token']))
             {
                 redirect('user');
@@ -37,6 +35,7 @@
         
         public function get_share()
         {
+            
             // 如果什麼都沒有傳，就全部抓
             
             $where = array();
@@ -44,7 +43,7 @@
             // 如果有傳時間限制
             $share_time = $this->input->post('share_time', TRUE);
 
-            if(isset($share_time))
+            if($share_time)
             {
                 
                 $where['share_time >='] = date('Y-m-d H:i:s', strtotime($share_time));
@@ -55,7 +54,7 @@
             $share_latitude_min = $this->input->post('share_latitude_min', TRUE);
             $share_longitude_max = $this->input->post('share_longitude_max', TRUE);
             $share_longitude_min = $this->input->post('share_longitude_min', TRUE);
-            if(isset($share_latitude_max) && isset($share_latitude_min) && isset($share_longitude_max) && isset($share_longitude_min))
+            if($share_latitude_max && $share_latitude_min && $share_longitude_max && $share_longitude_min)
             {
                 
                 $where['share_latitude <='] = $share_latitude_max;
