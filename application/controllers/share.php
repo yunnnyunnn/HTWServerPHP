@@ -2,12 +2,29 @@
     
     class Share extends CI_Controller {
         
+        private $user_id = NULL;
+        private $user_email = NULL;
+        
         public function __construct()
         {
             parent::__construct();
-            $this->load->model('share_model');
-            $this->load->model('share_comment_model');
-            $this->load->model('share_likes_model');
+            
+            
+            
+            
+            $is_login = $this->session->userdata('user');
+            if(!$is_login||empty($is_login['token']))
+            {
+                redirect('user');
+            }
+            else
+            {
+                $this->user_id = $is_login['user_id'];
+                $this->user_email = $is_login['user_email'];
+                $this->load->model('share_model');
+                $this->load->model('share_comment_model');
+                $this->load->model('share_likes_model');
+            }
         }
         public function index()
         {
@@ -25,21 +42,21 @@
             $where = array();
             
             // 如果有傳時間限制
-            if(isset($_POST['share_time']))
+            $share_time = $this->input->post('share_time', TRUE);
+
+            if(isset($share_time))
             {
-                $share_time = $this->input->post('share_time', TRUE);
                 
                 $where['share_time >='] = date('Y-m-d H:i:s', strtotime($share_time));
             }
             
             // 如果有傳區域限制
-            if(isset($_POST['share_latitude_max']) && isset($_POST['share_latitude_min']) && isset($_POST['share_longitude_max']) && isset($_POST['share_longitude_min']))
+            $share_latitude_max = $this->input->post('share_latitude_max', TRUE);
+            $share_latitude_min = $this->input->post('share_latitude_min', TRUE);
+            $share_longitude_max = $this->input->post('share_longitude_max', TRUE);
+            $share_longitude_min = $this->input->post('share_longitude_min', TRUE);
+            if(isset($share_latitude_max) && isset($share_latitude_min) && isset($share_longitude_max) && isset($share_longitude_min))
             {
-                
-                $share_latitude_max = $this->input->post('share_latitude_max', TRUE);
-                $share_latitude_min = $this->input->post('share_latitude_min', TRUE);
-                $share_longitude_max = $this->input->post('share_longitude_max', TRUE);
-                $share_longitude_min = $this->input->post('share_longitude_min', TRUE);
                 
                 $where['share_latitude <='] = $share_latitude_max;
                 $where['share_latitude >='] = $share_latitude_min;
@@ -73,14 +90,8 @@
             
             $where = array();
             
-            // 防止沒有傳user_id
-            if(!isset($_POST['user_id']))
-            {
-                echo json_encode(array('result'=>'wrong post value'));
-                return;
-            }
+            $user_id = $this->user_id;
             
-            $user_id = $this->input->post('user_id', TRUE);
             $where['user_id'] = $user_id;
             
             $query = $this->share_model->get_share($where);
@@ -105,18 +116,21 @@
         public function insert_share()
         {
          
+            $user_id = $this->user_id;
+
+            $share_content = $this->input->post('share_content', TRUE);
+            $share_weather_type = $this->input->post('share_weather_type', TRUE);
+            $share_latitude = $this->input->post('share_latitude', TRUE);
+            $share_longitude = $this->input->post('share_longitude', TRUE);
+            
             // 防止沒有傳post value
-            if(!isset($_POST['user_id']) OR !isset($_POST['share_content']) OR !isset($_POST['share_weather_type']) OR !isset($_POST['share_latitude']) OR !isset($_POST['share_longitude']))
+            if(!isset($share_content) OR !isset($share_weather_type) OR !isset($share_latitude) OR !isset($share_longitude))
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
             }
             
-            $user_id = $this->input->post('user_id', TRUE);
-            $share_content = $this->input->post('share_content', TRUE);
-            $share_weather_type = $this->input->post('share_weather_type', TRUE);
-            $share_latitude = $this->input->post('share_latitude', TRUE);
-            $share_longitude = $this->input->post('share_longitude', TRUE);
+            
             
             $data = array(
                           'user_id'=>$user_id,
@@ -137,15 +151,17 @@
         {
             // 刪除時必須提供user_id和share_id
             
+            $user_id = $this->user_id;
+            $share_id = $this->input->post('share_id', TRUE);
+            
             // 防止沒有傳post value
-            if(!isset($_POST['user_id']) OR !isset($_POST['share_id']))
+            if(!isset($share_id))
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
             }
             
-            $user_id = $this->input->post('user_id', TRUE);
-            $share_id = $this->input->post('share_id', TRUE);
+            
             
             $data = array(
                           'user_id'=>$user_id,
@@ -165,16 +181,18 @@
         
         public function insert_share_comment()
         {
+            $user_id = $this->user_id;
+            $share_id = $this->input->post('share_id', TRUE);
+            $share_comment_content = $this->input->post('share_comment_content', TRUE);
+            
             // 防止沒有傳post value
-            if(!isset($_POST['user_id']) OR !isset($_POST['share_id']) OR !isset($_POST['share_comment_content']))
+            if(!isset($share_id) OR !isset($share_comment_content))
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
             }
             
-            $user_id = $this->input->post('user_id', TRUE);
-            $share_id = $this->input->post('share_id', TRUE);
-            $share_comment_content = $this->input->post('share_comment_content', TRUE);
+            
             
             $data = array(
                           'user_id'=>$user_id,
@@ -194,15 +212,17 @@
 
         public function insert_share_likes()
         {
+            $user_id = $this->user_id;
+            $share_id = $this->input->post('share_id', TRUE);
+            
             // 防止沒有傳post value
-            if(!isset($_POST['user_id']) OR !isset($_POST['share_id']))
+            if(!isset($share_id))
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
             }
             
-            $user_id = $this->input->post('user_id', TRUE);
-            $share_id = $this->input->post('share_id', TRUE);
+            
             
             $data = array(
                           'user_id'=>$user_id,
@@ -226,15 +246,17 @@
         {
             // 刪除時必須提供user_id和share_id
             
+            $user_id = $this->user_id;
+            $share_id = $this->input->post('share_id', TRUE);
+            
             // 防止沒有傳post value
-            if(!isset($_POST['user_id']) OR !isset($_POST['share_id']))
+            if(!isset($share_id))
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
             }
             
-            $user_id = $this->input->post('user_id', TRUE);
-            $share_id = $this->input->post('share_id', TRUE);
+            
             
             $data = array(
                           'user_id'=>$user_id,

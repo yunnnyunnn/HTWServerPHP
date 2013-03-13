@@ -27,6 +27,7 @@ class Signup extends CI_Controller {
 		$msg = '';
 		$status = '';
 		$echo_data = array();
+
 		$user_email = $this->input->post('user_email',TRUE);
 		//$user_email = 'qq12345886@hotmail.com';
 		$device_type = $this->input->post('device_type',TRUE);

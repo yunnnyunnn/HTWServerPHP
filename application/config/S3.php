@@ -33,7 +33,7 @@ $config['verify_peer'] = TRUE;
 |
 */
 
-$config['accessKey'] = 'AKIAJKXP4HEOWZUK2GCQ';
+$config['accessKey'] = '***';
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +44,6 @@ $config['accessKey'] = 'AKIAJKXP4HEOWZUK2GCQ';
 |
 */
 
-$config['secretKey'] = '1zA6h5zyPAQq6HStGwDbj37CUx00fvDyxcBvjUSt';
+$config['secretKey'] = '***';
 
 $config['endpoint'] = 's3.amazonaws.com';
