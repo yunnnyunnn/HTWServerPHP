@@ -18,7 +18,9 @@ class User extends CI_Controller {
 	}
 	public function index()
 	{
-		$this->get_one_user();
+		//
+		
+		//$this->get_one_user();
 	}
 	
 	public function get_one_user()
@@ -63,11 +65,5 @@ class User extends CI_Controller {
 		echo json_encode($echo_data);	
 	}
 	
-	private function test()
-	{
-		
-		
-		
-	}
 	
 }

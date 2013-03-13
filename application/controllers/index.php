@@ -9,6 +9,9 @@ class Index extends CI_Controller {
 	
 	public function index()
 	{
+		$sess = $this->session->all_userdata();
+		print_r($sess);
+		//echo $this->session->userdata('howeather');
 		$this->load->view('test_upload_view');
 	}
 	
