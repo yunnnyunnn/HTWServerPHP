@@ -36,7 +36,7 @@ class Question extends CI_Controller {
 		echo $user_email;
 		echo '<br/>'; 
 
-		echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
+		//echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
 	
 	}
 	public function get_question()

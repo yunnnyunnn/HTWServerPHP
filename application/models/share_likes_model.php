@@ -1,4 +1,4 @@
-<?
+<?php
 
 class Share_likes_model extends CI_Model
 {

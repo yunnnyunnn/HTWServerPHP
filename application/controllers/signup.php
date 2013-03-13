@@ -19,7 +19,7 @@ class Signup extends CI_Controller {
 	}
 	public function index()
 	{
-		
+		$this->load->view('signup_view');
 	}
 	
 	public function signup_service()
@@ -27,9 +27,10 @@ class Signup extends CI_Controller {
 		$msg = '';
 		$status = '';
 		$echo_data = array();
-		$user_email = $this->input->post('user_email',TRUE);   ///
-		//$user_email = 'qq123456@hotmail.com';
-		$device_type = $this->input->post('device_type',TRUE);   ///
+
+		$user_email = $this->input->post('user_email',TRUE);
+		//$user_email = 'qq12345886@hotmail.com';
+		$device_type = $this->input->post('device_type',TRUE);
 		//$device_type = '1';
 		if(!filter_var($user_email, FILTER_VALIDATE_EMAIL))
 		{
@@ -108,10 +109,10 @@ class Signup extends CI_Controller {
 								'user_email' => $user_email ,
 								'token' => $token = md5(uniqid(rand(), TRUE))
 							);
-							$this->session->set_userdata('user',$session);
+							$this->session->set_userdata($session);
 							if($device_type!=4)
 							{
-								$echo_data['session_id'] = session_id();
+								$echo_data['session_id'] = $this->session->userdata('session_id');
 							}
 						}
 						else
