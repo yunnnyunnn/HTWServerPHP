@@ -7,12 +7,18 @@ class My_Controller extends CI_Controller {
 	
 	public function __construct()
 	{
-		parent::__construct();	
+        
+        
+        
+		parent::__construct();
 		if(isset($_GET['howeatoken']))
 		{
 			$this->load->model('howeatoken_model');
+            
+            $howeatoken = $this->input->get('howeatoken', TRUE);
+            
 			$where = array(
-				'howeatoken' => $_GET['howeatoken']
+				'howeatoken' => md5($howeatoken)
 			);
 			$result = $this->howeatoken_model->get_howeatoken($where);
 			if($result->num_rows()>0)
@@ -24,6 +30,7 @@ class My_Controller extends CI_Controller {
 			{
 				$echo = array('status' => 'fail' , 'msg' => 'Error validating access token');
 				echo json_encode($echo);
+                exit();
 			}
 		}
 		else

@@ -1,28 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     
-    class Share extends CI_Controller {
+    class Share extends My_Controller {
         
-        private $user_id = NULL;
-        private $user_email = NULL;
         
         public function __construct()
         {
             parent::__construct();
-            
-                        
-            $is_login = $this->session->all_userdata();
-            if(!$is_login||empty($is_login['token']))
-            {
-                redirect('user');
-            }
-            else
-            {
-                $this->user_id = $is_login['user_id'];
-                $this->user_email = $is_login['user_email'];
-                $this->load->model('share_model');
-                $this->load->model('share_comment_model');
-                $this->load->model('share_likes_model');
-            }
+            $this->load->model('share_model');
+            $this->load->model('share_comment_model');
+            $this->load->model('share_likes_model');
+            $this->load->library('S3');
+
         }
         public function index()
         {
@@ -123,18 +111,34 @@
             $share_longitude = $this->input->post('share_longitude', TRUE);
             
             // 防止沒有傳post value
-            if(!isset($share_content) OR !isset($share_weather_type) OR !isset($share_latitude) OR !isset($share_longitude))
+            if($share_content==FALSE OR $share_weather_type==FALSE OR $share_latitude==FALSE OR $share_longitude==FALSE)
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
             }
             
             
+            $fileName = '';
+            if(isset($_POST['Submit'])){
+                
+                $fileName = "$user_id/".time().".jpg";
+                $fileTempName = $_FILES['theFile']['tmp_name'];
+                
+                //create a new bucket
+                //$this->s3->putBucket("weather_bucket", S3::ACL_PUBLIC_READ);
+                //move the file
+                if ($this->s3->putObjectFile($fileTempName, "weather_bucket", $fileName, S3::ACL_PUBLIC_READ)) {
+                    //echo "We successfully uploaded your file.";
+                }else{
+                    //echo "Something went wrong while uploading your file... sorry.";
+                }
+            }
             
             $data = array(
                           'user_id'=>$user_id,
                           'share_content'=>$share_content,
                           'share_weather_type'=>$share_weather_type,
+                          'share_photo_url'=>$fileName,
                           'share_latitude'=>$share_latitude,
                           'share_longitude'=>$share_longitude,
                           'share_time'=>date("Y-m-d H:i:s"),
@@ -154,7 +158,7 @@
             $share_id = $this->input->post('share_id', TRUE);
             
             // 防止沒有傳post value
-            if(!isset($share_id))
+            if($share_id==FALSE)
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
@@ -185,7 +189,7 @@
             $share_comment_content = $this->input->post('share_comment_content', TRUE);
             
             // 防止沒有傳post value
-            if(!isset($share_id) OR !isset($share_comment_content))
+            if($share_id==FALSE OR $share_comment_content==FALSE)
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
@@ -215,7 +219,7 @@
             $share_id = $this->input->post('share_id', TRUE);
             
             // 防止沒有傳post value
-            if(!isset($share_id))
+            if($share_id==FALSE)
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
@@ -249,7 +253,7 @@
             $share_id = $this->input->post('share_id', TRUE);
             
             // 防止沒有傳post value
-            if(!isset($share_id))
+            if($share_id==FALSE)
             {
                 echo json_encode(array('result'=>'wrong post value'));
                 return;
