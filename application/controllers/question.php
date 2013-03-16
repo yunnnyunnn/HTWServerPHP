@@ -1,27 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Question extends CI_Controller {
-	
-	private $user_id = NULL;
-	private $user_email = NULL;
-	
+class Question extends My_Controller {
+
 	public function __construct()
 	{
 		parent::__construct();
-		$is_login = $this->session->userdata('user');
-		if(!$is_login||empty($is_login['token']))
-		{
-			redirect('user');
-		}
-		else
-		{		
-			$this->user_id = $is_login['user_id'];
-			$this->user_email = $is_login['user_email'];
-			$this->load->model('question_model');
-			$this->load->model('answer_model');
-			$this->load->model('answer_scores_model');
-			$this->load->model('location_log_model');		
-		}	
+		$this->load->model('question_model');
+		$this->load->model('answer_model');
+		$this->load->model('answer_scores_model');
+		$this->load->model('location_log_model');		
+		
 	}
 	public function index()
 	{
@@ -35,7 +23,7 @@ class Question extends CI_Controller {
 		echo '<br/>'; 
 		echo $user_email;
 		echo '<br/>'; 
-
+		
 		//echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
 	
 	}
