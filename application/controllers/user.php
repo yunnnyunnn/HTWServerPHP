@@ -1,20 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class User extends CI_Controller {
+class User extends My_Controller {
 	
 	public function __construct()
 	{
 		parent::__construct();	
-		$is_login = $this->session->userdata('user');
-		if(!$is_login||empty($is_login['token']))
-		{
-			redirect('/');
-		}
-		else
-		{
-			$this->load->model('user_model');
-			$this->load->model('share_model');
-		}
+		$this->load->model('user_model');
+		$this->load->model('share_model');
+		
 	}
 	public function index()
 	{

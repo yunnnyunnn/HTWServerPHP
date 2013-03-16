@@ -10,14 +10,28 @@ class My_Controller extends CI_Controller {
 		parent::__construct();	
 		if(isset($_GET['howeatoken']))
 		{
-			
+			$this->load->model('howeatoken_model');
+			$where = array(
+				'howeatoken' => $_GET['howeatoken']
+			);
+			$result = $this->howeatoken_model->get_howeatoken($where);
+			if($result->num_rows()>0)
+			{
+				$this->user_id = $result->row()->user_id;
+				$this->user_email = $result->row()->user_email;
+			}
+			else
+			{
+				$echo = array('status' => 'fail' , 'msg' => 'Error validating access token');
+				echo json_encode($echo);
+			}
 		}
 		else
 		{
 			$is_login = $this->session->userdata('user');
 			if(!$is_login||empty($is_login['token']))
 			{
-				redirect('user');
+				redirect('/');
 			}
 			else
 			{

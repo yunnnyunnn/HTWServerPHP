@@ -15,6 +15,7 @@ class Signup extends CI_Controller {
 			$this->load->model('user_model');
 			$this->load->model('share_model');
 			$this->load->model('device_model');
+			$this->load->model('howeatoken_model');
 		}
 	}
 	public function index()
@@ -100,6 +101,26 @@ class Signup extends CI_Controller {
 						$device_data['user_id'] = $user_id;
 						$device_data['device_type'] = $device_type;
 						$echo_data['user_id'] = $user_id;
+						///
+						$howeatoken = NULL;
+						$num = 57 ;
+						for ($i=1;$i<=$num;$i=$i+1)
+						{
+							$c=rand(1,3);
+							if($c==1){$a=rand(97,122);$b=chr($a);}
+							if($c==2){$a=rand(65,90);$b=chr($a);}	
+							if($c==3){$b=rand(0,9);}						
+							$howeatoken=$howeatoken.$b;
+						}
+						///
+						$howeatoken_data = array(
+							'howeatoken' => md5($howeatoken),
+							'user_id' => $user_id
+						);
+						if($this->howeatoken_model->insert_howeatoken($howeatoken_data))
+						{
+							$echo_data['howeatoken'] = $howeatoken;
+						}
 						if($this->device_model->insert_device($device_data))
 						{
 							$msg = 'Sign Up OK';
@@ -107,7 +128,7 @@ class Signup extends CI_Controller {
 							$session = array(
 								'user_id'=>$user_id ,
 								'user_email' => $user_email ,
-								'token' => $token = md5(uniqid(rand(), TRUE))
+								'token' => md5(uniqid(rand(), TRUE))
 							);
 							$this->session->set_userdata($session);
 							if($device_type!=4)

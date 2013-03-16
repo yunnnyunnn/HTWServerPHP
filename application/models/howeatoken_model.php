@@ -7,10 +7,11 @@ class Howeatoken_model extends CI_Model
 		parent::_construct();
 	}
 	
-	function get_howeatoken($field , $where)
+	function get_howeatoken($where)
 	{		
-		$this->db->select($field);
-		return $this->db->where($where)->get('howeatoken');
+		$this->db->select('user.user_id,user.user_email,howeatoken_permission,user.user_id as user_id');
+		$this->db->join('user' , 'howeatoken.user_id = user.user_id','left');
+		return $this->db->where($where)->get('howeatoken'); 
 	}
 	
 	function insert_howeatoken($data)
