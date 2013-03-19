@@ -42,7 +42,7 @@
             $share_latitude_min = $this->input->post('share_latitude_min', TRUE);
             $share_longitude_max = $this->input->post('share_longitude_max', TRUE);
             $share_longitude_min = $this->input->post('share_longitude_min', TRUE);
-            if($share_latitude_max && $share_latitude_min && $share_longitude_max && $share_longitude_min)
+            if(isset($_POST["share_latitude_max"]) && isset($_POST["share_latitude_min"]) && isset($_POST["share_longitude_max"]) && isset($_POST["share_longitude_min"]))
             {
                 
                 $where['share_latitude <='] = $share_latitude_max;
@@ -50,6 +50,14 @@
                 $where['share_longitude <='] = $share_longitude_max;
                 $where['share_longitude >='] = $share_longitude_min;
             }
+            
+            // 如果有指定作者
+            $get_share_user_id = $this->input->post('user_id', TRUE);
+            if (isset($_POST["user_id"]))
+            {
+                $where['user_id'] = $get_share_user_id;
+            }
+
             
             
             $query = $this->share_model->get_share($where);
@@ -67,10 +75,13 @@
             
             // 將最後結果送出
             echo json_encode(array('constraints' => $where,
-                                   'result' => $shares
+                                   'result' => $shares,
+                                   'msg' => 'get share ok',
+                                   'status' => 'success'
                                    ));
         }
         
+        /* 已經跟get_share()合併
         public function get_user_share()
         {
             // 如果什麼都沒有傳，就全部抓
@@ -99,6 +110,7 @@
                                    'result' => $shares
                                    ));
         }
+         */
         
         public function insert_share()
         {
@@ -111,9 +123,10 @@
             $share_longitude = $this->input->post('share_longitude', TRUE);
             
             // 防止沒有傳post value
-            if($share_content==FALSE OR $share_weather_type==FALSE OR $share_latitude==FALSE OR $share_longitude==FALSE)
+            if(!isset($_POST["share_content"]) OR !isset($_POST["share_weather_type"]) OR !isset($_POST["share_latitude"]) OR !isset($_POST["share_longitude"]))
             {
-                echo json_encode(array('result'=>'wrong post value'));
+                echo json_encode(array('msg' => 'insert share post value not set',
+                                       'status' => 'fail'));
                 return;
             }
             
@@ -147,7 +160,8 @@
             
             $result = $this->share_model->insert_share($data);
             
-            echo json_encode(array('result'=>$result));
+            echo json_encode(array('msg' => 'insert share ok',
+                                   'status' => 'success'));
         }
         
         public function delete_share()
@@ -158,9 +172,10 @@
             $share_id = $this->input->post('share_id', TRUE);
             
             // 防止沒有傳post value
-            if($share_id==FALSE)
+            if(!isset($_POST["share_id"]))
             {
-                echo json_encode(array('result'=>'wrong post value'));
+               echo json_encode(array('msg' => 'delete share post value not set',
+                                      'status' => 'fail'));
                 return;
             }
             
@@ -173,7 +188,8 @@
             
             $result = $this->share_model->delete_share($data);
             
-            echo json_encode(array('result'=>$result));
+               echo json_encode(array('msg' => 'delete share ok',
+                                      'status' => 'success'));
 
         }
         
@@ -189,9 +205,10 @@
             $share_comment_content = $this->input->post('share_comment_content', TRUE);
             
             // 防止沒有傳post value
-            if($share_id==FALSE OR $share_comment_content==FALSE)
+            if(!isset($_POST["share_id"]) OR !isset($_POST["share_comment_content"]))
             {
-                echo json_encode(array('result'=>'wrong post value'));
+                echo json_encode(array('msg' => 'insert share comment post value not set',
+                                        'status' => 'fail'));
                 return;
             }
             
@@ -206,7 +223,8 @@
             
             $result = $this->share_comment_model->insert_share_comment($data);
             
-            echo json_encode(array('result'=>$result));
+            echo json_encode(array('msg' => 'insert share comment ok',
+                                    'status' => 'success'));
         }
         
 ////////////////////////////////////////////////////////
@@ -219,9 +237,10 @@
             $share_id = $this->input->post('share_id', TRUE);
             
             // 防止沒有傳post value
-            if($share_id==FALSE)
+            if(!isset($_POST["share_id"]))
             {
-                echo json_encode(array('result'=>'wrong post value'));
+               echo json_encode(array('msg' => 'insert share likes post value not set',
+                                      'status' => 'fail'));
                 return;
             }
             
@@ -236,13 +255,15 @@
             $duplicateChecker = $this->share_likes_model->get_share_likes($data);
             if($duplicateChecker->num_rows()>0)
             {
-                echo json_encode(array('result'=>'like share more than once'));
+               echo json_encode(array('msg' => 'insert share likes more than once',
+                                      'status' => 'fail'));
                 return;
             }
             
             $result = $this->share_likes_model->insert_share_likes($data);
             
-            echo json_encode(array('result'=>$result));
+               echo json_encode(array('msg' => 'insert share likes ok',
+                                      'status' => 'success'));
         }
         
         public function delete_share_likes()
@@ -253,9 +274,10 @@
             $share_id = $this->input->post('share_id', TRUE);
             
             // 防止沒有傳post value
-            if($share_id==FALSE)
+            if(!isset($_POST["share_id"]))
             {
-                echo json_encode(array('result'=>'wrong post value'));
+               echo json_encode(array('msg' => 'delete share likes post value not set',
+                                      'status' => 'fail'));
                 return;
             }
             
@@ -268,7 +290,8 @@
             
             $result = $this->share_likes_model->delete_share_likes($data);
             
-            echo json_encode(array('result'=>$result));
+               echo json_encode(array('msg' => 'delete share likes ok',
+                                      'status' => 'success'));
             
         }
         
