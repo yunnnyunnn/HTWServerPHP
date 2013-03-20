@@ -51,6 +51,22 @@
                 $where['share_longitude >='] = $share_longitude_min;
             }
             
+            // 如果有傳share_id限制
+            $share_id_max = $this->input->post('share_id_max', TRUE);
+            if(isset($_POST["share_id_max"]))
+            {
+                
+                $where['share_id <='] = $share_id_max;
+            }
+            $share_id_min = $this->input->post('share_id_min', TRUE);
+            if(isset($_POST["share_id_min"]))
+            {
+                
+                $where['share_id >='] = $share_id_min;
+                
+            }
+
+            
             // 如果有指定作者
             $get_share_user_id = $this->input->post('user_id', TRUE);
             if (isset($_POST["user_id"]))
