@@ -11,6 +11,8 @@ class Share_likes_model extends CI_Model
     
     function get_share_likes($where)
     {
+        $this->db->select('share_likes_id, share_id, user_id, (select user_nickname from user where user_id = share_likes.user_id) as user_nickname');
+        
 		return $this->db->where($where)->get('share_likes');
     }
     

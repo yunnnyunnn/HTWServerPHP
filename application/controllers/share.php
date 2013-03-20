@@ -68,9 +68,13 @@
             foreach($shares as $share)
             {
                 $share_id = $share->share_id;
-                $where_comment = array('share_id'=>$share_id);
-                $query_comment = $this->share_comment_model->get_share_comment($where_comment);
+                $where_sub = array('share_id'=>$share_id);
+                
+                $query_comment = $this->share_comment_model->get_share_comment($where_sub);
                 $share->share_comment = $query_comment->result();
+                
+                $query_like = $this->share_likes_model->get_share_likes($where_sub);
+                $share->share_likes = $query_like->result();
             }
             
             // 將最後結果送出
