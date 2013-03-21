@@ -51,21 +51,6 @@
                 $where['share_longitude >='] = $share_longitude_min;
             }
             
-            // 如果有傳share_id限制
-            $share_id_max = $this->input->post('share_id_max', TRUE);
-            if(isset($_POST["share_id_max"]))
-            {
-                
-                $where['share_id <='] = $share_id_max;
-            }
-            $share_id_min = $this->input->post('share_id_min', TRUE);
-            if(isset($_POST["share_id_min"]))
-            {
-                
-                $where['share_id >='] = $share_id_min;
-                
-            }
-
             
             // 如果有指定作者
             $get_share_user_id = $this->input->post('user_id', TRUE);
@@ -75,8 +60,62 @@
             }
 
             
+            $share_id_max = $this->input->post('share_id_max', TRUE);
+            if(isset($_POST["share_id_max"]))
+            {
+                
+                $where['share_id <='] = $share_id_max;
+            }
             
             $query = $this->share_model->get_share($where);
+            
+            $shares = $query->result();
+            
+            // 這邊開始將每一篇的comment抓下來
+            foreach($shares as $share)
+            {
+                $share_id = $share->share_id;
+                $where_sub = array('share_id'=>$share_id);
+                
+                $query_comment = $this->share_comment_model->get_share_comment($where_sub);
+                $share->share_comment = $query_comment->result();
+                
+                $query_like = $this->share_likes_model->get_share_likes($where_sub);
+                $share->share_likes = $query_like->result();
+            }
+            
+            // 將最後結果送出
+            echo json_encode(array('constraints' => $where,
+                                   'result' => $shares,
+                                   'msg' => 'get share ok',
+                                   'status' => 'success'
+                                   ));
+        }
+        
+        public function get_share_stream() {
+            // 如果什麼都沒有傳，就全部抓
+            
+            $where = array();
+            
+            // 指定這次抓的串流從哪一篇開始
+            $share_id_max = $this->input->post('share_id_max', TRUE);
+            if(isset($_POST["share_id_max"]))
+            {
+                
+                $where['share_id <='] = $share_id_max;
+            }
+            
+            
+            // 指定一次抓幾篇，沒有指定的話預設值是25篇
+            $share_count = 25;
+            if (isset($_POST["share_count"])) {
+                
+                $share_count = $this->input->post('share_count', TRUE);
+
+            }
+            
+            
+            $query = $this->share_model->get_share($where, $share_count);
             
             $shares = $query->result();
             
