@@ -102,7 +102,7 @@
             if(isset($_POST["share_id_max"]))
             {
                 
-                $where['share_id <='] = $share_id_max;
+                $where['share_id <'] = $share_id_max;
             }
             
             
