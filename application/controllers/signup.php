@@ -5,7 +5,7 @@ class Signup extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();	
-		$is_login = $this->session->userdata('user');
+		$is_login = $this->session->all_userdata();
 		if($is_login||!empty($is_login['token']))
 		{
 			redirect('/');
@@ -30,6 +30,7 @@ class Signup extends CI_Controller {
 		$echo_data = array();
 
 		$user_email = $this->input->post('user_email',TRUE);
+		$user_nickname = $this->input->post('user_nickname',TRUE);
 		//$user_email = 'qq12345886@hotmail.com';
 		$device_type = $this->input->post('device_type',TRUE);
 		//$device_type = '1';
@@ -43,21 +44,21 @@ class Signup extends CI_Controller {
 			$device_data = array();
 			$user_data = array();
 			$validate = FALSE;
+			$user_data['user_email'] = $user_email;
+			$user_data['user_nickname'] = $user_nickname;
 			if($device_type == '1' || $device_type == '2' || $device_type == '3')
 			{
 				$device_token = $this->input->post('device_token',TRUE);
-				$device_data['device_token'] = $device_token;
-				$user_data['user_email'] = $user_email;
+				$device_data['device_token'] = $device_token;	
 				$validate = TRUE;
 			}
 			else if($device_type == '4')
 			{
 				$user_password = $this->input->post('user_password',TRUE);
 				$user_password_again = $this->input->post('user_password_again',TRUE);
-				$user_data['user_email'] = $user_email;
 				if(!empty($user_password)&&!empty($user_password_again))
 				{	
-					if($user_password==$user_password_again)
+					if($user_password == $user_password_again)
 					{
 						$validate = TRUE;
 						$user_data['user_password'] = md5($user_password);
@@ -66,8 +67,8 @@ class Signup extends CI_Controller {
 						$msg = 'Sign Up fail : Password Is Not the same';
 						$validate = FALSE;
 					}
-				}else
-				{
+				}
+				else{
 					$msg = 'Sign Up fail : Please Enter Password';
 					$validate = FALSE;
 				}
@@ -77,6 +78,7 @@ class Signup extends CI_Controller {
 				$validate = FALSE;
 				$msg = 'wrong device';
 			}
+			
 			if($validate)
 			{	
 				$field = array('user_id');
@@ -124,7 +126,7 @@ class Signup extends CI_Controller {
 						if($this->device_model->insert_device($device_data))
 						{
 							$msg = 'Sign Up OK';
-							$status = 'success';
+							$status = 'ok';
 							$session = array(
 								'user_id'=>$user_id ,
 								'user_email' => $user_email ,

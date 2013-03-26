@@ -7,10 +7,9 @@
 
 <body>
 <div>
-
 <form action="signin/signin_service" method="post">
-<input type="text" name="user_email" />
-<input type="password" name="user_password" />
+<input type="text" name="user_email" placeholder="電子郵件..." />
+<input type="password" name="user_password" placeholder="密碼..." />
 <select name="device_type">
 <option value="1">ios</option>
 <option value="2">android</option>

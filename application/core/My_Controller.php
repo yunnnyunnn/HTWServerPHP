@@ -6,10 +6,7 @@ class My_Controller extends CI_Controller {
 	var $user_email = NULL;
 	
 	public function __construct()
-	{
-        
-        
-        
+	{    
 		parent::__construct();
 		if(isset($_GET['howeatoken']))
 		{
@@ -35,7 +32,7 @@ class My_Controller extends CI_Controller {
 		}
 		else
 		{
-			$is_login = $this->session->userdata('user');
+			$is_login = $this->session->all_userdata();
 			if(!$is_login||empty($is_login['token']))
 			{
 				redirect('/');
