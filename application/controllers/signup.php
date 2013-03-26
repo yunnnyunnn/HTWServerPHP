@@ -6,7 +6,7 @@ class Signup extends CI_Controller {
 	{
 		parent::__construct();	
 		$is_login = $this->session->all_userdata();
-		if($is_login||!empty($is_login['token']))
+		if(isset($is_login['token']))
 		{
 			redirect('/');
 		}
@@ -103,7 +103,7 @@ class Signup extends CI_Controller {
 						$device_data['user_id'] = $user_id;
 						$device_data['device_type'] = $device_type;
 						$echo_data['user_id'] = $user_id;
-						///
+						///howeatoken 
 						$howeatoken = NULL;
 						$num = 57 ;
 						for ($i=1;$i<=$num;$i=$i+1)
@@ -113,8 +113,7 @@ class Signup extends CI_Controller {
 							if($c==2){$a=rand(65,90);$b=chr($a);}	
 							if($c==3){$b=rand(0,9);}						
 							$howeatoken=$howeatoken.$b;
-						}
-						///
+						}	
 						$howeatoken_data = array(
 							'howeatoken' => md5($howeatoken),
 							'user_id' => $user_id
@@ -123,6 +122,7 @@ class Signup extends CI_Controller {
 						{
 							$echo_data['howeatoken'] = $howeatoken;
 						}
+						///
 						if($this->device_model->insert_device($device_data))
 						{
 							$msg = 'Sign Up OK';
