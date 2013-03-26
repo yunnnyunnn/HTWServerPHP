@@ -69,7 +69,9 @@ class Signin extends CI_Controller {
 				else if($device_type == '4')
 				{
 					$field = array('user.user_id,device_type');
-					$query = $this->user_model->get_user_with_device($field , $where);
+					$device_where['device_type'] = $device_type;
+					$device_where['user_email'] = $user_email;
+					$query = $this->user_model->get_user_with_device($field , $device_where);
 					if($query->num_rows()>0)
 					{
 						if(!empty($user_password))
@@ -85,6 +87,8 @@ class Signin extends CI_Controller {
 					}
 					else
 					{
+						$msg = 'undefined Password';
+						$status = 'fail';
 					}
 				}
 				else
