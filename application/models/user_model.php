@@ -15,7 +15,7 @@ class User_model extends CI_Model
 	
 	function get_user_with_device($field ,$where)
 	{		
-		$this->db->select($field);
+		
 		$this->db->join('device','user.user_id = device.user_id','left');
 		return $this->db->where($where)->get('user');
 	}
