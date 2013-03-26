@@ -12,6 +12,7 @@
 <input type="text" name="user_email" placeholder="電子郵件..." />
 <input type="password" name="user_password" placeholder="密碼..." />
 <input type="password" name="user_password_again"  placeholder="再次輸入密碼..." />
+<input type="text" name="user_nickname" placeholder="暱稱..." />
 <select name="device_type">
 <option value="1">ios</option>
 <option value="2">android</option>

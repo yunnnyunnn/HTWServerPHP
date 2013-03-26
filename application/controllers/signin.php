@@ -1,21 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Signin extends CI_Controller {
+class Signin extends My_Controller {
 	
 	public function __construct()
 	{
 		parent::__construct();	
-		$is_login = $this->session->userdata('user');
-		if($is_login||!empty($is_login['token']))
-		{
-			redirect('/');
-		}
-		else
-		{
-			$this->load->model('user_model');
-			$this->load->model('share_model');
-			$this->load->model('device_model');
-		}
+		$this->load->model('user_model');
+		$this->load->model('share_model');
+		$this->load->model('device_model');
 	}
 	public function index()
 	{
@@ -48,19 +40,15 @@ class Signin extends CI_Controller {
 			{
 				$auth = FALSE;
 				$where = array();
+				$where['user_email'] = $user_email;
 				if($device_type == '1' || $device_type == '2' || $device_type == '3')
 				{
 					if(!empty($mapping_code))
 					{
-						for($i=0;$i<60;$i++)
+						$mapping_code_server = sha1('HOWEATHER_Tim.William.Brad.Allen.Henry');  
+						if($mapping_code_server == $mapping_code)
 						{
-							$mapping_code_server = sha1((time()-$i).'Tim.William.Brad');  
-							if($mapping_code_server==$mapping_code)
-							{
-								$where['user_email'] = $user_email;
-								$auth = TRUE;
-								break;
-							}
+							$auth = TRUE;
 						}
 					}
 					else
@@ -73,7 +61,6 @@ class Signin extends CI_Controller {
 				{
 					if(!empty($user_password))
 					{
-						$where['user_email'] = $user_email;
 						$where['user_password'] = md5($user_password);
 						$auth = TRUE;
 					}
@@ -95,17 +82,17 @@ class Signin extends CI_Controller {
 					$query = $this->user_model->get_user($field , $where);
 					if($query->num_rows()>0)
 					{
-						$status = 'success';
+						$status = 'ok';
 						$msg = 'sign in successfully';
 						$session = array(
 							'user_id'=>$query->row()->user_id ,
 							'user_email' => $query->row()->user_email ,
 							'token' => $token = md5(uniqid(rand(), TRUE))
 						);
-						$this->session->set_userdata('user',$session);
+						$this->session->set_userdata($session);
 						if($device_type!=4)
 						{
-							$echo_data['session_id'] = session_id();
+							$echo_data['session_id'] = $this->session->userdata('session_id');
 						}
 					}
 					else
