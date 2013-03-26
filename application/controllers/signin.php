@@ -1,13 +1,22 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Signin extends My_Controller {
+class Signin extends CI_Controller {
 	
 	public function __construct()
 	{
 		parent::__construct();	
-		$this->load->model('user_model');
-		$this->load->model('share_model');
-		$this->load->model('device_model');
+		$is_login = $this->session->all_userdata();
+		if(isset($is_login['token']))
+		{
+			redirect('/');
+		}
+		else
+		{
+			$this->load->model('user_model');
+			$this->load->model('share_model');
+			$this->load->model('device_model');
+			$this->load->model('howeatoken_model');
+		}
 	}
 	public function index()
 	{
@@ -19,7 +28,7 @@ class Signin extends My_Controller {
 		$status = '';
 		$msg = '';
 		$echo_data = array();
-		$user_email = $this->input->post('user_email',TRUE);
+		$user_email = trim($this->input->post('user_email',TRUE));
 		$user_password = $this->input->post('user_password',TRUE);//123456
 		$device_type = $this->input->post('device_type',TRUE);
 		$mapping_code = $this->input->post('mapping_code',TRUE);
@@ -59,16 +68,24 @@ class Signin extends My_Controller {
 				}
 				else if($device_type == '4')
 				{
-					if(!empty($user_password))
+					$field = array('user.user_id,device_type');
+					$query = $this->user_model->get_user_with_device($field , $where);
+					if($query->num_rows()>0)
 					{
-						$where['user_password'] = md5($user_password);
-						$auth = TRUE;
+						if(!empty($user_password))
+						{
+							$where['user_password'] = md5($user_password);
+							$auth = TRUE;
+						}
+						else
+						{
+							$msg = 'Missing Password';
+							$status = 'fail';
+						}	
 					}
 					else
 					{
-						$msg = 'Missing Password';
-						$status = 'fail';
-					}	
+					}
 				}
 				else
 				{
@@ -82,18 +99,40 @@ class Signin extends My_Controller {
 					$query = $this->user_model->get_user($field , $where);
 					if($query->num_rows()>0)
 					{
+						$user_id = $query->row()->user_id;
 						$status = 'ok';
 						$msg = 'sign in successfully';
 						$session = array(
-							'user_id'=>$query->row()->user_id ,
+							'user_id'=> $user_id ,
 							'user_email' => $query->row()->user_email ,
 							'token' => $token = md5(uniqid(rand(), TRUE))
 						);
 						$this->session->set_userdata($session);
 						if($device_type!=4)
 						{
+							///howeatoken 
+							$howeatoken = NULL;
+							$num = 57 ;
+							for ($i=1;$i<=$num;$i=$i+1)
+							{
+								$c=rand(1,3);
+								if($c==1){$a=rand(97,122);$b=chr($a);}
+								if($c==2){$a=rand(65,90);$b=chr($a);}	
+								if($c==3){$b=rand(0,9);}						
+								$howeatoken=$howeatoken.$b;
+							}	
+							$howeatoken_data = array(
+								'howeatoken' => md5($howeatoken),
+								'user_id' => $user_id
+							);
+							if($this->howeatoken_model->insert_howeatoken($howeatoken_data))
+							{
+								$echo_data['howeatoken'] = $howeatoken;
+							}
+							///
 							$echo_data['session_id'] = $this->session->userdata('session_id');
 						}
+						$echo_data['user_id'] = $user_id;
 					}
 					else
 					{
@@ -104,7 +143,6 @@ class Signin extends My_Controller {
 				else
 				{
 					$status = 'fail';
-					$msg = 'no password';
 				}
 			}
 		}
