@@ -57,7 +57,18 @@ class Signin extends CI_Controller {
 						$mapping_code_server = sha1('HOWEATHER_Tim.William.Brad.Allen.Henry');  
 						if($mapping_code_server == $mapping_code)
 						{
-							$auth = TRUE;
+							$field = array('*');
+							$query = $this->user_model->get_user($field , $where);
+							if($query->num_rows()>0)
+							{
+								//send email
+								
+							}
+							else
+							{
+								$msg = 'no user email';
+								$status = 'fail';	
+							}			
 						}
 					}
 					else
@@ -77,7 +88,26 @@ class Signin extends CI_Controller {
 						if(!empty($user_password))
 						{
 							$where['user_password'] = md5($user_password);
-							$auth = TRUE;
+							$field = array('*');
+							$query = $this->user_model->get_user($field , $where);
+							if($query->num_rows()>0)
+							{
+								$user_id = $query->row()->user_id;
+								$status = 'ok';
+								$msg = 'sign in successfully';
+								$session = array(
+									'user_id'=> $user_id ,
+									'user_email' => $query->row()->user_email ,
+									'token' => $token = md5(uniqid(rand(), TRUE))
+								);
+								$this->session->set_userdata($session);
+								$echo_data['user_id'] = $user_id;
+							}
+							else
+							{
+								$msg = 'Email or Password Error';
+								$status = 'fail';
+							}
 						}
 						else
 						{
@@ -95,63 +125,18 @@ class Signin extends CI_Controller {
 				{
 					$msg = 'wrong device code';
 					$status = 'fail';
-				}
-				
-				if($auth)
-				{
-					$field = array('*');
-					$query = $this->user_model->get_user($field , $where);
-					if($query->num_rows()>0)
-					{
-						$user_id = $query->row()->user_id;
-						$status = 'ok';
-						$msg = 'sign in successfully';
-						$session = array(
-							'user_id'=> $user_id ,
-							'user_email' => $query->row()->user_email ,
-							'token' => $token = md5(uniqid(rand(), TRUE))
-						);
-						$this->session->set_userdata($session);
-						if($device_type!=4)
-						{
-							///howeatoken 
-							$howeatoken = NULL;
-							$num = 57 ;
-							for ($i=1;$i<=$num;$i=$i+1)
-							{
-								$c=rand(1,3);
-								if($c==1){$a=rand(97,122);$b=chr($a);}
-								if($c==2){$a=rand(65,90);$b=chr($a);}	
-								if($c==3){$b=rand(0,9);}						
-								$howeatoken=$howeatoken.$b;
-							}	
-							$howeatoken_data = array(
-								'howeatoken' => md5($howeatoken),
-								'user_id' => $user_id
-							);
-							if($this->howeatoken_model->insert_howeatoken($howeatoken_data))
-							{
-								$echo_data['howeatoken'] = $howeatoken;
-							}
-							///
-							$echo_data['session_id'] = $this->session->userdata('session_id');
-						}
-						$echo_data['user_id'] = $user_id;
-					}
-					else
-					{
-						$status = 'fail';
-						$msg = 'email or password error';
-					}
-				}
-				else
-				{
-					$status = 'fail';
-				}
+				}	
 			}
 		}
 		$echo_data['status'] = $status;
 		$echo_data['msg'] = $msg;	
 		echo json_encode($echo_data);
+	}
+	
+	private function check_sign_vcode()
+	{
+		
+		
+		
 	}
 }
