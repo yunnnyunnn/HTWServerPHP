@@ -215,9 +215,6 @@ class Question extends My_Controller {
 	
 	function insert_answer()
 	{
-		//while(TRUE){
-		//$user_email = $session['user_email'];
-		//$user_id = $this->input->post('user_id',TRUE);
 		$user_email = $this->user_email;
 		$user_id = $this->user_id;
 		$question_id = $this->input->post('question_id',TRUE);
@@ -229,6 +226,8 @@ class Question extends My_Controller {
 		$is_best_answer = $this->input->post('is_best_answer',TRUE);
 		$answer_score = 0;//$this->input->post('answer_score',TRUE);
 		
+		$file_name = '';   
+          
 		/*
 		$user_id = rand(1,3);
 		$question_id = rand(1,1000);
@@ -243,6 +242,18 @@ class Question extends My_Controller {
 		$answer_id = NULL;
 		if(!empty($answer_content))
 		{
+			if(isset($_FILES['theFile']))
+			{
+				$this->load->library('S3');
+				$file_name = $user_id.time().".jpg";
+				if (!$this->s3->putObjectFile($_FILES['theFile']['tmp_name'], "weather_bucket", $file_name, S3::ACL_PUBLIC_READ)) {
+					$status = 'fail';
+					$msg = "Something went wrong while uploading your file... sorry.";
+					echo json_encode(array('status' => $status , 'msg' => $msg , 'answer_id' => $answer_id));
+					return;
+				}
+			}
+			
 			$data = array(
 				'user_id' => $user_id,
 				'question_id' => $question_id,
@@ -253,6 +264,7 @@ class Question extends My_Controller {
 				'answer_photo_url' => $answer_photo_url,
 				'is_best_answer' => $is_best_answer,
 				'answer_score' => $answer_score,
+				'answer_photo_url' => $file_name
 			);
 			$answer_id = $this->answer_model->insert_answer($data);
 			if(isset($answer_id))
@@ -273,7 +285,6 @@ class Question extends My_Controller {
 			$msg = 'miss post value';
 		}
 		echo json_encode(array('status' => $status , 'msg' => $msg , 'answer_id' => $answer_id));
-		//}
 	}
 	
 	public function insert_answer_scores()

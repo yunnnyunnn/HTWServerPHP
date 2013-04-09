@@ -35,7 +35,7 @@ class My_Controller extends CI_Controller {
 			$is_login = $this->session->all_userdata();
 			if(!$is_login||empty($is_login['token']))
 			{
-				redirect('/');
+				redirect('/signin');
 			}
 			else
 			{

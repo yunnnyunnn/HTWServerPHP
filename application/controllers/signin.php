@@ -54,7 +54,7 @@ class Signin extends CI_Controller {
 				{
 					if(!empty($mapping_code))
 					{
-						$mapping_code_server = sha1('HOWEATHER_Tim.William.Brad.Allen.Henry');  
+						$mapping_code_server = sha1('HOWEATHER_Tim.William.Brad.Allan.Henry');  
 						if($mapping_code_server == $mapping_code)
 						{
 							$field = array('*');
