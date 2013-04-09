@@ -249,7 +249,7 @@ class Question extends My_Controller {
 				if (!$this->s3->putObjectFile($_FILES['theFile']['tmp_name'], "weather_bucket", $file_name, S3::ACL_PUBLIC_READ)) {
 					$status = 'fail';
 					$msg = "Something went wrong while uploading your file... sorry.";
-					echo json_encode(array('status' => $status , 'msg' => $msg , 'answer_id' => $answer_id));
+					echo json_encode(array('status' => $status , 'msg' => $msg));
 					return;
 				}
 			}
