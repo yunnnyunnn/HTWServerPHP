@@ -133,10 +133,6 @@ class Signup extends CI_Controller {
 								'token' => md5(uniqid(rand(), TRUE))
 							);
 							$this->session->set_userdata($session);
-							if($device_type!=4)
-							{
-								$echo_data['session_id'] = $this->session->userdata('session_id');
-							}
 						}
 						else
 						{
