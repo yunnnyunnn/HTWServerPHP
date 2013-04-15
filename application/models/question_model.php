@@ -9,7 +9,8 @@ class Question_model extends CI_Model
 	
 	function get_question($field,$where)
 	{		
-		$this->db->order_by('question_time','ASC');
+		$this->db->order_by('question.question_time','DESC');
+		$this->db->join('user','question.user_id = user.user_id');
 		$this->db->select($field);
 		return $this->db->where($where)->get('question');
 	}
@@ -34,8 +35,6 @@ return $query;
 	
 	function get_question_with_answers($where)
 	{
-		
-		
 		return $this->db->where($where)->get('question');
 	}
 	
