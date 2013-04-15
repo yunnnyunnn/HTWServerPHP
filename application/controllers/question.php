@@ -32,31 +32,46 @@ class Question extends My_Controller {
 		//echo date("Y-m-d H:i:s").'<br/>';
 		$status = '';
 		$msg = '';
+		$question_rows = '';
 		$limit_hour = $this->input->post('limit_hour',TRUE);
-		$limit_hour = 180;
+		$limit_hour = '1900';
 		$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * 60 * $limit_hour));
 		$where = array(
-			'question_time >=' => $time,
-			
+			'question_time >=' => $time,	
 		);
-		$field = array('*');
-		
-		
+		$field = array('question.*','user.user_nickname');
 		$query = $this->question_model->get_question($field,$where);
 		$count = $query->num_rows();
-		$answer_where = array();
-		$question_rows = $query->result();
-		$i=0;
-		foreach($question_rows as $row)
+		if($count>0)
 		{
-			$answer_where['question_id'] = $row->question_id;
-			$answer = $this->answer_model->get_answer($answer_where);
-			$i+=$answer->num_rows();
-			$row->answer = $answer->result();
-			$answer->free_result();
+			$status = 'ok';
+			$msg = 'get question successfully.';
+			$answer_where = array();
+			$answer_field = array('answer.*','user.user_nickname');
+			$answer_scores_where = array();
+			$answer_scores_field = array('*');
+			$question_rows = $query->result();
+			foreach($question_rows as $row)
+			{
+				$answer_where['question_id'] = $row->question_id;
+				$answer = $this->answer_model->get_answer($answer_field,$answer_where);
+				$answer_row = $answer->result();
+				foreach($answer_row as $ans)
+				{
+					$answer_scores_where['answer_id'] = $ans->answer_id;
+					$answer_scores = $this->answer_scores_model->get_answer_scores($answer_scores_field,$answer_scores_where);
+					$ans->answer_scores = $answer_scores->result();
+				}
+				$row->answer = $answer_row;
+				$answer->free_result();
+			}
 		}
-		
-		echo json_encode(array('status'=>$status,'msg' => $msg,'count'=>$i,'result' => $question_rows));
+		else
+		{
+			$status = 'fail';
+			$msg = 'no results.';
+		}
+		echo json_encode(array('status'=>$status,'msg' => $msg,'result' => $question_rows));
 		
 		/*
 		echo '<br/>';
@@ -223,7 +238,7 @@ class Question extends My_Controller {
 		$answer_time = date("Y-m-d H:i:s");
 		$answer_photo_url = $this->input->post('answer_photo_url',TRUE);
 		$answer_content	= $this->input->post('answer_content',TRUE);
-		$is_best_answer = $this->input->post('is_best_answer',TRUE);
+		$is_best_answer = 0;//$this->input->post('is_best_answer',TRUE);
 		$answer_score = 0;//$this->input->post('answer_score',TRUE);
 		
 		$file_name = '';   
@@ -284,7 +299,10 @@ class Question extends My_Controller {
 			$status = 'fail';
 			$msg = 'miss post value';
 		}
-		echo json_encode(array('status' => $status , 'msg' => $msg , 'answer_id' => $answer_id));
+		echo json_encode(array('status' => $status , 'msg' => $msg , 'answer_id' => $answer_id,'answer_photo_url'=>$file_name));
+	}
+	function set_best_answer()
+	{
 	}
 	
 	public function insert_answer_scores()
