@@ -303,6 +303,30 @@ class Question extends My_Controller {
 	}
 	function set_best_answer()
 	{
+		$status = '';
+		$msg = '';
+		$answer_id = $this->input->post('answer_id',TRUE);
+		if(isset($answer_id)&&!empty($answer_id)&&is_numeric($answer_id))
+		{
+			$where = array('answer_id' => $answer_id);
+			$data = array('is_best_answer' => 1);
+			if($this->answer_model->update_answer($where,$data))
+			{
+				$status = 'ok';
+				$msg = 'Set bset answer Successfully.';
+			}
+			else
+			{
+				$status = 'fail';
+				$msg = 'Update answer : Database Error';
+			}
+		}
+		else
+		{
+			$status = 'fail';
+			$msg = 'Missing answer id';
+		}
+		echo json_encode(array('status' => $status , 'msg' => $msg));
 	}
 	
 	public function insert_answer_scores()
@@ -332,11 +356,10 @@ class Question extends My_Controller {
 				$query = $this->answer_scores_model->get_answer_scores($field , $where);
 				if($query->num_rows()>0)
 				{
-					$data1 = array('scores' => $scores);
-					if($this->answer_scores_model->update_answer_scores($where , $data1))
+					if($this->answer_scores_model->delete_answer_scores($where))
 					{
-						$status = 'success';
-						$msg = 'Update Score Successfully.';
+						$status = 'ok';
+						$msg = 'Delete Score Successfully.';
 						$update = TRUE;
 					}
 					else
@@ -350,7 +373,7 @@ class Question extends My_Controller {
 				{
 					if($this->answer_scores_model->insert_answer_scores($data))
 					{
-						$status = 'success';
+						$status = 'ok';
 						$msg = 'Insert Score Successfully.';
 						$update = TRUE;
 					}

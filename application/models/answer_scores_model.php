@@ -22,4 +22,9 @@ class Answer_scores_model extends CI_Model
 	{
 		return $this->db->where($where)->update('answer_scores',$data);	
 	}
+	
+	function delete_answer_scores($where)
+	{
+		return $this->db->where($where)->delete('answer_scores');	
+	}
 }
