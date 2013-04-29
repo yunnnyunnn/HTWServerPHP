@@ -36,7 +36,7 @@ class Question extends My_Controller {
 		$question_time_limit = $this->input->post('question_time',TRUE);
 		$time = date('Y-m-d H:i:s', strtotime($question_time_limit));
 		$where = array(
-			'question_time >=' => $time,	
+			'question_time >' => $time,	
 		);
 		$field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
 		$query = $this->question_model->get_question($field,$where);
