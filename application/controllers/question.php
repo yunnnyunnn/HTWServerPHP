@@ -39,7 +39,7 @@ class Question extends My_Controller {
 		$where = array(
 			'question_time >=' => $time,	
 		);
-		$field = array('question.*','user.user_nickname');
+		$field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
 		$query = $this->question_model->get_question($field,$where);
 		$count = $query->num_rows();
 		if($count>0)
@@ -47,7 +47,7 @@ class Question extends My_Controller {
 			$status = 'ok';
 			$msg = 'get question successfully.';
 			$answer_where = array();
-			$answer_field = array('answer.*','user.user_nickname');
+			$answer_field = array('answer.*','user.user_nickname', 'timediff(answer.answer_time, now()) as answer_timediff');
 			$answer_scores_where = array();
 			$answer_scores_field = array('*');
 			$question_rows = $query->result();
