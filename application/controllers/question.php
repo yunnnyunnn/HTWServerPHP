@@ -33,9 +33,8 @@ class Question extends My_Controller {
 		$status = '';
 		$msg = '';
 		$question_rows = '';
-		$limit_hour = $this->input->post('limit_hour',TRUE);
-		$limit_hour = '1900';
-		$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * 60 * $limit_hour));
+		$question_time_limit = $this->input->post('question_time',TRUE);
+		$time = date('Y-m-d H:i:s', strtotime($question_time_limit));
 		$where = array(
 			'question_time >=' => $time,	
 		);
