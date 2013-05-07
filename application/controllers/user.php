@@ -84,7 +84,7 @@ class User extends My_Controller {
         
         $result = $this->location_log_model->insert_location_log($data);
         
-        echo json_encode(array('msg' => 'insert share ok',
+        echo json_encode(array('msg' => 'update user location ok',
                                'status' => 'ok'));
     }
 	
