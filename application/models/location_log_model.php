@@ -6,6 +6,11 @@ class Location_log_model extends CI_Model
 	{
 		parent::_construct();
 	}
+    
+    function insert_location_log($data)
+    {
+        return $this->db->insert('location_log',$data);
+    }
 	
 	function get_location_log($where,$row = '')
 	{		

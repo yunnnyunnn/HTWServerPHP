@@ -7,7 +7,7 @@ class User extends My_Controller {
 		parent::__construct();	
 		$this->load->model('user_model');
 		$this->load->model('share_model');
-		
+        $this->load->model('location_log_model');
 	}
 	public function index()
 	{
@@ -57,6 +57,36 @@ class User extends My_Controller {
 		$echo_data['msg'] = $msg;
 		echo json_encode($echo_data);	
 	}
+    
+    public function insert_location_log()
+    {
+        
+        $user_id = $this->user_id;
+        
+        $location_latitude = $this->input->post('location_latitude', TRUE);
+        $location_longitude = $this->input->post('location_longitude', TRUE);
+        
+        // 防止沒有傳post value
+        if(!isset($_POST["location_latitude"]) OR !isset($_POST["location_longitude"]))
+        {
+            echo json_encode(array('msg' => 'insert location post value not set',
+                                   'status' => 'fail'));
+            return;
+        }
+        
+        
+        $data = array(
+                      'user_id'=>$user_id,
+                      'location_latitude'=>$location_latitude,
+                      'location_longitude'=>$location_longitude,
+                      'location_log_time'=>date("Y-m-d H:i:s"),
+                      );
+        
+        $result = $this->location_log_model->insert_location_log($data);
+        
+        echo json_encode(array('msg' => 'insert share ok',
+                               'status' => 'ok'));
+    }
 	
 	
 }
