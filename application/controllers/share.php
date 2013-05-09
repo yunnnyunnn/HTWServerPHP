@@ -9,6 +9,7 @@
             $this->load->model('share_model');
             $this->load->model('share_comment_model');
             $this->load->model('share_likes_model');
+            $this->load->model('notification_model');
             $this->load->library('S3');
 
         }
@@ -67,7 +68,10 @@
                 $where['share_id <='] = $share_id_max;
             }
             
-            $query = $this->share_model->get_share($where);
+            //$field = 'user_id, share_id, share_content, share_weather_type, share_photo_url, share_latitude, share_longitude, timediff(share_time, now()) as share_time, (select user_nickname from user where user_id = share.user_id) as user_nickname';
+            $field = array('*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');
+            
+            $query = $this->share_model->get_share($where, $field);
             
             $shares = $query->result();
             
@@ -114,8 +118,9 @@
 
             }
             
-            
-            $query = $this->share_model->get_share($where, $share_count);
+            //$field = 'user_id, share_id, share_content, share_weather_type, share_photo_url, share_latitude, share_longitude, timediff(share_time, now()) as share_time, (select user_nickname from user where user_id = share.user_id) as user_nickname';
+            $field = array('*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');
+            $query = $this->share_model->get_share($where, $field, $share_count);
             
             $shares = $query->result();
             
@@ -282,9 +287,61 @@
             
             $result = $this->share_comment_model->insert_share_comment($data);
             
+            
+            // 開始制作一個通知
+            // 先抓到要傳給哪些人
+            
+            $where = array(
+                           'share_id' => $share_id
+                           );
+            $field = array('share.user_id');
+            
+            $receiver_array = array();
+            
+            // 抓到作者
+            $query = $this->share_model->get_share($where, $field);
+            $query_result = $query->result();
+            if ($query->num_rows() > 0) {
+                foreach ($query_result as $single_share) {
+                    if (!in_array($single_share->user_id, $receiver_array))
+                        $receiver_array[] = $single_share->user_id;
+                }
+            }
+            
+            // 抓到推文者
+            $query_comment = $this->share_comment_model->get_share_comment($where);
+            $query_comment_result = $query_comment->result();
+            if ($query_comment->num_rows() > 0) {
+                foreach ($query_comment_result as $single_comment) {
+                    if (!in_array($single_comment->user_id, $receiver_array))
+                        $receiver_array[] = $single_comment->user_id;
+                    
+                }
+            }
+            
+            
+            // 開始制作通知
+            foreach ($receiver_array as $receiver) {
+                $data = array (
+                'user_id_sender' => $user_id,
+                'user_id_receiver' => $receiver,
+                'notification_type' => 0,
+                'post_id' => $share_id,
+                'notification_time' => date("Y-m-d H:i:s"),
+                'notification_is_record' => 0,
+                );
+                
+                $result = $this->notification_model->insert_notification($data);
+
+            }
+            
+            
+            
             echo json_encode(array('msg' => 'insert share comment ok',
                                     'status' => 'success'));
         }
+        
+
         
 ////////////////////////////////////////////////////////
 
