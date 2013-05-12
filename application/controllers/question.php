@@ -10,7 +10,8 @@ class Question extends My_Controller {
 		$this->load->model('answer_scores_model');
 		$this->load->model('location_log_model');
         $this->load->model('notification_model');
-		
+        $this->load->library('geolocation');
+
 	}
 	public function index()
 	{
@@ -28,6 +29,10 @@ class Question extends My_Controller {
 		//echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
 	
 	}
+    
+    
+    
+    
 	public function get_question()
 	{
 		//echo date("Y-m-d H:i:s").'<br/>';
@@ -192,7 +197,6 @@ class Question extends My_Controller {
 				$msg = 'Question insert sucessfully.';
 				if($is_pay)
 				{
-					$this->load->library('geolocation');
 					$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * $limit_min));
 					$query = $this->location_log_model->get_group_by_location_log($time,'user_id');
 					echo 'count = '.$query->num_rows() .'<br/>';
@@ -570,7 +574,6 @@ class Question extends My_Controller {
 	 
 		return $result;
 	}
- 
 
 	
 	
