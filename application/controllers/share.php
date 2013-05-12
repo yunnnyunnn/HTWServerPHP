@@ -303,8 +303,10 @@
             $query_result = $query->result();
             if ($query->num_rows() > 0) {
                 foreach ($query_result as $single_share) {
-                    if (!in_array($single_share->user_id, $receiver_array))
+                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id))
+                    {
                         $receiver_array[] = $single_share->user_id;
+                    }
                 }
             }
             
@@ -313,8 +315,10 @@
             $query_comment_result = $query_comment->result();
             if ($query_comment->num_rows() > 0) {
                 foreach ($query_comment_result as $single_comment) {
-                    if (!in_array($single_comment->user_id, $receiver_array))
+                    if (!in_array($single_comment->user_id, $receiver_array)&&($single_comment->user_id!=$user_id))
+                    {
                         $receiver_array[] = $single_comment->user_id;
+                    }
                     
                 }
             }
@@ -377,6 +381,48 @@
             }
             
             $result = $this->share_likes_model->insert_share_likes($data);
+            
+            
+            
+            // 開始制作一個通知
+            // 先抓到要傳給哪些人
+            
+            $where = array(
+                           'share_id' => $share_id
+                           );
+            $field = array('share.user_id');
+            
+            $receiver_array = array();
+            
+            // 抓到作者
+            $query = $this->share_model->get_share($where, $field);
+            $query_result = $query->result();
+            if ($query->num_rows() > 0) {
+                foreach ($query_result as $single_share) {
+                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id))
+                    {
+                        $receiver_array[] = $single_share->user_id;
+                    }
+                }
+            }
+            
+            // 開始制作通知
+            foreach ($receiver_array as $receiver) {
+                $data = array (
+                               'user_id_sender' => $user_id,
+                               'user_id_receiver' => $receiver,
+                               'notification_type' => 1,
+                               'post_id' => $share_id,
+                               'notification_time' => date("Y-m-d H:i:s"),
+                               'notification_is_record' => 0,
+                               );
+                
+                $result = $this->notification_model->insert_notification($data);
+                
+            }
+            
+            
+            
             
                echo json_encode(array('msg' => 'insert share likes ok',
                                       'status' => 'success'));

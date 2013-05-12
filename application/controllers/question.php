@@ -8,7 +8,8 @@ class Question extends My_Controller {
 		$this->load->model('question_model');
 		$this->load->model('answer_model');
 		$this->load->model('answer_scores_model');
-		$this->load->model('location_log_model');		
+		$this->load->model('location_log_model');
+        $this->load->model('notification_model');
 		
 	}
 	public function index()
@@ -283,9 +284,53 @@ class Question extends My_Controller {
 			$answer_id = $this->answer_model->insert_answer($data);
 			if(isset($answer_id))
 			{
+                
+                
 				$status = 'ok';
 				$msg = 'Question insert sucessfully.';
 				//notification
+                
+                
+                // 開始制作一個通知
+                // 先抓到要傳給哪些人
+                
+                $where = array(
+                               'question_id' => $question_id
+                               );
+                $field = array('question.user_id');
+                
+                $receiver_array = array();
+                
+                // 抓到發問者
+                $query = $this->question_model->get_question($field,$where);
+                $query_result = $query->result();
+                if ($query->num_rows() > 0) {
+                    foreach ($query_result as $single_question) {
+                        if (!in_array($single_question->user_id, $receiver_array)&&($single_question->user_id!=$user_id))
+                        {
+                            $receiver_array[] = $single_question->user_id;
+                        }
+                    }
+                }
+                
+                // 開始制作通知
+                foreach ($receiver_array as $receiver) {
+                    $data = array (
+                                   'user_id_sender' => $user_id,
+                                   'user_id_receiver' => $receiver,
+                                   'notification_type' => 2,
+                                   'post_id' => $question_id,
+                                   'notification_time' => date("Y-m-d H:i:s"),
+                                   'notification_is_record' => 0,
+                                   );
+                    
+                    $result = $this->notification_model->insert_notification($data);
+                    
+                }
+
+                
+                
+                
 			}
 			else
 			{
@@ -313,6 +358,64 @@ class Question extends My_Controller {
 			{
 				$status = 'ok';
 				$msg = 'Set bset answer Successfully.';
+                
+                
+                
+                
+                // 開始制作一個通知
+                
+                // 抓到question_id和回答者id
+                $question_id;
+                $receiver;
+                $where = array(
+                               'answer_id' => $answer_id
+                               );
+                $field = array('answer.user_id', 'answer.question_id');
+                $answer = $this->answer_model->get_answer($field,$where);
+				$answer_row = $answer->result();
+                if ($answer->num_rows() > 0) {
+                    foreach($answer_row as $ans)
+                    {
+                        $question_id = $ans->question_id;
+                        $receiver = $ans->user_id;
+                    }
+                }
+                
+
+                // 抓到發問者
+                $sender;
+                $where = array(
+                               'question_id' => $question_id
+                               );
+                $field = array('question.user_id');
+                
+                $query = $this->question_model->get_question($field,$where);
+                $query_result = $query->result();
+                if ($query->num_rows() > 0) {
+                    foreach ($query_result as $single_question) {
+                        $sender = $single_question->user_id;
+                    }
+                }
+                
+                // 開始制作通知
+                if ($sender&&$receiver&&$question_id) {
+                    $data = array (
+                                   'user_id_sender' => $sender,
+                                   'user_id_receiver' => $receiver,
+                                   'notification_type' => 3,
+                                   'post_id' => $question_id,
+                                   'notification_time' => date("Y-m-d H:i:s"),
+                                   'notification_is_record' => 0,
+                                   );
+                    
+                    $result = $this->notification_model->insert_notification($data);
+                }
+                
+                
+                
+                
+                
+                
 			}
 			else
 			{
@@ -375,6 +478,46 @@ class Question extends My_Controller {
 						$status = 'ok';
 						$msg = 'Insert Score Successfully.';
 						$update = TRUE;
+                        
+                        
+                        
+                        
+                        
+                        // 開始制作一個通知
+                        
+                        // 抓到question_id和回答者id
+                        $question_id;
+                        $receiver;
+                        $where = array(
+                                       'answer_id' => $answer_id
+                                       );
+                        $field = array('answer.user_id', 'answer.question_id');
+                        $answer = $this->answer_model->get_answer($field,$where);
+                        $answer_row = $answer->result();
+                        if ($answer->num_rows() > 0) {
+                            foreach($answer_row as $ans)
+                            {
+                                $question_id = $ans->question_id;
+                                $receiver = $ans->user_id;
+                            }
+                        }
+                        
+                        // 開始制作通知
+                        if ($receiver&&$question_id&&$receiver!=$user_id) {
+                            $data = array (
+                                           'user_id_sender' => $user_id,
+                                           'user_id_receiver' => $receiver,
+                                           'notification_type' => 4,
+                                           'post_id' => $question_id,
+                                           'notification_time' => date("Y-m-d H:i:s"),
+                                           'notification_is_record' => 0,
+                                           );
+                            
+                            $result = $this->notification_model->insert_notification($data);
+                        }
+                        
+                        
+                        
 					}
 					else
 					{
