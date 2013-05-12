@@ -22,6 +22,7 @@ class User extends My_Controller {
 		$msg = '';
 		$echo_data = array();
 		$user_id = $this->input->post('user_id',TRUE);
+		//$user_id=1368326288;
 		if(empty($user_id)||!is_numeric($user_id))
 		{
 			$status = 'fail';
@@ -30,7 +31,7 @@ class User extends My_Controller {
 		else
 		{
 			$field = array('*');
-			$where_data = array('user_id'=>$user_id);
+			$where_data = array('user.user_id'=>$user_id);
 			$user_data = $this->user_model->get_user($field,$where_data);
 			if($user_data->num_rows()>0)
 			{
@@ -38,7 +39,7 @@ class User extends My_Controller {
 				$where_data = array('user_exp >'=>$user_data->row()->user_exp);
 				$user_rank = $this->user_model->get_user($field,$where_data);
 				
-				$where_data = array('user_id'=>$user_id);
+				$where_data = array('user.user_id'=>$user_id);
 				$user_share = $this->share_model->get_share($where_data);			
 		
 				$status = 'ok';
