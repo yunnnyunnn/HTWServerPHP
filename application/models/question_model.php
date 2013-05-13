@@ -40,7 +40,8 @@ return $query;
 	
 	function insert_question($data)
 	{
-		return $this->db->insert('question',$data);
+        $this->db->insert('question',$data);
+		return $this->db->insert_id();
 	}
 	
 	function update_question($where,$data)

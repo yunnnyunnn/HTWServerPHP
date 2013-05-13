@@ -213,7 +213,7 @@ class Question extends My_Controller {
 		$question_reward = $this->input->post('question_reward',TRUE);
 		
 		$is_pay = $this->input->post('is_pay',TRUE);
-		$limit_min = $this->input->post('limit_min',TRUE);
+        $question_notification_time = $this->input->post('question_notification_time', TRUE); // 手機端先寫死，傳-1 days
 		
 		/*
 		$user_id = rand (1,3);
@@ -243,34 +243,103 @@ class Question extends My_Controller {
 				'question_time_left' => $question_time_left,
 				'question_reward' => $question_reward,
 			);
+            
+            $question_id = $this->question_model->insert_question($data);
 			
-			if($this->question_model->insert_question($data))
+			if(isset($question_id))
 			{
 
 				$status = 'ok';
 				$msg = 'Question insert sucessfully.';
-				if($is_pay)
+				if($is_pay) // 要通知人
 				{
-					$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * $limit_min));
-					$query = $this->location_log_model->get_group_by_location_log($time,'user_id');
-					echo 'count = '.$query->num_rows() .'<br/>';
-					if($query->num_rows()>0)
-					{
-						foreach($query->result() as $row)
-						{	
-							$distance = $this->geolocation->get_distance($question_latitude,$question_longitude,$row->location_latitude,$row->location_longitude);
-							echo 'distance = '.$distance.'<br/>';
-							if($distance < $question_distance_limited)
-							{
-								echo 'user_id = '.$row->user_id;
-								//notification
-							}
-						}
-					}else
-					{
-						$msg = 'Question insert sucessfully,no user around the geolocation';
-					}
-				}				
+                    
+                    // 假如任何一個值是空的就無法執行
+                    if (empty($question_latitude)||empty($question_longitude)||empty($question_distance_limited)||empty($question_notification_time)) {
+                        $status = 'ok';
+                        $msg = 'Question insert sucessfully but miss post value so cant notify';
+                        echo json_encode(array('status' => $status , 'msg' => $msg));
+                        return;
+                    }
+                    
+                    $question_notification_time = date('Y-m-d H:i:s', strtotime($question_notification_time));
+                    $where = array(
+                                   'location_log_time >=' => $question_notification_time
+                                   );
+                    $query = $this->location_log_model->get_location_log($where);
+                    
+                    if ($query->num_rows() == 0) {
+                        $status = 'ok';
+                        $msg = 'Question insert sucessfully but no user location data within the time';
+                        echo json_encode(array('status' => $status , 'msg' => $msg));
+                        return;
+                    }
+                    
+                    $possible_location = $query->result();
+                    $available_notification_receiver = array();
+                    foreach ($possible_location as $single_location) {
+                        
+                        $is_around_question = FALSE;
+                        // 計算問題與這個location data之間的距離
+                        $distance_between_question_and_user = $this->geolocation->vincentyGreatCircleDistance($question_latitude, $question_longitude, $single_location->location_latitude, $single_location->location_longitude);
+                        if ($distance_between_question_and_user <= $question_distance_limited) {
+                            $is_around_question = TRUE;
+                        }
+                        
+                        if ($is_around_question&&!in_array($single_location->user_id, $available_notification_receiver)&&$single_location->user_id!=$this->user_id) {
+                            $available_notification_receiver[] = $single_location->user_id;
+                        }
+                    }
+                    
+                    
+                    
+                    
+                    // 開始制作通知
+                    foreach ($available_notification_receiver as $receiver) {
+                        $data = array (
+                                       'user_id_sender' => $user_id,
+                                       'user_id_receiver' => $receiver,
+                                       'notification_type' => 5,
+                                       'post_id' => $question_id,
+                                       'notification_time' => date("Y-m-d H:i:s"),
+                                       'notification_is_record' => 0,
+                                       );
+                        
+                        $result = $this->notification_model->insert_notification($data);
+                        
+                    }
+                    
+                    
+                    
+                    
+                    
+                    
+                    $status = 'ok';
+                    $msg = 'Question insert sucessfully and notify some users';
+                    
+                    echo json_encode(array('status' => $status , 'msg' => $msg, 'result' => $available_notification_receiver));
+                    return;
+                    
+//					$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * $limit_min));
+//					$query = $this->location_log_model->get_group_by_location_log($time,'user_id');
+//					echo 'count = '.$query->num_rows() .'<br/>';
+//					if($query->num_rows()>0)
+//					{
+//						foreach($query->result() as $row)
+//						{	
+//							$distance = $this->geolocation->get_distance($question_latitude,$question_longitude,$row->location_latitude,$row->location_longitude);
+//							echo 'distance = '.$distance.'<br/>';
+//							if($distance < $question_distance_limited)
+//							{
+//								echo 'user_id = '.$row->user_id;
+//								//notification
+//							}
+//						}
+//					}else
+//					{
+//						$msg = 'Question insert sucessfully,no user around the geolocation';
+//					}
+				}
 			}
 			else
 			{
