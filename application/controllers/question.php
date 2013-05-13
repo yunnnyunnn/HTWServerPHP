@@ -141,6 +141,60 @@ class Question extends My_Controller {
 		echo json_encode(array('status'=>$status,'msg' => $msg,'count'=>$count,'result' => $result));
 		*/
 	}
+    
+    public function get_user_around_question()
+    {
+        $question_latitude = $this->input->post('question_latitude',TRUE);
+		$question_longitude = $this->input->post('question_longitude',TRUE);
+        $question_distance_limited = $this->input->post('question_distance_limited',TRUE); // 手機端先寫死，傳15000
+        $question_notification_time = $this->input->post('question_notification_time', TRUE); // 手機端先寫死，傳-1 days
+        
+        // 假如任何一個值是空的就無法執行
+        if (empty($question_latitude)||empty($question_longitude)||empty($question_distance_limited)||empty($question_notification_time)) {
+            $status = 'fail';
+			$msg = 'miss post value';
+            echo json_encode(array('status' => $status , 'msg' => $msg));
+            return;
+        }
+        
+        $question_notification_time = date('Y-m-d H:i:s', strtotime($question_notification_time));
+        $where = array(
+            'location_log_time >=' => $question_notification_time
+        );
+        $query = $this->location_log_model->get_location_log($where);
+        
+        if ($query->num_rows() == 0) {
+            $status = 'ok';
+			$msg = 'no user location data within the time';
+            echo json_encode(array('status' => $status , 'msg' => $msg));
+            return;
+        }
+        
+        $possible_location = $query->result();
+        $available_notification_receiver = array();
+        foreach ($possible_location as $single_location) {
+            
+            $is_around_question = FALSE;
+            // 計算問題與這個location data之間的距離
+            $distance_between_question_and_user = $this->geolocation->vincentyGreatCircleDistance($question_latitude, $question_longitude, $single_location->location_latitude, $single_location->location_longitude);
+            if ($distance_between_question_and_user <= $question_distance_limited) {
+                $is_around_question = TRUE;
+            }
+            
+            if ($is_around_question&&!in_array($single_location->user_id, $available_notification_receiver)&&$single_location->user_id!=$this->user_id) {
+                $available_notification_receiver[] = $single_location->user_id;
+            }
+        }
+        
+        $status = 'ok';
+        $msg = 'get user around question ok';
+        
+		echo json_encode(array('status'=>$status,'msg' => $msg,'result' => $available_notification_receiver));
+        
+        
+    }
+    
+    
 	public function insert_question()
 	{
 		$status = '';

@@ -11,10 +11,11 @@ class Location_log_model extends CI_Model
     {
         return $this->db->insert('location_log',$data);
     }
-	
-	function get_location_log($where,$row = '')
+	    
+	function get_location_log($where, $field = '*',$row = '')
 	{		
 		$this->db->order_by('location_log_time','DESC');
+        $this->db->select($field);
 		if(isset($row)&&is_numeric($row))
 		{
 			$this->db->limit($row);
