@@ -8,6 +8,8 @@ class User extends My_Controller {
 		$this->load->model('user_model');
 		$this->load->model('share_model');
         $this->load->model('location_log_model');
+        $this->load->model('device_model');
+
 	}
 	public function index()
 	{
@@ -87,6 +89,43 @@ class User extends My_Controller {
         
         echo json_encode(array('msg' => 'update user location ok',
                                'status' => 'ok'));
+    }
+    
+    public function update_device_token()
+    {
+        $user_id = $this->user_id;
+        $device_type = $this->input->post('device_type', TRUE);
+        $device_token = $this->input->post('device_token', TRUE);
+
+        // 防止沒有傳post value
+        if(!isset($_POST["device_type"]) OR !isset($_POST["device_token"]))
+        {
+            echo json_encode(array('msg' => 'wrong post value',
+                                   'status' => 'fail'));
+            return;
+        }
+        
+        $where = array(
+                            'user_id' => $user_id,
+                            'device_type' => $device_type
+                       );
+        
+        $data = array(
+                            'device_token' => $device_token
+                      );
+        
+        if ($this->device_model->update_device($where, $data)) {
+            echo json_encode(array('msg' => 'successfully update device token',
+                                   'status' => 'ok'));
+            return;
+        }
+        else {
+            echo json_encode(array('msg' => 'database update wrong',
+                                   'status' => 'fail'));
+            return;
+        }
+        
+        
     }
 	
 	
