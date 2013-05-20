@@ -7,8 +7,12 @@ class Device_model extends CI_Model
 		parent::_construct();
 	}
 	
-	function get_device($where)
-	{		
+	function get_device($where, $field = '*')
+	{
+        $this->db->join('user','device.user_id = user.user_id');
+        
+        $this->db->select($field);
+
 		return $this->db->where($where)->get('device');
 	}
 	
