@@ -6,7 +6,7 @@ class Payload_maker
     {
         
         
-        $payload = "{\"aps\":{\"alert\":{\"loc-key\":\"$loc_key\",\"loc-args\":\"$loc_args\",\"action-loc-key\":$action_loc_key},\"badge\":$badge,\"sound\":\"$sound\"},\"post\":$post,}";
+        $payload = "{\"aps\":{\"alert\":{\"loc-key\":\"$loc_key\",\"loc-args\":".json_encode($loc_args).",\"action-loc-key\":$action_loc_key},\"badge\":$badge,\"sound\":\"$sound\"},\"post\":$post,}";
         
         return $payload;
     

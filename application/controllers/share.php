@@ -272,6 +272,15 @@
             $share_id = $this->input->post('share_id', TRUE);
             $share_comment_content = $this->input->post('share_comment_content', TRUE);
             
+            $where = array (
+                            'user_id'=> $user_id
+                            );
+            
+            $query_user = $this->user_model->get_user('*', $where);
+            $user_nickname = $query_user->row()->user_nickname;
+            
+            
+            
             // 防止沒有傳post value
             if(!isset($_POST["share_id"]) OR !isset($_POST["share_comment_content"]))
             {
@@ -352,9 +361,8 @@
                 'device.user_id' => $receiver,
                 
                 );
-                $field = array('*', 'user.user_nickname');
 
-                $query_device = $this->device_model->get_device($where, $field);
+                $query_device = $this->device_model->get_device($where);
                 $query_device_result = $query_device->result();
                 
                 if($query_device->num_rows() > 0)
@@ -365,7 +373,6 @@
                             $data = array (
                             'device_token' => $single_device->device_token,
                             'device_type' => $single_device->device_type,
-                            'user_nickname' => $single_device->user_nickname
                             );
                             $device_token_array[] = $data;
                         }
@@ -377,34 +384,38 @@
             
             
             
+            
             // 開始製作推播db
             foreach ($device_token_array as $device_token) {
                 if ($device_token['device_type'] == 1) { // iOS推播
-                    $payload = $this->payload_maker->make_payload('PUSH_MESSAGE_TYPE_0', $device_token['user_nickname'], $share_id);
-                    $data  = array(
-                                   'pqo_device_token' => $device_token['device_token'],
-                                   'pqi_payload' => $payload,
-                                   'pqi_time_queued' => date("Y-m-d H:i:s")
-                                   );
-                    $result = $this->push_queue_ios_model->insert_push_queue_iOS($data);
+                    $loc_args = array($user_nickname, $share_comment_content);
+                    $payload = $this->payload_maker->make_payload('PUSH_MESSAGE_TYPE_0', $loc_args, $share_id);
+                    if (strlen($payload) <= 256)
+                    {
+                        $data  = array(
+                                       'pqo_device_token' => $device_token['device_token'],
+                                       'pqi_payload' => $payload,
+                                       'pqi_time_queued' => date("Y-m-d H:i:s")
+                                       );
+                        $result = $this->push_queue_ios_model->insert_push_queue_iOS($data);
+                    }
+                    
                 }
                 else if ($device_token['device_type'] == 3) { // windows phone推播
                     
                     $device_token['device_token'];
-                    $device_token['user_nickname'];
                     
                 }
                 else if ($device_token['device_type'] == 2) { // android推播
                     
                     $device_token['device_token'];
-                    $device_token['user_nickname'];
                     
                 }
                 
             }
             
             
-            echo json_encode(array('msg' => $device_token_array,
+            echo json_encode(array('msg' => $user_nickname,
                                     'status' => 'success'));
         }
         
@@ -485,7 +496,73 @@
             }
             
             
+            /////////////////////////////////
+            // 取得所有的device token
+            $device_token_array = array();
+            foreach ($receiver_array as $receiver) {
+                
+                $where = array(
+                               
+                               'device.user_id' => $receiver,
+                               
+                               );
+                
+                $query_device = $this->device_model->get_device($where);
+                $query_device_result = $query_device->result();
+                
+                if($query_device->num_rows() > 0)
+                {
+                    foreach ($query_device_result as $single_device) {
+                        if (!in_array($single_device->device_token, $device_token_array)&&$single_device->device_token)
+                        {
+                            $data = array (
+                                           'device_token' => $single_device->device_token,
+                                           'device_type' => $single_device->device_type,
+                                           );
+                            $device_token_array[] = $data;
+                        }
+                        
+                    }
+                }
+                
+            }
             
+            
+            
+            $where = array (
+                            'user_id'=> $user_id
+                            );
+            
+            $query_user = $this->user_model->get_user('*', $where);
+            $user_nickname = $query_user->row()->user_nickname;
+            // 開始製作推播db
+            foreach ($device_token_array as $device_token) {
+                if ($device_token['device_type'] == 1) { // iOS推播
+                    $loc_args = array($user_nickname);
+                    $payload = $this->payload_maker->make_payload('PUSH_MESSAGE_TYPE_1', $loc_args, $share_id);
+                    if (strlen($payload) <= 256)
+                    {
+                        $data  = array(
+                                       'pqo_device_token' => $device_token['device_token'],
+                                       'pqi_payload' => $payload,
+                                       'pqi_time_queued' => date("Y-m-d H:i:s")
+                                       );
+                        $result = $this->push_queue_ios_model->insert_push_queue_iOS($data);
+                    }
+                    
+                }
+                else if ($device_token['device_type'] == 3) { // windows phone推播
+                    
+                    $device_token['device_token'];
+                    
+                }
+                else if ($device_token['device_type'] == 2) { // android推播
+                    
+                    $device_token['device_token'];
+                    
+                }
+                
+            }
             
                echo json_encode(array('msg' => 'insert share likes ok',
                                       'status' => 'success'));
