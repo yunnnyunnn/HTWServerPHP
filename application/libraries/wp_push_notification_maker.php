@@ -1,35 +1,66 @@
 <?php
-class Wp_push_notification_maker()
-{
-    function make_push_notification($wp_url)
+    class Wp_push_notification_maker
     {
-    	 $toastMessage = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
-                "<wp:Notification xmlns:wp=\"WPNotification\">" .
-                   "<wp:Toast>" .
-                        "<wp:Text1>" . "SendToast" . "</wp:Text1>" .
-                        "<wp:Text2>" . "Text Message" . "</wp:Text2>" .
-                        "</wp:Toast> " .
-                "</wp:Notification>";
+        
+        
+        private $debug_mode = false;
+        
+        
+        
+        
+        
+        public function send_toast($title, $message, $priority = 2,$url)
+        {
+            $msg = "< ?xml version=\"1.0\" encoding=\"utf-8\"?>" .
+"<wp :Notification xmlns:wp=\"WPNotification\">" .
+"</wp><wp :Toast>" .
+"</wp><wp :Text1>" . $title . "</wp>" .
+"<wp :Text2>" . $message . "</wp>" .
+"" .
+"";
 
-    // Create request to send
-    $r = curl_init();
-    curl_setopt($r, CURLOPT_URL,$wp_url);
-    curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($r, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HEADER, true); 
+$result= $this->_send_push( array(
+                                       'X-WindowsPhone-Target: toast',
+                                       'X-NotificationClass: ' . $priority,
+                                       ), $msg,$url);
+echo $result;
+}
 
-    // add headers
-    $httpHeaders=array('Content-type: text/xml; charset=utf-8', 'X-WindowsPhone-Target: toast',
-                    'Accept: application/*', 'X-NotificationClass: 2','Content-Length:'.strlen($toastMessage));
-    curl_setopt($r, CURLOPT_HTTPHEADER, $httpHeaders);
-
-    // add message
-    curl_setopt($r, CURLOPT_POSTFIELDS, $toastMessage);
-
-    // execute request
-    $output = curl_exec($r);
-    curl_close($r);
+private function _send_push($headers, $msg,$url)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER,    // Add these headers to all requests
+                $headers + array(
+                                 'Content-Type: text/xml',
+                                 'Accept: application/*'
+                                 )
+                );
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $msg);
+    
+    if ($this->debug_mode)
+    {
+        curl_setopt($ch, CURLOPT_VERBOSE, $this->debug_mode);
+        curl_setopt($ch, CURLOPT_STDERR, fopen('debug.log','w'));
     }
+    $output = curl_exec($ch);
+    curl_close($ch);
+    
+    return $output;
+//    array(
+//                 'X-SubscriptionStatus'     => $this->_get_header_value($output, 'X-SubscriptionStatus'),
+//                 'X-NotificationStatus'     => $this->_get_header_value($output, 'X-NotificationStatus'),
+//                 'X-DeviceConnectionStatus' => $this->_get_header_value($output, 'X-DeviceConnectionStatus')
+//                 );
+}
+
+private function _get_header_value($content, $header)
+{
+    return preg_match_all("/$header: (.*)/i", $content, $match) ? $match[1][0] : "";
+}
 }
 
 ?>

@@ -15,6 +15,7 @@
             $this->load->model('device_model');
             $this->load->library('S3');
             $this->load->library('payload_maker');
+            $this->load->library('wp_push_notification_maker');
 
         }
         public function index()
@@ -403,8 +404,8 @@
                 }
                 else if ($device_token['device_type'] == 3) { // windows phone推播
                     
-                    $device_token['device_token'];
-                    $this->wp_push_notification_maker->make_push_notification($device_token['device_token']);
+                    //$result= $this->wp_push_notification_maker->send_toast('toast','message','',$device_token['device_token']);
+                    
                     
                 }
                 else if ($device_token['device_type'] == 2) { // android推播
@@ -416,7 +417,7 @@
             }
             
             
-            echo json_encode(array('msg' => $user_nickname,
+            echo json_encode(array('msg' => 'comment succesfully saved',
                                     'status' => 'success'));
         }
         
