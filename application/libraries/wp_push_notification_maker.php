@@ -14,8 +14,8 @@ class Wp_push_notification_maker
         $msg = "< ?xml version=\"1.0\" encoding=\"utf-8\"?>" .
             "<wp:Notification xmlns:wp=\"WPNotification\">" .
                 "<wp :Toast>" .
-                    "<wp :Text1>" . $title . "<wp :Text1>" .
-                    "<wp :Text2>" . $message . "<wp :Text2>" .
+                    "<wp :Text1>" . $title . "</wp :Text1>" .
+                    "<wp :Text2>" . $message . "</wp :Text2>" .
                 "</wp:Toast>" .
             "</wp:Notification>";
  
