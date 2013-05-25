@@ -23,7 +23,7 @@ class Wp_push_notification_maker
                                       'X-WindowsPhone-Target: toast',
                                       'X-NotificationClass:'.$priority, 
                                       ), $msg,$url);
-     print_r($result);
+   
     }
  
     private function _send_push($headers, $msg,$url)
