@@ -11,17 +11,17 @@ class Wp_push_notification_maker
  
    public function send_toast($title, $message, $priority = 2,$url)
     {
-        $msg = "< ?xml version=\"1.0\" encoding=\"utf-8\"?>" .
+        $msg = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
             "<wp:Notification xmlns:wp=\"WPNotification\">" .
-                "<wp :Toast>" .
-                    "<wp :Text1>" . $title . "</wp :Text1>" .
-                    "<wp :Text2>" . $message . "</wp :Text2>" .
+                "<wp:Toast>" . 
+                    "<wp:Text1>" . $title . "</wp:Text1>" .
+                    "<wp:Text2>" . $message . "</wp:Text2>" .
                 "</wp:Toast>" .
             "</wp:Notification>";
  
      $result= $this->_send_push(array(
                                       'X-WindowsPhone-Target: toast',
-                                      'X-NotificationClass:'.$priority, 
+                                      'X-NotificationClass: ' . 2, 
                                       ), $msg,$url);
    
     }
@@ -47,7 +47,7 @@ class Wp_push_notification_maker
             curl_setopt($ch, CURLOPT_STDERR, fopen('debug.log','w'));
         }
         $output = curl_exec($ch);
-        curl_close($ch);
+        //curl_close($ch);
  
         return array(
             'X-SubscriptionStatus'     => $this->_get_header_value($output, 'X-SubscriptionStatus'),

@@ -406,7 +406,7 @@
                     
 
                     $device_token['device_token'];
-                   $result= $this->wp_push_notification_maker->send_toast($user_nickname.'在你的分享上留言:'.$share_comment_content  ,'',2,$device_token['device_token']);
+                   $result= $this->wp_push_notification_maker->send_toast('test','message'  ,2,$device_token['device_token']);
 
                     //$result= $this->wp_push_notification_maker->send_toast('toast','message','',$device_token['device_token']);
 
