@@ -133,7 +133,7 @@ class User extends My_Controller {
     {
     	    $user_id = $this->user_id;
     	    $where = array();
-    	    $where['user_id']=$user_id;
+    	    $where['user_id_receiver']=$user_id;
             
             // 指定這次抓的串流從哪一篇開始
             $notification_id_max = $this->input->post('notification_id_max', TRUE);
