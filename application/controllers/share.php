@@ -228,6 +228,14 @@
                           );
             
             $result = $this->share_model->insert_share($data);
+
+            //////////////增加使用者經驗值
+            if(isset($_POST['Submit']))
+                 $this->update_user_exp($user_id,$this->insert_share_with_photo);
+            else
+                 $this->update_user_exp($user_id,$this->insert_share);
+
+
             
             echo json_encode(array('msg' => 'insert share ok',
                                    'status' => 'success'));
@@ -317,7 +325,7 @@
             $query_result = $query->result();
             if ($query->num_rows() > 0) {
                 foreach ($query_result as $single_share) {
-                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id))
+                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id)))
                     {
                         $receiver_array[] = $single_share->user_id;
                     }
@@ -431,8 +439,11 @@
         {
             $user_id = $this->user_id;
             $share_id = $this->input->post('share_id', TRUE);
+              
+
+         
             
-            // 防止沒有傳post value
+           /// 防止沒有傳post value
             if(!isset($_POST["share_id"]))
             {
                echo json_encode(array('msg' => 'insert share likes post value not set',
@@ -457,8 +468,12 @@
             }
             
             $result = $this->share_likes_model->insert_share_likes($data);
+
+            //為了判斷這個share的user是不是insert的user
+            $getshare=$this->share_model->get_share(array('share_id' => $share_id));
             
-            
+            if($getshare->row()->user_id!=$user_id)
+               $this->update_user_exp($user_id,$this->share_liked);
             
             // 開始制作一個通知
             // 先抓到要傳給哪些人
@@ -475,7 +490,7 @@
             $query_result = $query->result();
             if ($query->num_rows() > 0) {
                 foreach ($query_result as $single_share) {
-                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id))
+                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id)))
                     {
                         $receiver_array[] = $single_share->user_id;
                     }
@@ -578,6 +593,8 @@
             
             $user_id = $this->user_id;
             $share_id = $this->input->post('share_id', TRUE);
+
+           
             
             // 防止沒有傳post value
             if(!isset($_POST["share_id"]))
@@ -595,6 +612,13 @@
                           );
             
             $result = $this->share_likes_model->delete_share_likes($data);
+
+             $getshare=$this->share_model->get_share(array('share_id' => $share_id));
+
+            ////////////////////減少使用者經驗值
+            if($getshare->row()->user_id!=$user_id)             
+                  $this->update_user_exp($user_id,-$this->share_liked);
+
             
                echo json_encode(array('msg' => 'delete share likes ok',
                                       'status' => 'success'));
