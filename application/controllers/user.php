@@ -18,6 +18,70 @@ class User extends My_Controller {
 		
 		//$this->get_one_user();
 	}
+
+  public function edit_user_status()
+  {
+     $status = '';
+     $msg = '';
+     $echo_data = array();
+     $user_id = $this->user_id;
+     $edit_status=$this->input->post('user_status',TRUE);
+
+      if(!isset($_POST["user_status"]))
+      {
+          echo json_encode(array('msg' => 'user_status post value not set',
+                                 'status' => 'fail'));
+          return;
+      }
+
+      $where=array('user_id' => $user_id );
+      $updatefield=array('user_status' => $edit_status);      
+        
+      if($this->user_model->update_user($where,$updatefield))
+      {
+         $status='ok';
+         $msg='update user status success';
+      }
+      else
+      {
+        $status='fail';
+        $msg='update user status fail';
+      }
+
+      echo json_encode(array('status' => $status,'msg'=>$msg ));
+  }
+
+  public function edit_user_nickname()
+  {
+     $status = '';
+     $msg = '';
+     $echo_data = array();
+     $user_id = $this->user_id;
+     $edit_name=$this->input->post('user_nickname',TRUE);
+
+      if(!isset($_POST["user_nickname"]))
+      {
+          echo json_encode(array('msg' => 'user_nickname post value not set',
+                                 'status' => 'fail'));
+          return;
+      }
+
+      $where=array('user_id' => $user_id );
+      $updatefield=array('user_nickname' => $edit_name);      
+        
+      if($this->user_model->update_user($where,$updatefield))
+      {
+         $status='ok';
+         $msg='update user status success';
+      }
+      else
+      {
+        $status='fail';
+        $msg='update user status fail';
+      }
+
+      echo json_encode(array('status' => $status,'msg'=>$msg ));
+  }
 	
 	public function get_one_user()
 	{

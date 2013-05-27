@@ -325,7 +325,7 @@
             $query_result = $query->result();
             if ($query->num_rows() > 0) {
                 foreach ($query_result as $single_share) {
-                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id))
+                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id)))
                     {
                         $receiver_array[] = $single_share->user_id;
                     }
@@ -468,8 +468,12 @@
             }
             
             $result = $this->share_likes_model->insert_share_likes($data);
+
+            //為了判斷這個share的user是不是insert的user
+            $getshare=$this->share_model->get_share(array('share_id' => $share_id));
             
-            $this->update_user_exp($user_id,$this->share_liked);
+            if($getshare->row()->user_id!=$user_id)
+               $this->update_user_exp($user_id,$this->share_liked);
             
             // 開始制作一個通知
             // 先抓到要傳給哪些人
@@ -486,7 +490,7 @@
             $query_result = $query->result();
             if ($query->num_rows() > 0) {
                 foreach ($query_result as $single_share) {
-                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id))
+                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id)))
                     {
                         $receiver_array[] = $single_share->user_id;
                     }
@@ -609,8 +613,11 @@
             
             $result = $this->share_likes_model->delete_share_likes($data);
 
-             ////////////////////減少使用者經驗值
-            $this->update_user_exp($user_id,-$this->share_liked);
+             $getshare=$this->share_model->get_share(array('share_id' => $share_id));
+
+            ////////////////////減少使用者經驗值
+            if($getshare->row()->user_id!=$user_id)             
+                  $this->update_user_exp($user_id,-$this->share_liked);
 
             
                echo json_encode(array('msg' => 'delete share likes ok',
