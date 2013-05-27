@@ -483,6 +483,14 @@ class Question extends My_Controller {
 				'answer_photo_url' => $file_name
 			);
 			$answer_id = $this->answer_model->insert_answer($data);
+
+			///////////增加使用者經驗值
+			if($file_name!='')
+                 $this->update_user_exp($user_id,$this->answer_question_with_photo);
+            else
+                 $this->update_user_exp($user_id,$this->answer_question);
+              
+
 			if(isset($answer_id))
 			{
                 
@@ -632,7 +640,9 @@ class Question extends My_Controller {
 				$msg = 'Set bset answer Successfully.';
                 
                 
-                
+                //增加使用者經驗值
+                    $this->update_user_exp($user_id,$this->answer_is_best_answer);
+
                 
                 // 開始制作一個通知
                 
@@ -801,6 +811,9 @@ class Question extends My_Controller {
 				{
 					if($this->answer_scores_model->delete_answer_scores($where))
 					{
+						//減少使用者經驗值
+                        $this->update_user_exp($user_id,-$this->answer_is_liked);
+
 						$status = 'ok';
 						$msg = 'Delete Score Successfully.';
 						$update = TRUE;
@@ -820,7 +833,8 @@ class Question extends My_Controller {
 						$msg = 'Insert Score Successfully.';
 						$update = TRUE;
                         
-                        
+                        //減少使用者經驗值
+                        $this->update_user_exp($user_id,$this->answer_is_liked);
                         
                         
                         
