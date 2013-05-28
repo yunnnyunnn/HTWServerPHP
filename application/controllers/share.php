@@ -86,7 +86,9 @@
                 $share_id = $share->share_id;
                 $where_sub = array('share_id'=>$share_id);
                 
-                $query_comment = $this->share_comment_model->get_share_comment($where_sub);
+                $field = array('*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
+
+                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $field);
                 $share->share_comment = $query_comment->result();
                 
                 $query_like = $this->share_likes_model->get_share_likes($where_sub);
@@ -135,7 +137,9 @@
                 $share_id = $share->share_id;
                 $where_sub = array('share_id'=>$share_id);
                 
-                $query_comment = $this->share_comment_model->get_share_comment($where_sub);
+                $field = array('*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
+
+                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $field);
                 $share->share_comment = $query_comment->result();
                 
                 $query_like = $this->share_likes_model->get_share_likes($where_sub);
