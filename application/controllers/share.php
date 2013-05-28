@@ -325,7 +325,7 @@
             $query_result = $query->result();
             if ($query->num_rows() > 0) {
                 foreach ($query_result as $single_share) {
-                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id)))
+                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id))
                     {
                         $receiver_array[] = $single_share->user_id;
                     }
@@ -490,7 +490,7 @@
             $query_result = $query->result();
             if ($query->num_rows() > 0) {
                 foreach ($query_result as $single_share) {
-                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id)))
+                    if (!in_array($single_share->user_id, $receiver_array)&&($single_share->user_id!=$user_id))
                     {
                         $receiver_array[] = $single_share->user_id;
                     }
