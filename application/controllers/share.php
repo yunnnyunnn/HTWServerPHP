@@ -477,7 +477,7 @@
             $getshare=$this->share_model->get_share(array('share_id' => $share_id));
             
             if($getshare->row()->user_id!=$user_id)
-               $this->update_user_exp($user_id,$this->share_liked);
+               $this->update_user_exp($getshare->row()->user_id,$this->share_liked);
             
             // 開始制作一個通知
             // 先抓到要傳給哪些人
@@ -621,7 +621,7 @@
 
             ////////////////////減少使用者經驗值
             if($getshare->row()->user_id!=$user_id)             
-                  $this->update_user_exp($user_id,-$this->share_liked);
+                  $this->update_user_exp($getshare->row()->user_,-$this->share_liked);
 
             
                echo json_encode(array('msg' => 'delete share likes ok',

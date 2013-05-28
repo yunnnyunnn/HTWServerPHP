@@ -5,7 +5,8 @@ class User extends My_Controller {
 	public function __construct()
 	{
 		parent::__construct();	
-		$this->load->model('user_model');
+    $this->load->model('user_model');
+		$this->load->model('user_medal_model');
 		$this->load->model('share_model');
         $this->load->model('location_log_model');
         $this->load->model('device_model');
@@ -19,7 +20,7 @@ class User extends My_Controller {
 		//$this->get_one_user();
 	}
 
-  public function edit_user_status()
+  public function update_user_status()
   {
      $status = '';
      $msg = '';
@@ -51,7 +52,7 @@ class User extends My_Controller {
       echo json_encode(array('status' => $status,'msg'=>$msg ));
   }
 
-  public function edit_user_nickname()
+  public function update_user_nickname()
   {
      $status = '';
      $msg = '';
@@ -78,6 +79,54 @@ class User extends My_Controller {
       {
         $status='fail';
         $msg='update user status fail';
+      }
+
+      echo json_encode(array('status' => $status,'msg'=>$msg ));
+  }
+
+  public function update_user_medal()
+  {
+     $status = '';
+     $msg = '';
+     $echo_data = array();
+     $user_id = $this->user_id;
+     $edit_medal=$this->input->post('user_medal',TRUE);
+    
+
+      if(!isset($_POST["user_medal"]))
+      {
+          echo json_encode(array('msg' => 'user_medal post value not set',
+                                 'status' => 'fail'));
+          return;
+      }
+
+      $where=array('user_id' => $user_id );
+      $updatefield=array('user_medal' => $edit_medal);    
+
+      ///////判斷是否拿過該medal
+      $medal_checker_where=array('user_id' => $user_id,'medal_id'=>$edit_medal );
+      $medal_checker=$this->user_medal_model->get_user_medal('*',$medal_checker_where);
+      if($medal_checker->num_rows()>0)
+      {
+          //已得過medal,不做事
+      }
+      else
+      {
+          //沒得過medal,新增一筆進user_medal
+          $this->user_medal_model->insert_user_medal($medal_checker_where);
+      }
+
+
+        
+      if($this->user_model->update_user($where,$updatefield))
+      {
+         $status='ok';
+         $msg='update user medal success';
+      }
+      else
+      {
+        $status='fail';
+        $msg='update user medal fail';
       }
 
       echo json_encode(array('status' => $status,'msg'=>$msg ));
