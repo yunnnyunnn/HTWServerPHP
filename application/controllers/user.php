@@ -174,6 +174,41 @@ class User extends My_Controller {
 		$echo_data['msg'] = $msg;
 		echo json_encode($echo_data);	
 	}
+
+  public function get_user_medal()
+  {
+      $echo_data = array();
+      $user_id = $this->input->post('user_id',TRUE);
+      //$user_id=1369531833;
+      if(empty($user_id)||!is_numeric($user_id))
+      {
+        $status = 'fail';
+        $msg = 'missing user id';
+      }
+      else
+      {
+        $field = array('*');
+        $where_data = array('user_id'=>$user_id);
+        $user_medal_data = $this->user_medal_model->get_user_medal($field,$where_data);
+        if($user_medal_data->num_rows()>0)
+        {
+
+          $status = 'ok';
+          $msg = 'ok';
+          $echo_data['result'] = $user_medal_data->result();
+
+        }
+        else
+        {
+          $status = 'fail';
+          $msg = 'no such user';
+        }     
+      }
+      $echo_data['status'] = $status;
+      $echo_data['msg'] = $msg;
+      echo json_encode($echo_data); 
+    }
+  
     
     public function insert_location_log()
     {
