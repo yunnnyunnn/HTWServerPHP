@@ -268,7 +268,7 @@ class Question extends My_Controller {
                     
                     $question_notification_time = date('Y-m-d H:i:s', strtotime($question_notification_time));
                     $where = array(
-                                   'location_log_time >=' => $question_notification_time
+                        'location_log_time >=' => $question_notification_time
                                    );
                     $query = $this->location_log_model->get_location_log($where);
                     
@@ -488,12 +488,12 @@ class Question extends My_Controller {
 			if($file_name!='') {
                  $new_exp = $this->update_user_exp($user_id,$this->answer_question_with_photo);
                 // 這邊開始檢視需不需要給他新的medal
-                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+                $this->check_and_insert_user_medal($user_id, $new_exp);
             }
             else {
                 $new_exp = $this->update_user_exp($user_id,$this->answer_question);
                 // 這邊開始檢視需不需要給他新的medal
-                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+                $this->check_and_insert_user_medal($user_id, $new_exp);
             }
             
 
@@ -649,7 +649,7 @@ class Question extends My_Controller {
                 //增加使用者經驗值
                 $new_exp = $this->update_user_exp($user_id,$this->answer_is_best_answer);
                 // 這邊開始檢視需不需要給他新的medal
-                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+                $this->check_and_insert_user_medal($user_id, $new_exp);
 
                 
                 // 開始制作一個通知
@@ -844,7 +844,7 @@ class Question extends My_Controller {
                         // 增加使用者經驗值
                         $new_exp = $this->update_user_exp($user_id,$this->answer_is_liked);
                         // 這邊開始檢視需不需要給他新的medal
-                        $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+                        $this->check_and_insert_user_medal($user_id, $new_exp);
                         
                         
                         // 開始制作一個通知

@@ -238,14 +238,14 @@
             {
                  $new_exp = $this->update_user_exp($user_id,$this->insert_share_with_photo);
                 // 這邊開始檢視需不需要給他新的medal
-                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+                $this->check_and_insert_user_medal($user_id, $new_exp);
 
             }
             else
             {
                  $new_exp = $this->update_user_exp($user_id,$this->insert_share);
                 // 這邊開始檢視需不需要給他新的medal
-                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+                $this->check_and_insert_user_medal($user_id, $new_exp);
 
             }
 
