@@ -235,9 +235,19 @@
 
             //////////////增加使用者經驗值
             if(isset($_POST['Submit']))
-                 $this->update_user_exp($user_id,$this->insert_share_with_photo);
+            {
+                 $new_exp = $this->update_user_exp($user_id,$this->insert_share_with_photo);
+                // 這邊開始檢視需不需要給他新的medal
+                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+
+            }
             else
-                 $this->update_user_exp($user_id,$this->insert_share);
+            {
+                 $new_exp = $this->update_user_exp($user_id,$this->insert_share);
+                // 這邊開始檢視需不需要給他新的medal
+                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+
+            }
 
 
             

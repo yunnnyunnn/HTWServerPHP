@@ -485,11 +485,17 @@ class Question extends My_Controller {
 			$answer_id = $this->answer_model->insert_answer($data);
 
 			///////////增加使用者經驗值
-			if($file_name!='')
-                 $this->update_user_exp($user_id,$this->answer_question_with_photo);
-            else
-                 $this->update_user_exp($user_id,$this->answer_question);
-              
+			if($file_name!='') {
+                 $new_exp = $this->update_user_exp($user_id,$this->answer_question_with_photo);
+                // 這邊開始檢視需不需要給他新的medal
+                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+            }
+            else {
+                $new_exp = $this->update_user_exp($user_id,$this->answer_question);
+                // 這邊開始檢視需不需要給他新的medal
+                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
+            }
+            
 
 			if(isset($answer_id))
 			{
@@ -641,7 +647,9 @@ class Question extends My_Controller {
                 
                 
                 //增加使用者經驗值
-                    $this->update_user_exp($user_id,$this->answer_is_best_answer);
+                $new_exp = $this->update_user_exp($user_id,$this->answer_is_best_answer);
+                // 這邊開始檢視需不需要給他新的medal
+                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
 
                 
                 // 開始制作一個通知
@@ -833,9 +841,10 @@ class Question extends My_Controller {
 						$msg = 'Insert Score Successfully.';
 						$update = TRUE;
                         
-                        //減少使用者經驗值
-                        $this->update_user_exp($user_id,$this->answer_is_liked);
-                        
+                        // 增加使用者經驗值
+                        $new_exp = $this->update_user_exp($user_id,$this->answer_is_liked);
+                        // 這邊開始檢視需不需要給他新的medal
+                        $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
                         
                         
                         // 開始制作一個通知
