@@ -62,7 +62,7 @@
             $get_share_user_id = $this->input->post('user_id', TRUE);
             if (isset($_POST["user_id"]))
             {
-                $where['user_id'] = $get_share_user_id;
+                $where['user.user_id'] = $get_share_user_id;
             }
 
             
