@@ -18,6 +18,7 @@ class My_Controller extends CI_Controller {
 	{    
 		parent::__construct();
         $this->load->model('user_model');
+        $this->load->model('device_model');
         $this->load->model('user_medal_model');
 
 		if(isset($_GET['howeatoken']))
@@ -94,6 +95,39 @@ class My_Controller extends CI_Controller {
                 
             }
         }
+    }
+    
+    public function get_device_token($receiver_array)
+    {
+        $device_token_array = array();
+        foreach ($receiver_array as $receiver) {
+            
+            $where = array(
+                           
+                           'device.user_id' => $receiver,
+                           
+                           );
+            
+            $query_device = $this->device_model->get_device($where);
+            $query_device_result = $query_device->result();
+            
+            if($query_device->num_rows() > 0)
+            {
+                foreach ($query_device_result as $single_device) {
+                    if (!in_array($single_device->device_token, $device_token_array)&&$single_device->device_token)
+                    {
+                        $data = array (
+                                       'device_token' => $single_device->device_token,
+                                       'device_type' => $single_device->device_type,
+                                       );
+                        $device_token_array[] = $data;
+                    }
+                    
+                }
+            }
+            
+        }
+        return $device_token_array;
     }
     
     

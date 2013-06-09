@@ -318,34 +318,9 @@ class Question extends My_Controller {
                     
                     /////////////////////////////////
                     // 取得所有的device token
-                    $device_token_array = array();
-                    foreach ($available_notification_receiver as $receiver) {
-                        
-                        $where = array(
-                                       
-                                       'device.user_id' => $receiver,
-                                       
-                                       );
-                        
-                        $query_device = $this->device_model->get_device($where);
-                        $query_device_result = $query_device->result();
-                        
-                        if($query_device->num_rows() > 0)
-                        {
-                            foreach ($query_device_result as $single_device) {
-                                if (!in_array($single_device->device_token, $device_token_array)&&$single_device->device_token)
-                                {
-                                    $data = array (
-                                                   'device_token' => $single_device->device_token,
-                                                   'device_type' => $single_device->device_type,
-                                                   );
-                                    $device_token_array[] = $data;
-                                }
-                                
-                            }
-                        }
-                        
-                    }
+                    $device_token_array = $this->get_device_token($available_notification_receiver);
+                    
+
                     
                     
                     
@@ -393,26 +368,7 @@ class Question extends My_Controller {
                     
                     echo json_encode(array('status' => $status , 'msg' => $msg, 'result' => $available_notification_receiver));
                     return;
-                    
-//					$time = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")) - (60 * $limit_min));
-//					$query = $this->location_log_model->get_group_by_location_log($time,'user_id');
-//					echo 'count = '.$query->num_rows() .'<br/>';
-//					if($query->num_rows()>0)
-//					{
-//						foreach($query->result() as $row)
-//						{	
-//							$distance = $this->geolocation->get_distance($question_latitude,$question_longitude,$row->location_latitude,$row->location_longitude);
-//							echo 'distance = '.$distance.'<br/>';
-//							if($distance < $question_distance_limited)
-//							{
-//								echo 'user_id = '.$row->user_id;
-//								//notification
-//							}
-//						}
-//					}else
-//					{
-//						$msg = 'Question insert sucessfully,no user around the geolocation';
-//					}
+
 				}
 			}
 			else
@@ -546,35 +502,9 @@ class Question extends My_Controller {
                 
                 
                 /////////////////////////////////
+                
                 // 取得所有的device token
-                $device_token_array = array();
-                foreach ($receiver_array as $receiver) {
-                    
-                    $where = array(
-                                   
-                                   'device.user_id' => $receiver,
-                                   
-                                   );
-                    
-                    $query_device = $this->device_model->get_device($where);
-                    $query_device_result = $query_device->result();
-                    
-                    if($query_device->num_rows() > 0)
-                    {
-                        foreach ($query_device_result as $single_device) {
-                            if (!in_array($single_device->device_token, $device_token_array)&&$single_device->device_token)
-                            {
-                                $data = array (
-                                               'device_token' => $single_device->device_token,
-                                               'device_type' => $single_device->device_type,
-                                               );
-                                $device_token_array[] = $data;
-                            }
-                            
-                        }
-                    }
-                    
-                }
+                $device_token_array = $this->get_device_token($receiver_array);
                 
                 
                 
@@ -646,10 +576,7 @@ class Question extends My_Controller {
 				$msg = 'Set bset answer Successfully.';
                 
                 
-                //增加使用者經驗值
-                $new_exp = $this->update_user_exp($user_id,$this->answer_is_best_answer);
-                // 這邊開始檢視需不需要給他新的medal
-                $this->check_and_insert_user_medal($user_id, $new_exp);
+                
 
                 
                 // 開始制作一個通知
@@ -670,6 +597,11 @@ class Question extends My_Controller {
                         $receiver = $ans->user_id;
                     }
                 }
+                
+                //增加使用者經驗值
+                $new_exp = $this->update_user_exp($receiver,$this->answer_is_best_answer);
+                // 這邊開始檢視需不需要給他新的medal
+                $this->check_and_insert_user_medal($receiver, $new_exp);
                 
 
                 // 抓到發問者
@@ -707,33 +639,8 @@ class Question extends My_Controller {
                 
                 /////////////////////////////////
                 // 取得所有的device token
-                $device_token_array = array();
-                if($receiver) {
-                    $where = array(
-                                   
-                                   'device.user_id' => $receiver,
-                                   
-                                   );
-                    
-                    $query_device = $this->device_model->get_device($where);
-                    $query_device_result = $query_device->result();
-                    
-                    if($query_device->num_rows() > 0)
-                    {
-                        foreach ($query_device_result as $single_device) {
-                            if (!in_array($single_device->device_token, $device_token_array)&&$single_device->device_token)
-                            {
-                                $data = array (
-                                               'device_token' => $single_device->device_token,
-                                               'device_type' => $single_device->device_type,
-                                               );
-                                $device_token_array[] = $data;
-                            }
-                            
-                        }
-                    }
-                }
-                
+                $receiver_array = array($receiver);
+                $device_token_array = $this->get_device_token($receiver_array);
                 
                 
                 $where = array (
@@ -884,32 +791,8 @@ class Question extends My_Controller {
                         
                         /////////////////////////////////
                         // 取得所有的device token
-                        $device_token_array = array();
-                        if($receiver) {
-                            $where = array(
-                                           
-                                           'device.user_id' => $receiver,
-                                           
-                                           );
-                            
-                            $query_device = $this->device_model->get_device($where);
-                            $query_device_result = $query_device->result();
-                            
-                            if($query_device->num_rows() > 0)
-                            {
-                                foreach ($query_device_result as $single_device) {
-                                    if (!in_array($single_device->device_token, $device_token_array)&&$single_device->device_token)
-                                    {
-                                        $data = array (
-                                                       'device_token' => $single_device->device_token,
-                                                       'device_type' => $single_device->device_type,
-                                                       );
-                                        $device_token_array[] = $data;
-                                    }
-                                    
-                                }
-                            }
-                        }
+                        $receiver_array = array($receiver);
+                        $device_token_array = $this->get_device_token($receiver_array);
                         
                         
                         
