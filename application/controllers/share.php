@@ -7,7 +7,6 @@
         {
             parent::__construct();
             $this->load->model('user_model');
-            $this->load->model('user_medal_model');
             $this->load->model('share_model');
             $this->load->model('share_comment_model');
             $this->load->model('share_likes_model');
@@ -483,32 +482,7 @@
                 $new_exp = $this->update_user_exp($share_liked_user_id,$this->share_liked);
                 
                 // 這邊開始檢視需不需要給他新的medal
-                $medal_array = unserialize(MEDAL_WITH_EXP);
-
-                foreach ($medal_array as $medal_name => $exp) {
-                    if ($new_exp>=$exp) {
-                        
-                        $field = array('*');
-                        $where = array(
-                        'user_id' => $share_liked_user_id,
-                                       'medal_id' => $medal_name
-                        );
-                        $medal_checker = $this->user_medal_model->get_user_medal($field, $where);
-                        if ($medal_checker->num_rows()==0) { // 必須要他沒有這個medal才能增加一個medal
-                            $medal_data = array (
-                            'user_id' => $share_liked_user_id,
-                                           'medal_id' => $medal_name
-                            );
-                            if($this->user_medal_model->insert_user_medal($medal_data)) {
-                                // ok
-                            }
-                            else {
-                                // fail when insert medal
-                            }
-                        }
-
-                    }
-                }
+                $this->check_and_insert_user_medal($share_liked_user_id, $new_exp);
             }
             
             // 開始制作一個通知

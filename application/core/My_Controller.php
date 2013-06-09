@@ -18,6 +18,7 @@ class My_Controller extends CI_Controller {
 	{    
 		parent::__construct();
         $this->load->model('user_model');
+        $this->load->model('user_medal_model');
 
 		if(isset($_GET['howeatoken']))
 		{
@@ -68,6 +69,32 @@ class My_Controller extends CI_Controller {
         return $new_exp;
 	}
     
+    public function check_and_insert_user_medal($user_id, $new_exp)
+    {
+        $medal_array = unserialize(MEDAL_WITH_EXP);
+        
+        foreach ($medal_array as $medal_number => $exp) {
+            if ($new_exp>=$exp) {
+                
+                $field = array('*');
+                $medal_data = array(
+                               'user_id' => $user_id,
+                               'medal_id' => $medal_number
+                               );
+                $medal_checker = $this->user_medal_model->get_user_medal($field, $medal_data);
+                if ($medal_checker->num_rows()==0) { // 必須要他沒有這個medal才能增加一個medal
+                    
+                    if($this->user_medal_model->insert_user_medal($medal_data)) {
+                        // ok
+                    }
+                    else {
+                        // fail when insert medal
+                    }
+                }
+                
+            }
+        }
+    }
     
     
 }
