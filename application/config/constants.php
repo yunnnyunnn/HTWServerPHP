@@ -48,5 +48,28 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 */
 define('QUESTION_PUSH_PRICE' , 1);
 
+    
+/**
+|---------------
+| Medal Setting
+|---------------
+|
+| These settings are defined for medal and exp.
+|
+*/
+    
+    
+define('MEDAL_WITH_EXP' , serialize(array (
+   '1' => 50,
+   '2' => 200,
+   '3' => 500,
+   '4' => 1000,
+   '5' => 2000,
+   '6' => 5000,
+   '7' => 8000,
+   '8' => 10000
+)));
+
+    
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

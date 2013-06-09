@@ -62,7 +62,12 @@ class My_Controller extends CI_Controller {
 		$field=array('user_exp');
 		$where=array('user_id' => $user_id );
 		$user_data=$this->user_model->get_user($field,$where);
-		$updatefield=array('user_exp' => $user_data->row()->user_exp+$exp );
+        $new_exp = $user_data->row()->user_exp + $exp;
+		$updatefield=array('user_exp' => $new_exp );
 		$result=$this->user_model->update_user($where,$updatefield);
+        return $new_exp;
 	}
+    
+    
+    
 }

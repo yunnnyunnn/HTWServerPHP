@@ -108,26 +108,26 @@ class User extends My_Controller {
       $medal_checker=$this->user_medal_model->get_user_medal('*',$medal_checker_where);
       if($medal_checker->num_rows()>0)
       {
-          //已得過medal,不做事
+          //已得過medal,可以換
+          if($this->user_model->update_user($where,$updatefield))
+          {
+              $status='ok';
+              $msg='update user medal success';
+          }
+          else
+          {
+              $status='fail';
+              $msg='update user medal fail';
+          }
       }
       else
       {
-          //沒得過medal,新增一筆進user_medal
-          $this->user_medal_model->insert_user_medal($medal_checker_where);
+          //沒得過medal,不給換
+          //$this->user_medal_model->insert_user_medal($medal_checker_where);
+          $status='fail';
+          $msg='no such medal';
       }
-
-
-        
-      if($this->user_model->update_user($where,$updatefield))
-      {
-         $status='ok';
-         $msg='update user medal success';
-      }
-      else
-      {
-        $status='fail';
-        $msg='update user medal fail';
-      }
+      
 
       echo json_encode(array('status' => $status,'msg'=>$msg ));
   }
