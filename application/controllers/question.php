@@ -15,6 +15,8 @@ class Question extends My_Controller {
         $this->load->model('notification_model');
         $this->load->library('geolocation');
         $this->load->library('payload_maker');
+        $this->load->library('wp_push_notification_maker');
+
 
 	}
 	public function index()
