@@ -8,6 +8,7 @@ class User extends My_Controller {
     $this->load->model('user_model');
 		$this->load->model('user_medal_model');
 		$this->load->model('share_model');
+        $this->load->model('answer_model');
         $this->load->model('location_log_model');
         $this->load->model('device_model');
         $this->load->model('notification_model');
@@ -156,11 +157,14 @@ class User extends My_Controller {
 				$user_rank = $this->user_model->get_user($field,$where_data);
 				
 				$where_data = array('user.user_id'=>$user_id);
-				$user_share = $this->share_model->get_share($where_data);			
+				$user_share = $this->share_model->get_share($where_data);
+                
+				$user_answer = $this->answer_model->get_answer('*', $where_data);
 		
 				$status = 'ok';
 				$msg = 'ok';
 				$echo_data['user_share_count'] = $user_share->num_rows();
+                $echo_data['user_answer_count'] = $user_answer->num_rows();
 				$echo_data['user_rank'] = $user_rank->num_rows()+1;
 				$echo_data['userdata'] = $user_data->result();
 			}
