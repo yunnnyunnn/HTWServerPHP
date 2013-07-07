@@ -15,7 +15,7 @@ class Notification_model extends CI_Model
 	{
 		$this->db->order_by('notification_time','DESC');
         $this->db->join('user','notification.user_id_sender = user.user_id');
-        $this->db->select('*, timediff(notification_time, now()) as notification_timediff','user.user_nickname');
+        $this->db->select('notification.*, timediff(notification_time, now()) as notification_timediff, user.user_nickname as sender_user_nickname');
         if ($limit !=0)
         {
             return $this->db->where($where)->get('notification', $limit, $offset);
