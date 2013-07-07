@@ -283,36 +283,53 @@ class User extends My_Controller {
 
     function get_notification_stream()
     {
-    	    $user_id = $this->user_id;
-    	    $where = array();
-    	    $where['user_id_receiver']=$user_id;
+        $user_id = $this->user_id;
+        $where = array();
+        $where['user_id_receiver']=$user_id;
+        
+        // 指定這次抓的串流從哪一篇開始
+        $notification_id_max = $this->input->post('notification_id_max', TRUE);
+        if(isset($_POST["notification_id_max"]))
+        {
             
-            // 指定這次抓的串流從哪一篇開始
-            $notification_id_max = $this->input->post('notification_id_max', TRUE);
-            if(isset($_POST["notification_id_max"]))
-            {
+            $where['notification_id <'] = $notification_id_max;
+        }
+        
+        
+        // 指定一次抓幾篇，沒有指定的話預設值是25篇
+        $notification_count = 25;
+        if (isset($_POST["notification_count"])) {                
+            $notification_count = $this->input->post('notification_count', TRUE);
+        }
+
+         //$field = array('*', 'user.user_nickname');
+        $query = $this->notification_model->get_notification($where, $notification_count);
+        
+        $notifications = $query->result();
+        
+        foreach ($notifications as $notification) {
+            $notification_type = $notification->notification_type;
+            if ($notification_type < 2) { // shares notification
+                $where_share = array ('share_id' => $notification->post_id);
                 
-                $where['notification_id <'] = $notification_id_max;
-            }
-            
-            
-            // 指定一次抓幾篇，沒有指定的話預設值是25篇
-            $notification_count = 25;
-            if (isset($_POST["notification_count"])) {                
-                $notification_count = $this->input->post('notification_count', TRUE);
-            }
+                $query = $this->share_model->get_share($where_share, 'share_weather_type, share_photo_url', 1);
+                $shares = $query->result();
+                $share = $shares[0];
 
-             //$field = array('*', 'user.user_nickname');
-            $query = $this->notification_model->get_notification($where, $notification_count);
-            
-            $notifications = $query->result();
+                $notification->notification_share_photo_url = $share->share_photo_url;
+                $notification->notification_share_weather_type = $share->share_weather_type;
+            }
+            else { // asks notification
+                
+            }
+        }
 
-               // 將最後結果送出
-            echo json_encode(array('constraints' => $where,
-                                   'result' => $notifications,
-                                   'msg' => 'get notification ok',
-                                   'status' => 'success'
-                                   ));
+           // 將最後結果送出
+        echo json_encode(array('constraints' => $where,
+                               'result' => $notifications,
+                               'msg' => 'get notification ok',
+                               'status' => 'success'
+                               ));
     }
 	
 	
