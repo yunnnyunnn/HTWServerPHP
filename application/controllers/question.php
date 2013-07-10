@@ -50,6 +50,33 @@ class Question extends My_Controller {
 		$where = array(
 			'question_time >' => $time,	
 		);
+        
+        
+        
+        // 如果有傳區域限制
+        $question_latitude_max = $this->input->post('question_latitude_max', TRUE);
+        $question_latitude_min = $this->input->post('question_latitude_min', TRUE);
+        $question_longitude_max = $this->input->post('question_longitude_max', TRUE);
+        $question_longitude_min = $this->input->post('question_longitude_min', TRUE);
+        if(isset($_POST["question_latitude_max"]) && isset($_POST["question_latitude_min"]) && isset($_POST["question_longitude_max"]) && isset($_POST["question_longitude_min"]))
+        {
+            
+            $where['question_latitude <='] = $question_latitude_max;
+            $where['question_latitude >='] = $question_latitude_min;
+            $where['question_longitude <='] = $question_longitude_max;
+            $where['question_longitude >='] = $question_longitude_min;
+        }
+        
+        // 如果有指定id
+        
+        $question_id = $this->input->post('question_id', TRUE);
+        if(isset($_POST["question_id"]))
+        {
+            
+            $where['question_id'] = $question_id;
+            
+        }
+        
 		$field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
 		$query = $this->question_model->get_question($field,$where);
 		$count = $query->num_rows();
