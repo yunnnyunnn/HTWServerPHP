@@ -331,6 +331,42 @@ class User extends My_Controller {
                                'status' => 'success'
                                ));
     }
+    
+    function set_notification_is_record()
+    {
+        
+        $notification_is_record = $this->input->post('notification_is_record', TRUE);
+        $notification_id = $this->input->post('notification_id', TRUE);
+        
+        // 防止沒有傳post value
+        if(!isset($_POST["notification_is_record"]) OR !isset($_POST["notification_id"]))
+        {
+            echo json_encode(array('msg' => 'wrong post value',
+                                   'status' => 'fail'));
+            return;
+        }
+        
+        $where = array(
+                       'notification_id' => $notification_id
+                       );
+        
+        $data = array(
+                      'notification_is_record' => $notification_is_record
+                      );
+        
+        
+        
+        if ($this->notification_model->update_notification($data, $where)) {
+            echo json_encode(array('msg' => 'successfully update notification is read',
+                                   'status' => 'ok'));
+            return;
+        }
+        else {
+            echo json_encode(array('msg' => 'database update wrong',
+                                   'status' => 'fail'));
+            return;
+        }
+    }
 	
 	
 }
