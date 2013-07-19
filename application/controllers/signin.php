@@ -52,6 +52,70 @@ class Signin extends CI_Controller {
 				$where['user_email'] = $user_email;
 				if($device_type == '1' || $device_type == '2' || $device_type == '3')
 				{
+                    
+                    
+                    $field = array('user.user_id,device_type');
+					$device_where['device_type'] = $device_type;
+					$device_where['user_email'] = $user_email;
+					$query = $this->user_model->get_user_with_device($field , $device_where);
+					if($query->num_rows()>0)
+					{
+						if(!empty($user_password))
+						{
+							$where['user_password'] = md5($user_password);
+							$field = array('*');
+							$query = $this->user_model->get_user($field , $where);
+							if($query->num_rows()>0)
+							{
+                                
+                                
+								$user_id = $query->row()->user_id;
+								$status = 'ok';
+								$msg = 'sign in successfully';
+								$echo_data['user_id'] = $user_id;
+                                $echo_data['user_nickname'] = $query->row()->user_nickname;
+                                
+                                
+                                ///howeatoken
+                                $howeatoken = NULL;
+                                $num = 57 ;
+                                for ($i=1;$i<=$num;$i=$i+1)
+                                {
+                                    $c=rand(1,3);
+                                    if($c==1){$a=rand(97,122);$b=chr($a);}
+                                    if($c==2){$a=rand(65,90);$b=chr($a);}
+                                    if($c==3){$b=rand(0,9);}
+                                    $howeatoken=$howeatoken.$b;
+                                }
+                                $howeatoken_data = array(
+                                                         'howeatoken' => md5($howeatoken),
+                                                         'user_id' => $user_id
+                                                         );
+                                if($this->howeatoken_model->insert_howeatoken($howeatoken_data))
+                                {
+                                    $echo_data['howeatoken'] = $howeatoken;
+                                }
+							}
+							else
+							{
+								$msg = 'Email or Password Error';
+								$status = 'fail';
+							}
+						}
+						else
+						{
+							$msg = 'Missing Password';
+							$status = 'fail';
+						}	
+					}
+					else
+					{
+						$msg = 'undefined device';
+						$status = 'fail';
+					}
+                    
+                    
+                    /*
 					if(!empty($mapping_code))
 					{
 						$mapping_code_server = sha1('HOWEATHER_Tim.William.Brad.Allan.Henry');  
@@ -76,6 +140,7 @@ class Signin extends CI_Controller {
 						$msg = 'Missing mapping code';
 						$status = 'fail';		
 					}
+                     */
 				}
 				else if($device_type == '4')
 				{
