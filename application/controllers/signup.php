@@ -48,9 +48,22 @@ class Signup extends CI_Controller {
 			$user_data['user_nickname'] = $user_nickname;
 			if($device_type == '1' || $device_type == '2' || $device_type == '3')
 			{
-				$device_token = $this->input->post('device_token',TRUE);
-				$device_data['device_token'] = $device_token;	
-				$validate = TRUE;
+                
+                $user_password = $this->input->post('user_password',TRUE);
+				if(!empty($user_password))
+				{
+					$user_data['user_password'] = md5($user_password);
+                    $device_token = $this->input->post('device_token',TRUE);
+                    $device_data['device_token'] = $device_token;
+                    
+                    $validate = TRUE;
+				}
+				else{
+					$msg = 'Sign Up fail : Please Enter Password';
+					$validate = FALSE;
+				}
+                
+				
 			}
 			else if($device_type == '4')
 			{
