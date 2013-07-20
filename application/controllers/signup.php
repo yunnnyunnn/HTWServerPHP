@@ -95,7 +95,7 @@ class Signup extends CI_Controller {
 			if($validate)
 			{	
 				$field = array('user_id');
-				$query = $this->user_model->get_user($field ,$user_data);
+				$query = $this->user_model->get_user($field ,array('user_email'=>$user_email));
 				if($query->num_rows()>0)
 				{
 					$msg = 'Sign Up fail : Already Sign Up';
