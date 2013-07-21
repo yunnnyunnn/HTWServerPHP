@@ -249,9 +249,11 @@ class User extends My_Controller {
         $user_id = $this->user_id;
         $device_type = $this->input->post('device_type', TRUE);
         $device_token = $this->input->post('device_token', TRUE);
+        $device_id = $this->input->post('device_id', TRUE);
+
 
         // 防止沒有傳post value
-        if(!isset($_POST["device_type"]) OR !isset($_POST["device_token"]))
+        if(!isset($_POST["device_type"]) OR !isset($_POST["device_token"]) OR !isset($_POST["device_id"]))
         {
             echo json_encode(array('msg' => 'wrong post value',
                                    'status' => 'fail'));
@@ -260,12 +262,16 @@ class User extends My_Controller {
         
         $where = array(
                             'user_id' => $user_id,
-                            'device_type' => $device_type
+                            'device_type' => $device_type,
+                       'device_id' => $device_id
                        );
         
         $data = array(
                             'device_token' => $device_token
                       );
+        
+        // 先將一樣的token清掉
+        $this->device_model->update_device(array('device_token' => $device_token), array('device_token' => ''));
         
         if ($this->device_model->update_device($where, $data)) {
             echo json_encode(array('msg' => 'successfully update device token',

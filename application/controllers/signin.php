@@ -22,6 +22,33 @@ class Signin extends CI_Controller {
 	{
 		$this->load->view('signin_view');
 	}
+    
+    public function signout()
+    {
+        $status = '';
+		$msg = '';
+        $device_id = $this->input->post('device_id',TRUE);
+        
+        if (empty($device_id)||!is_numeric($device_id)) {
+            $msg = 'wrong device';
+			$status = 'fail';
+        }
+        else {
+            
+            if ($this->device_model->delete_device(array('device_id'=>$device_id))) {
+                $msg = 'sign out success';
+                $status = 'ok';
+            }
+            else {
+                $msg = 'db wrong when signing out';
+                $status = 'fail';
+            }
+            
+        }
+        $echo_data['status'] = $status;
+		$echo_data['msg'] = $msg;
+		echo json_encode($echo_data);
+    }
 	
 	public function signin_service()
 	{
@@ -54,10 +81,9 @@ class Signin extends CI_Controller {
 				{
                     
                     
-                    $field = array('user.user_id,device_type');
-					$device_where['device_type'] = $device_type;
+                    $field = array('user_id');
 					$device_where['user_email'] = $user_email;
-					$query = $this->user_model->get_user_with_device($field , $device_where);
+					$query = $this->user_model->get_user($field , $device_where);
 					if($query->num_rows()>0)
 					{
 						if(!empty($user_password))
@@ -95,6 +121,24 @@ class Signin extends CI_Controller {
                                 {
                                     $echo_data['howeatoken'] = $howeatoken;
                                 }
+                                ///
+                                $device_data = array();
+                                $device_data['device_token'] = '';
+                                $device_data['user_id'] = $user_id;
+                                $device_data['device_type'] = $device_type;
+                                
+                                $device_id = $this->device_model->insert_device($device_data);
+                                if($device_id>0)
+                                {
+                                    $echo_data['device_id'] = $device_id;
+                                }
+                                else
+                                {
+                                    $msg = 'Sign in fail : Database Error';
+                                    $status = 'fail';
+                                }
+                                
+                                
 							}
 							else
 							{

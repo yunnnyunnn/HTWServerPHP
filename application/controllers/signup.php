@@ -136,8 +136,10 @@ class Signup extends CI_Controller {
 							$echo_data['howeatoken'] = $howeatoken;
 						}
 						///
-						if($this->device_model->insert_device($device_data))
+                        $device_id = $this->device_model->insert_device($device_data);
+						if($device_id>0)
 						{
+                            $echo_data['device_id'] = $device_id;
 							$msg = 'Sign Up OK';
 							$status = 'ok';
 							$session = array(

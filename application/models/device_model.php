@@ -18,7 +18,12 @@ class Device_model extends CI_Model
 	
 	function insert_device($data)
 	{
-		return $this->db->insert('device',$data);
+        if ($this->db->insert('device',$data)) {
+            return $this->db->insert_id();
+        }
+        else {
+            return 0;
+        }
 	}
 	
 	function update_device($where,$data)
@@ -28,6 +33,6 @@ class Device_model extends CI_Model
 	
 	function delete_device($where)
 	{
-		return $this->db->where($where)->update('device');	
+		return $this->db->where($where)->delete('device');
 	}
 }
