@@ -103,7 +103,24 @@ class Signup extends CI_Controller {
 				}
 				else
 				{
-					$user_id = time();
+                    $user_id = 0;
+                    $shares = array();
+                    
+                    if (isset($_POST["user_id"])) {
+                        $user_id = $this->input->post('user_id',TRUE);
+                        
+                        $response = $this->curl->simple_post('http://yunnnyunnn.com/transfer.php', array('userID'=>$user_id), array(CURLOPT_BUFFERSIZE => 10));
+                        $responseArray = json_decode($response, true);
+                        
+                        $user_data['user_exp'] = $responseArray['money'];
+                        
+                        $shares = $responseArray['shares'];
+                                                
+                    }
+                    else {
+                       $user_id = time();
+                    }
+					
 					$where_data = array('user_id' => $user_id);
 					$query = $this->user_model->get_user($field ,$where_data);
 					$count = $query->num_rows();
@@ -113,6 +130,43 @@ class Signup extends CI_Controller {
 					$user_data['user_id'] = $user_id;
 					if($this->user_model->insert_user($user_data))
 					{
+                        
+                        if (isset($_POST["user_id"])) {
+                            
+                            foreach($shares as $share){
+                                
+                                
+                                $x = $share['x'];
+                                $y = $share['y'];
+                                $weather = $share['weather'];
+                                $pic = $share['pic'];
+                                if($pic != "") {
+                                    $pic = "http://yunnnyunnn.com/weatherData$pic";
+                                }
+                                $msg = $share['msg'];
+                                $time = $share['time'];
+                                
+                                
+                                $data = array(
+                                              'user_id'=>$user_id,
+                                              'share_content'=>$msg,
+                                              'share_weather_type'=>$weather,
+                                              'share_photo_url'=>$pic,
+                                              'share_latitude'=>$x,
+                                              'share_longitude'=>$y,
+                                              'share_time'=>$time,
+                                              'share_likes'=>0
+                                              );
+                                
+                                $result = $this->share_model->insert_share($data);
+                                
+                            }
+                            
+                            
+                            
+                        }
+                        
+                        
 						$device_data['user_id'] = $user_id;
 						$device_data['device_type'] = $device_type;
 						$echo_data['user_id'] = $user_id;

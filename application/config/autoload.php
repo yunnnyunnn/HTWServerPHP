@@ -52,7 +52,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('database','Session');
+$autoload['libraries'] = array('database','Session', 'curl');
 
 
 /*
@@ -111,6 +111,6 @@ $autoload['language'] = array();
 
 $autoload['model'] = array();
 
-
+    
 /* End of file autoload.php */
 /* Location: ./application/config/autoload.php */

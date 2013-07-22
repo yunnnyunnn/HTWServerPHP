@@ -27,8 +27,35 @@ class Test extends My_Controller {
     
     public function testit()
     {
-        $medal_array = unserialize(MEDAL_WITH_EXP);
-        var_dump($medal_array);
+        $response = $this->curl->simple_post('http://yunnnyunnn.com/transfer.php', array('userID'=>'31769'), array(CURLOPT_BUFFERSIZE => 10));
+        $responseArray = json_decode($response, true);
+        
+        $money = $responseArray['money'];
+        echo "money:$money";
+        
+        $userID = $responseArray['userID'];
+        echo "userID:$userID";
+        
+        $shares = $responseArray['shares'];
+        
+        foreach($shares as $share){
+            $x = $share['x'];
+            echo "x:$x";
+            $y = $share['y'];
+            echo "y:$y";
+            $weather = $share['weather'];
+            echo "weather:$weather";
+            $pic = $share['pic'];
+            echo "pic:$pic";
+            $msg = $share['msg'];
+            echo "msg:$msg";
+            $time = $share['time'];
+            echo "time:$time";
+        }
+
+
+        
+        //var_dump($responseArray);
     }
 
 	
