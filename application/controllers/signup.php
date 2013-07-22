@@ -142,12 +142,12 @@ class Signup extends CI_Controller {
                             $echo_data['device_id'] = $device_id;
 							$msg = 'Sign Up OK';
 							$status = 'ok';
-							$session = array(
-								'user_id'=>$user_id ,
-								'user_email' => $user_email ,
-								'token' => md5(uniqid(rand(), TRUE))
-							);
-							$this->session->set_userdata($session);
+//							$session = array(
+//								'user_id'=>$user_id ,
+//								'user_email' => $user_email ,
+//								'token' => md5(uniqid(rand(), TRUE))
+//							);
+//							$this->session->set_userdata($session);
 						}
 						else
 						{
