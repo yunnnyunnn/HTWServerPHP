@@ -214,8 +214,18 @@ class Question extends My_Controller {
                 $is_around_question = TRUE;
             }
             
-            if ($is_around_question&&!in_array($single_location->user_id, $available_notification_receiver)&&$single_location->user_id!=$this->user_id) {
-                $available_notification_receiver[] = $single_location->user_id;
+            $is_Already_receiver = FALSE;
+            foreach ($available_notification_receiver as $receiverData) {
+                if ($receiverData->user_id==$single_location->user_id) {
+                    $is_Already_receiver = TRUE;
+                    break;
+                }
+            }
+            
+            if ($is_around_question&&!$is_Already_receiver&&$single_location->user_id!=$this->user_id) {
+                
+
+                $available_notification_receiver[] = $single_location;
             }
         }
         
