@@ -279,6 +279,16 @@
             
             $result = $this->share_model->delete_share($data);
             
+            $where = array(
+            
+            'notification_type <'=>2,
+            'post_id'=>$share_id
+                           
+            
+            );
+            
+            $this->notification_model->delete_notification($where);
+            
                echo json_encode(array('msg' => 'delete share ok',
                                       'status' => 'success'));
 

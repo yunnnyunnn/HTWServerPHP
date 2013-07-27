@@ -26,7 +26,7 @@ class Index extends CI_Controller {
 			//create a new bucket
 			$this->s3->putBucket("yunnnyunnn_test", S3::ACL_PUBLIC_READ);
 			//move the file
-			if ($this->s3->putObjectFile($fileTempName, "weather_bucket", $fileName, S3::ACL_PUBLIC_READ)) {
+			if ($this->s3->putObjectFile($fileTempName, "yunnnyunnn_test", $fileName, S3::ACL_PUBLIC_READ)) {
 				echo "We successfully uploaded your file.";
 			}else{
 				echo "Something went wrong while uploading your file... sorry.";

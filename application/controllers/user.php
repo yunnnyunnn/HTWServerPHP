@@ -320,10 +320,14 @@ class User extends My_Controller {
                 
                 $query = $this->share_model->get_share($where_share, 'share_weather_type, share_photo_url', 1);
                 $shares = $query->result();
-                $share = $shares[0];
-
-                $notification->notification_share_photo_url = $share->share_photo_url;
-                $notification->notification_share_weather_type = $share->share_weather_type;
+                
+                //if ($query->num_rows()>0){
+                    $share = $shares[0];
+                    
+                    $notification->notification_share_photo_url = $share->share_photo_url;
+                    $notification->notification_share_weather_type = $share->share_weather_type;
+                //}
+                
             }
             else { // asks notification
                 
