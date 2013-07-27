@@ -16,6 +16,8 @@
             $this->load->library('S3');
             $this->load->library('payload_maker');
             $this->load->library('wp_push_notification_maker');
+            $this->load->library('image_manipulation');
+
 
         }
         public function index()
@@ -210,11 +212,30 @@
                 $fileName = "$user_id/".time().".jpg";
                 $fileTempName = $_FILES['theFile']['tmp_name'];
                 
+                $thumbTempName = "$user_id".time().".jpg";
+                $destination = FCPATH.'upload/'.$thumbTempName;
+                $this->image_manipulation->create_thumbs($fileTempName, $destination);
+                
+                
+                $path_parts = pathinfo($fileName);
+                $thumbName = $path_parts['dirname'].'/'.$path_parts['filename'].'_thumb.'.$path_parts['extension'];
+                
                 //create a new bucket
                 //$this->s3->putBucket("weather_bucket", S3::ACL_PUBLIC_READ);
                 //move the file
                 if ($this->s3->putObjectFile($fileTempName, "weather_bucket", $fileName, S3::ACL_PUBLIC_READ)) {
                     //echo "We successfully uploaded your file.";
+                    
+                    //move the file
+                    if ($this->s3->putObjectFile($destination, "weather_bucket", $thumbName, S3::ACL_PUBLIC_READ)) {
+                        //echo "We successfully uploaded your thumb.";
+                        // 刪除upload裡的暫存檔案
+                        unlink($destination);
+                    }else{
+                        //echo "Something went wrong while uploading your thumb... sorry.";
+                    }
+                    
+                    
                 }else{
                     //echo "Something went wrong while uploading your file... sorry.";
                 }
