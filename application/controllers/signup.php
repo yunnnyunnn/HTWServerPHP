@@ -147,6 +147,10 @@ class Signup extends CI_Controller {
                                 $time = $share['time'];
                                 
                                 
+                                $timeObj = strtotime($time);
+
+                                $new_time = date('Y-m-d H:i:s', strtotime('+14 hours', $timeObj));
+
                                 $data = array(
                                               'user_id'=>$user_id,
                                               'share_content'=>$msg,
@@ -154,7 +158,7 @@ class Signup extends CI_Controller {
                                               'share_photo_url'=>$pic,
                                               'share_latitude'=>$x,
                                               'share_longitude'=>$y,
-                                              'share_time'=>$time,
+                                              'share_time'=>$new_time,
                                               'share_likes'=>0
                                               );
                                 

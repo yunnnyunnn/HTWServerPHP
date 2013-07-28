@@ -27,9 +27,10 @@ class Test extends My_Controller {
     
     public function testit()
     {
-        $source = FCPATH.'upload/123.jpg';
-        $destination = FCPATH.'upload/thumb/123.jpg';
-        $this->image_manipulation->create_thumbs($source, $destination);
+        $time = strtotime('2013-7-28 00:00:00');
+        echo $time;
+        $new_time = date('Y-m-d H:i:s', strtotime('+8 hours', $time));
+        echo $new_time;
     }
 
 	
