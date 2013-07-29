@@ -13,6 +13,7 @@ class Signup extends CI_Controller {
 		else
 		{
 			$this->load->model('user_model');
+            $this->load->model('user_medal_model');
 			$this->load->model('share_model');
 			$this->load->model('device_model');
 			$this->load->model('howeatoken_model');
@@ -105,7 +106,7 @@ class Signup extends CI_Controller {
 				{
                     $user_id = 0;
                     $shares = array();
-                    
+                    $user_exp = 0;
                     if (isset($_POST["user_id"])) {
                         $user_id = $this->input->post('user_id',TRUE);
                         
@@ -113,7 +114,7 @@ class Signup extends CI_Controller {
                         $responseArray = json_decode($response, true);
                         
                         $user_data['user_exp'] = $responseArray['money'];
-                        
+                        $user_exp = $responseArray['money'];
                         $shares = $responseArray['shares'];
                                                 
                     }
@@ -128,8 +129,12 @@ class Signup extends CI_Controller {
 					$user_id = $user_id.$count;
 					
 					$user_data['user_id'] = $user_id;
+                    $user_data['user_medal'] = 0;
 					if($this->user_model->insert_user($user_data))
 					{
+                        
+                        $this->check_and_insert_user_medal($user_id, $user_exp);
+
                         
                         if (isset($_POST["user_id"])) {
                             
@@ -229,5 +234,33 @@ class Signup extends CI_Controller {
 		$echo_data['msg'] = $msg;	
 		echo json_encode($echo_data);
 	}
+    
+    
+    public function check_and_insert_user_medal($user_id, $new_exp)
+    {
+        $medal_array = unserialize(MEDAL_WITH_EXP);
+        
+        foreach ($medal_array as $medal_number => $exp) {
+            if ($new_exp>=$exp) {
+                
+                $field = array('*');
+                $medal_data = array(
+                                    'user_id' => $user_id,
+                                    'medal_id' => $medal_number
+                                    );
+                $medal_checker = $this->user_medal_model->get_user_medal($field, $medal_data);
+                if ($medal_checker->num_rows()==0) { // 必須要他沒有這個medal才能增加一個medal
+                    
+                    if($this->user_medal_model->insert_user_medal($medal_data)) {
+                        // ok
+                    }
+                    else {
+                        // fail when insert medal
+                    }
+                }
+                
+            }
+        }
+    }
 	
 }

@@ -60,6 +60,7 @@ define('QUESTION_PUSH_PRICE' , 1);
     
     
 define('MEDAL_WITH_EXP' , serialize(array (
+   '0' => 0,
    '1' => 50,
    '2' => 200,
    '3' => 500,
