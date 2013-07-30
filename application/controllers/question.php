@@ -287,6 +287,18 @@ class Question extends My_Controller {
 				'question_reward' => $question_reward,
 			);
             
+            
+            if($is_pay) // 要通知人，檢查下是否有足夠的錢
+            {
+                if (!$this->user_money_enough_checker($user_id, $this->current_payment_per_question)) {
+                    $status = 'fail';
+                    $msg = 'money not enough';
+                    echo json_encode(array('status' => $status , 'msg' => $msg));
+                    return;
+                }
+            }
+            
+            
             $question_id = $this->question_model->insert_question($data);
 			
 			if(isset($question_id))
@@ -296,6 +308,9 @@ class Question extends My_Controller {
 				$msg = 'Question insert sucessfully.';
 				if($is_pay) // 要通知人
 				{
+                    
+                    
+                    
                     
                     // 假如任何一個值是空的就無法執行
                     if (empty($question_latitude)||empty($question_longitude)||empty($question_distance_limited)||empty($question_notification_time)) {
@@ -334,8 +349,20 @@ class Question extends My_Controller {
                         }
                     }
                     
+                    if (count($available_notification_receiver)==0) {
+                        $status = 'ok';
+                        $msg = 'Question insert sucessfully but no user to notify';
+                        echo json_encode(array('status' => $status , 'msg' => $msg));
+                        return;
+                    }
                     
                     
+                    if (!$this->user_pay_money($user_id, $this->current_payment_per_question)) {
+                        $status = 'ok';
+                        $msg = 'fail to pay, Question insert sucessfully but no notification';
+                        echo json_encode(array('status' => $status , 'msg' => $msg));
+                        return;
+                    }
                     
                     // 開始制作通知
                     foreach ($available_notification_receiver as $receiver) {
@@ -401,9 +428,8 @@ class Question extends My_Controller {
                     
                     
                     
-                    
                     $status = 'ok';
-                    $msg = 'Question insert sucessfully and notify some users';
+                    $msg = 'Pay success, Question insert sucessfully and notify some users';
                     
                     echo json_encode(array('status' => $status , 'msg' => $msg, 'result' => $available_notification_receiver));
                     return;

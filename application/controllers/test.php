@@ -27,10 +27,17 @@ class Test extends My_Controller {
     
     public function testit()
     {
-        $time = strtotime('2013-7-28 00:00:00');
-        echo $time;
-        $new_time = date('Y-m-d H:i:s', strtotime('+8 hours', $time));
-        echo $new_time;
+        $payer_id = $this->input->post('payer_id', TRUE);
+        $payment = $this->input->post('payment', TRUE);
+        
+        if ($this->user_pay_money($payer_id, $payment)) {
+            echo 'success pay';
+        }
+        else {
+            echo 'failed pay';
+
+        }
+        
     }
 
 	

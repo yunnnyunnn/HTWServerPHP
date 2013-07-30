@@ -13,6 +13,9 @@ class My_Controller extends CI_Controller {
 	var $answer_question_with_photo=2;
 	var $answer_is_liked=1;
 	var $answer_is_best_answer=10;
+    
+    // 費用
+    var $current_payment_per_question = 1;
 	
 	public function __construct()
 	{    
@@ -128,6 +131,54 @@ class My_Controller extends CI_Controller {
             
         }
         return $device_token_array;
+    }
+    
+    public function user_pay_money($payer_id, $payment) {
+        
+        $field = array('user_money');
+        $where = array('user_id'=>$payer_id);
+        $user_data=$this->user_model->get_user($field,$where);
+        
+        if($user_data->num_rows() == 0) {
+            return FALSE;
+        }
+        
+        $user_money = $user_data->row()->user_money;
+        
+        $user_money = $user_money - $payment;
+        
+        if ($user_money<0) {
+            return FALSE;
+        }
+        
+        
+		$updatefield=array('user_money' => $user_money );
+		
+        return $this->user_model->update_user($where,$updatefield);
+
+    }
+    
+    public function user_money_enough_checker($payer_id, $payment) {
+        
+        $field = array('user_money');
+        $where = array('user_id'=>$payer_id);
+        $user_data=$this->user_model->get_user($field,$where);
+        
+        if($user_data->num_rows() == 0) {
+            return FALSE;
+        }
+        
+        $user_money = $user_data->row()->user_money;
+        
+        $user_money = $user_money - $payment;
+        
+        if ($user_money<0) {
+            return FALSE;
+        }
+        else {
+            return TRUE;
+        }
+        
     }
     
     
