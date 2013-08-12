@@ -130,7 +130,7 @@ class Signup extends CI_Controller {
 					
 					$user_data['user_id'] = $user_id;
                     $user_data['user_medal'] = 0;
-                    $user_data['user_money'] = 10;
+                    $user_data['user_money'] = 3;
 
 					if($this->user_model->insert_user($user_data))
 					{
