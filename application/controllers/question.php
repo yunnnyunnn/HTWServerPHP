@@ -106,7 +106,7 @@ class Question extends My_Controller {
 		}
 		else
 		{
-			$status = 'fail';
+			$status = 'ok';
 			$msg = 'no results.';
 		}
 		echo json_encode(array('status'=>$status,'msg' => $msg,'result' => $question_rows));
