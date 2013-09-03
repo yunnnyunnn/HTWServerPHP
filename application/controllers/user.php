@@ -166,6 +166,7 @@ class User extends My_Controller {
 				$echo_data['user_share_count'] = $user_share->num_rows();
                 $echo_data['user_answer_count'] = $user_answer->num_rows();
 				$echo_data['user_rank'] = $user_rank->num_rows()+1;
+                $user_data->row()->user_password = '*';
 				$echo_data['userdata'] = $user_data->result();
 			}
 			else
