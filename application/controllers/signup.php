@@ -24,6 +24,71 @@ class Signup extends CI_Controller {
 		$this->load->view('signup_view');
 	}
 	
+    public function transfer_posts_from_old_server_to_new()
+    {
+        $msg = '';
+		$status = '';
+		$echo_data = array();
+        
+		$old_user_id = $this->input->post('old_user_id',TRUE);
+		$new_user_id = $this->input->post('new_user_id',TRUE);
+        
+        if (!isset($_POST["old_user_id"])||!isset($_POST["new_user_id"])) {
+            $status = 'fail';
+            $msg = 'missing post value';
+        }
+        else {
+            $response = $this->curl->simple_post('http://yunnnyunnn.com/transfer.php', array('userID'=>$old_user_id), array(CURLOPT_BUFFERSIZE => 10));
+            $responseArray = json_decode($response, true);
+            
+            $shares = $responseArray['shares'];
+            
+            foreach($shares as $share){
+                
+                $x = $share['x'];
+                $y = $share['y'];
+                $weather = $share['weather'];
+                $pic = $share['pic'];
+                if($pic != "") {
+                    $pic = "http://yunnnyunnn.com/weatherData$pic";
+                }
+                $msg = $share['msg'];
+                $time = $share['time'];
+                
+                
+                $timeObj = strtotime($time);
+                
+                $new_time = date('Y-m-d H:i:s', strtotime('+14 hours', $timeObj));
+                
+                $data = array(
+                              'user_id'=>$new_user_id,
+                              'share_content'=>$msg,
+                              'share_weather_type'=>$weather,
+                              'share_photo_url'=>$pic,
+                              'share_latitude'=>$x,
+                              'share_longitude'=>$y,
+                              'share_time'=>$new_time,
+                              'share_likes'=>0
+                              );
+                
+                $result = $this->share_model->insert_share($data);
+                
+            }
+            
+            $status = 'ok';
+            $msg = 'transfer_posts_from_old_server_to_new succeed';
+            $echo_data['data'] = $shares;
+
+        }
+        
+        
+        
+        
+        $echo_data['status'] = $status;
+		$echo_data['msg'] = $msg;
+		echo json_encode($echo_data);
+    }
+    
 	public function signup_service()
 	{
 		$msg = '';
