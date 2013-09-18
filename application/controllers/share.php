@@ -502,12 +502,13 @@
             // 開始制作一個通知
             // 先抓到要傳給哪些人
             
+            
+            /********** duplicated script
             $where = array(
                            'share_id' => $share_id
                            );
             $field = array('share.user_id');
             
-            $receiver_array = array();
             
             // 抓到作者
             $query = $this->share_model->get_share($where, $field);
@@ -520,6 +521,10 @@
                     }
                 }
             }
+            */
+            
+            $receiver_array = array();
+            $receiver_array[] = $share_liked_user_id;
             
             // 開始制作通知
             foreach ($receiver_array as $receiver) {

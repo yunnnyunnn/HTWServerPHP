@@ -482,7 +482,7 @@ class Question extends My_Controller {
 			if(isset($_FILES['theFile']))
 			{
 				$this->load->library('S3');
-				$file_name = $user_id.time().".jpg";
+				$file_name = "$user_id/".time().".jpg";
 				if (!$this->s3->putObjectFile($_FILES['theFile']['tmp_name'], "weather_bucket", $file_name, S3::ACL_PUBLIC_READ)) {
 					$status = 'fail';
 					$msg = "Something went wrong while uploading your file... sorry.";
