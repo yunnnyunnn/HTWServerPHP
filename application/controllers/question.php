@@ -793,9 +793,43 @@ class Question extends My_Controller {
 					{
 						//減少使用者經驗值
                         $this->update_user_exp($user_id,-$this->answer_is_liked);
+                        
+                        
+                        ////////////////////刪除通知
+                        
+                        // 抓到question_id和回答者id
+                        $question_id;
+                        $receiver;
+                        $where = array(
+                                       'answer_id' => $answer_id
+                                       );
+                        $field = array('answer.user_id', 'answer.question_id');
+                        $answer = $this->answer_model->get_answer($field,$where);
+                        $answer_row = $answer->result();
+                        if ($answer->num_rows() > 0) {
+                            foreach($answer_row as $ans)
+                            {
+                                $question_id = $ans->question_id;
+                                $receiver = $ans->user_id;
+                            }
+                        }
+                        
+                        $where = array(
+                                       'user_id_sender'=>$user_id,
+                                       'post_id'=>$question_id,
+                                       'notification_type'=> 4
+                                       );
+                        if($this->notification_model->delete_notification($where)) {
+                            $msg = 'delete answer score ok, delete notification success';
 
+                        }
+                        else {
+                            $msg = 'delete answer score ok, but delete notification failed';
+
+                        }
+                        
+                        
 						$status = 'ok';
-						$msg = 'Delete Score Successfully.';
 						$update = TRUE;
 					}
 					else

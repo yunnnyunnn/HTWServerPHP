@@ -621,9 +621,23 @@
             if($getshare->row()->user_id!=$user_id)             
                   $this->update_user_exp($getshare->row()->user_id,-$this->share_liked);
 
+            ////////////////////刪除通知
             
-               echo json_encode(array('msg' => 'delete share likes ok',
-                                      'status' => 'success'));
+            
+            $where = array(
+                          'user_id_sender'=>$user_id,
+                          'post_id'=>$share_id,
+                           'notification_type'=> 1
+                          );
+            if($this->notification_model->delete_notification($where)) {
+                echo json_encode(array('msg' => 'delete share likes ok, delete notification success',
+                                       'status' => 'success'));
+            }
+            else {
+                echo json_encode(array('msg' => 'delete share likes ok, but delete notification failed',
+                                       'status' => 'success'));
+            }
+            
             
         }
         
