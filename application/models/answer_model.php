@@ -9,7 +9,7 @@ class Answer_model extends CI_Model
 	
 	function get_answer($field='*',$where)
 	{	
-		$this->db->order_by('answer_time','DESC');	
+		$this->db->order_by('answer_time','ASC');	
 		$this->db->join('user','answer.user_id = user.user_id');
 		$this->db->select($field);
 		return $this->db->where($where)->get('answer');
