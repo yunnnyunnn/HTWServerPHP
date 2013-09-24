@@ -524,7 +524,10 @@
             */
             
             $receiver_array = array();
-            $receiver_array[] = $share_liked_user_id;
+            if($share_liked_user_id!=$user_id)
+            {
+                $receiver_array[] = $share_liked_user_id;
+            }
             
             // 開始制作通知
             foreach ($receiver_array as $receiver) {
