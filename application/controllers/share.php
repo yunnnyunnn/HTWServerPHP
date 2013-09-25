@@ -156,6 +156,51 @@
                                    ));
         }
         
+        
+        public function get_one_share() {
+            
+            $where = array();
+            
+            // 指定這次抓的串流從哪一篇開始
+            $share_id_max = $this->input->post('share_id_max', TRUE);
+            if(isset($_POST["share_id_max"]))
+            {
+                
+                $where['share_id'] = $share_id_max;
+            }
+            
+            
+            $share_count = 1;
+            
+            
+            $field = array('*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');
+            $query = $this->share_model->get_share($where, $field, $share_count);
+            
+            $shares = $query->result();
+            
+            // 這邊開始將每一篇的comment抓下來
+            foreach($shares as $share)
+            {
+                $share_id = $share->share_id;
+                $where_sub = array('share_id'=>$share_id);
+                
+                $field = array('*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
+                
+                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $field);
+                $share->share_comment = $query_comment->result();
+                
+                $query_like = $this->share_likes_model->get_share_likes($where_sub);
+                $share->share_likes = $query_like->result();
+            }
+            
+            // 將最後結果送出
+            echo json_encode(array('constraints' => $where,
+                                   'result' => $shares,
+                                   'msg' => 'get share ok',
+                                   'status' => 'success'
+                                   ));
+        }
+        
         /* 已經跟get_share()合併
         public function get_user_share()
         {
