@@ -1,17 +1,14 @@
 <?php
 class Android_push_notification_maker
 {
-	function make_notification($regID,$message,$campaigndate,$title,$description)
+	function make_payload($PUSH_MESSAGE_TYPE,$post_id,$user_nickname,$comment)
 	{
-		$fields = array(
-			'registration_ids'  => $regID,
-            'data' => array(
-				'message' => $message,
-                'campaigndate' => $campaigndate,
-                'title' => $title,
-                'description' => $description
-                )
-		);
-		return json_encode($fields);
+		$message =  array(
+			'PUSH_MESSAGE_TYPE' => $PUSH_MESSAGE_TYPE,
+			'post_id' => $post_id,
+			'user_nickname' => $user_nickname,
+			'comment' =>$comment
+			);
+		return json_encode($message);
 	}
 }
