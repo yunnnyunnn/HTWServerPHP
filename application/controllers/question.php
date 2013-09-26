@@ -9,6 +9,7 @@ class Question extends My_Controller {
         $this->load->model('user_model');
         $this->load->model('device_model');
         $this->load->model('push_queue_ios_model');
+		$this->load->model('push_queue_android_model');
 		$this->load->model('answer_model');
 		$this->load->model('answer_scores_model');
 		$this->load->model('location_log_model');
@@ -16,7 +17,7 @@ class Question extends My_Controller {
         $this->load->library('geolocation');
         $this->load->library('payload_maker');
         $this->load->library('wp_push_notification_maker');
-
+ 		$this->load->library('android_push_notification_maker');
 
 	}
 	public function index()
@@ -419,9 +420,13 @@ class Question extends My_Controller {
                             
                         }
                         else if ($device_token['device_type'] == 2) { // android推播
-                            
-                            $device_token['device_token'];
-                            
+                            $payload = $this->android_push_notification_maker->make_payload('5', $question_id, $user_nickname);
+							$data  = array(
+										   'registration_id' => $device_token['device_token'],
+										   'pqa_payload' => $payload,
+										   'pqa_time_queued' => date("Y-m-d H:i:s")
+										   );
+							$result = $this->push_queue_android_model->insert_push_queue_android($data);
                         }
                         
                     }
@@ -601,10 +606,14 @@ class Question extends My_Controller {
                         
                         
                     }
-                    else if ($device_token['device_type'] == 2) { // android推播
-                        
-                        $device_token['device_token'];
-                        
+                    else if ($device_token['device_type'] == 2) { // android推播        
+                        $payload = $this->android_push_notification_maker->make_payload('2', $question_id, $user_nickname);
+						$data  = array(
+							'registration_id' => $device_token['device_token'],
+							'pqa_payload' => $payload,
+							'pqa_time_queued' => date("Y-m-d H:i:s")
+						);
+						$result = $this->push_queue_android_model->insert_push_queue_android($data);   
                     }
                     
                 }
@@ -737,9 +746,13 @@ class Question extends My_Controller {
                         
                     }
                     else if ($device_token['device_type'] == 2) { // android推播
-                        
-                        $device_token['device_token'];
-                        
+						$payload = $this->android_push_notification_maker->make_payload('3', $question_id, $user_nickname);
+						$data  = array(
+							'registration_id' => $device_token['device_token'],
+							'pqa_payload' => $payload,
+							'pqa_time_queued' => date("Y-m-d H:i:s")
+						);
+						$result = $this->push_queue_android_model->insert_push_queue_android($data);   
                     }
                     
                 }
@@ -924,9 +937,13 @@ class Question extends My_Controller {
                                 
                             }
                             else if ($device_token['device_type'] == 2) { // android推播
-                                
-                                $device_token['device_token'];
-                                
+                                $payload = $this->android_push_notification_maker->make_payload('4', $question_id, $user_nickname);
+								$data  = array(
+									'registration_id' => $device_token['device_token'],
+									'pqa_payload' => $payload,
+									'pqa_time_queued' => date("Y-m-d H:i:s")
+								);
+								$result = $this->push_queue_android_model->insert_push_queue_android($data); 
                             }
                             
                         }

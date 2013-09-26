@@ -39,7 +39,10 @@ class Test extends My_Controller {
         }
         
     }
+	
+	function test_push_notification()
+	{
+				 
+	}
 
-	
-	
 }
