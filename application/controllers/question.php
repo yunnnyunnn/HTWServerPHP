@@ -9,7 +9,7 @@ class Question extends My_Controller {
         $this->load->model('user_model');
         $this->load->model('device_model');
         $this->load->model('push_queue_ios_model');
-		$this->load->model('android_push_notification_maker');
+		$this->load->model('push_queue_android_model');
 		$this->load->model('answer_model');
 		$this->load->model('answer_scores_model');
 		$this->load->model('location_log_model');
