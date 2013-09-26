@@ -632,7 +632,7 @@
                     
                 }
                 else if ($device_token['device_type'] == 2) { // android推播
-                    $payload = $this->android_push_notification_maker->make_payload('1', $share_id, $user_nickname,'');
+                    $payload = $this->android_push_notification_maker->make_payload('1', $share_id, $user_nickname);
 					$data  = array(
 								   'registration_id' => $device_token['device_token'],
 								   'pqa_payload' => $payload,
