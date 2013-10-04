@@ -17,7 +17,7 @@ class Image_manipulation{
 	{
 		$CI =& get_instance();		
 		//$CI->load->library("image_lib");
-        
+         
         
         
         $config['image_library'] = 'gd2';
