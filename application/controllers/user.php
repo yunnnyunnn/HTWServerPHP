@@ -342,7 +342,22 @@ class User extends My_Controller {
                                'status' => 'success'
                                ));
     }
-    
+	
+    function get_notification_count()
+	{
+		$user_id = $this->user_id;
+        $where = array();
+        $where['user_id_receiver'] = $user_id;
+        $notification_time = $this->input->post('notification_time', TRUE);
+		//$notification_time = date('Y-m-d H:i:s');
+        if(isset($_POST["notification_time"]))
+        { 
+            $where['notification_time >='] = $notification_time;
+        }
+		$count = $this->notification_model->get_notifitcation_count($where);
+		echo json_encode(array('count' => $count)); 
+	}
+	
     function set_notification_is_record()
     {
         
