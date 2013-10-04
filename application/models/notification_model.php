@@ -31,7 +31,7 @@ class Notification_model extends CI_Model
 	
 	function get_notifitcation_count($where)
 	{
-		return $this->db->where($where)->count_all_results('notification');
+		return $this->db->where($where)->count_all_results('notification'); 
 	}
 	
 	function delete_notification($where)

@@ -355,7 +355,7 @@ class User extends My_Controller {
             $where['notification_time >='] = $notification_time;
         }
 		$count = $this->notification_model->get_notifitcation_count($where);
-		echo json_encode(array('count' => $count));
+		echo json_encode(array('count' => $count)); 
 	}
 	
     function set_notification_is_record()
