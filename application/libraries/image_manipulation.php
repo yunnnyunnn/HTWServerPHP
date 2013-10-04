@@ -20,7 +20,7 @@ class Image_manipulation{
         
         
         
-        $config['image_library'] = 'gd2';
+        $config['image_library'] = 'ImageMagick';
         $config['source_image']	= $source;//FCPATH.'upload/123.jpg';
         $config['create_thumb'] = TRUE;
         $config['maintain_ratio'] = TRUE;
@@ -30,8 +30,8 @@ class Image_manipulation{
         $config['new_image'] = $thumb_path;
 
         
-        $CI->load->library('image_lib',$config);
-        
+        $CI->load->library('image_lib');
+        $CI->image_lib->initialize($config);
         if ( ! $CI->image_lib->resize())
         {
             echo $CI->image_lib->display_errors();
