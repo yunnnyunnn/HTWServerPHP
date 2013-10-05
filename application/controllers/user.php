@@ -350,6 +350,7 @@ class User extends My_Controller {
         $where['user_id_receiver'] = $user_id;
         $notification_time = $this->input->post('notification_time', TRUE);
 		//$notification_time = date('Y-m-d H:i:s');
+		$where['notification_is_record'] = '0';
         if(isset($_POST["notification_time"]))
         { 
             $where['notification_time >='] = $notification_time;
