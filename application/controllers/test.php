@@ -5,9 +5,13 @@ class Test extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		 $this->load->model('user_model');
         $this->load->library('image_manipulation');
 $this->load->model('notification_model');
 $this->load->model('location_log_model');
+$this->load->model('share_model');
+            $this->load->model('share_comment_model');
+            $this->load->model('share_likes_model');
 	}
 	public function index()
 	{
@@ -71,6 +75,58 @@ $this->load->model('location_log_model');
 		}
 		echo json_encode(array('status' => $status,'result' => $query->result()));
 	}
+	
+	public function get_specific_shares() {
+		  
+		
+		  $sid_array = array();
+		  // 指定這次抓的串流從哪一篇開始
+		  $share_id_json = $this->input->post('share_id_json', TRUE);
+		 
+		  $share_id_json = '[{"share_id":1},{"share_id":2}]';
+		  //if(isset($_POST["share_id_json"]))
+		  //{
+			  $sid_array = json_decode($share_id_json,true);
+		  //}
+		 // print_r($sid_array);
+		  
+		  $shares = array();
+		  foreach($sid_array as $specific)
+		  {
+			  $where = array();
+			  $share_count = 1;
+			  $where['share_id'] = $specific['share_id'];
+			  
+			  $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');		
+			  $query = $this->share_model->get_share($where, $field, $share_count);	
+			 
+			  if($query->num_rows()>0)
+			  {
+				  $one_share = $query->row();
+				  $share_id = $one_share->share_id;
+				  $where_sub = array('share_id'=>$share_id);
+				 
+				  $field = array('share_comment.*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
+				  
+				  $query_comment = $this->share_comment_model->get_share_comment($where_sub, $field);
+				  $one_share->share_comment = $query_comment->result();
+  
+				  $query_like = $this->share_likes_model->get_share_likes($where_sub);			
+				  $one_share->share_likes = $query_like->result();
+				
+				  $shares[] = $one_share;
+			  } 
+			
+			 
+		  }
+		  // 將最後結果送出
+		  echo json_encode(array('result' => $shares,
+								 'msg' => 'get share ok',
+								 'status' => 'success'
+								 ));
+	  }
+
+	
 	function test_image_compress()
 	{
 		$this->image_manipulation->create_thumbs(FCPATH.'userdata/1362455798/123.jpg',FCPATH.'userdata/1362455798/123_thumb.jpg',2000);
