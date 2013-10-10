@@ -244,7 +244,25 @@ class User extends My_Controller {
         echo json_encode(array('msg' => 'update user location ok',
                                'status' => 'ok'));
     }
-    
+    public function get_latest_location()
+	{
+		$user_id = $this->user_id;
+		
+        $where = array(
+            'user_id' => $user_id
+        );
+        $query = $this->location_log_model->get_location_log($where,'*',1);
+		if($query->num_rows()>0)
+		{
+			$status = 'ok';
+		}
+		else
+		{
+			$status = 'fail';
+		}
+		echo json_encode(array('status' => $status,'result' => $query->result()));
+	}
+	
     public function update_device_token()
     {
         $user_id = $this->user_id;

@@ -203,6 +203,48 @@
                                    ));
         }
         
+		public function get_specific_shares() 
+		{
+		  $sid_array = array();
+		  $share_id_json = $this->input->post('share_id_json', TRUE);
+		  if(isset($_POST["share_id_json"]))
+		  {
+			  $sid_array = json_decode($share_id_json);
+		  }
+		  $shares = array();
+		  foreach($sid_array as $specific)
+		  {
+			  $where = array();
+			  $share_count = 1;
+			  $where['share_id'] = $specific['share_id'];
+			  
+			  $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');		
+			  $query = $this->share_model->get_share($where, $field, $share_count);	
+			 
+			  if($query->num_rows()>0)
+			  {
+				  $one_share = $query->row();
+				  $share_id = $one_share->share_id;
+				  $where_sub = array('share_id'=>$share_id);
+				 
+				  $field = array('share_comment.*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
+				  
+				  $query_comment = $this->share_comment_model->get_share_comment($where_sub, $field);
+				  $one_share->share_comment = $query_comment->result();
+	
+				  $query_like = $this->share_likes_model->get_share_likes($where_sub);			
+				  $one_share->share_likes = $query_like->result();
+				
+				  $shares[] = $one_share;
+			  }  
+		  }
+		  // 將最後結果送出
+		  echo json_encode(array('result' => $shares,
+								 'msg' => 'get share ok',
+								 'status' => 'success'
+								 ));
+	  }
+		
         /* 已經跟get_share()合併
         public function get_user_share()
         {
