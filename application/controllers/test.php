@@ -7,6 +7,7 @@ class Test extends CI_Controller {
 		parent::__construct();
         $this->load->library('image_manipulation');
 $this->load->model('notification_model');
+$this->load->model('location_log_model');
 	}
 	public function index()
 	{
@@ -52,7 +53,24 @@ $this->load->model('notification_model');
         }
         
     }
-	
+	   public function get_latest_location()
+	{
+		//$user_id = $this->user_id;
+		$user_id = '1';
+        $where = array(
+            'user_id' => $user_id
+        );
+        $query = $this->location_log_model->get_location_log($where,'*',1);
+		if($query->num_rows()>0)
+		{
+			$status = 'ok';
+		}
+		else
+		{
+			$status = 'fail';
+		}
+		echo json_encode(array('status' => $status,'result' => $query->result()));
+	}
 	function test_image_compress()
 	{
 		$this->image_manipulation->create_thumbs(FCPATH.'userdata/1362455798/123.jpg',FCPATH.'userdata/1362455798/123_thumb.jpg',2000);
