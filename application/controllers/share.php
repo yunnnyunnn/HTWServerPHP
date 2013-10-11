@@ -209,7 +209,7 @@
 		  $share_id_json = $this->input->post('share_id_json', TRUE);
 		  if(isset($_POST["share_id_json"]))
 		  {
-			  $sid_array = json_decode($share_id_json);
+			  $sid_array = json_decode($share_id_json,TRUE);
 		  }
 		  $shares = array();
 		  foreach($sid_array as $specific)
