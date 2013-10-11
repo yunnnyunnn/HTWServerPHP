@@ -246,8 +246,7 @@ class User extends My_Controller {
     }
     public function get_latest_location()
 	{
-		$user_id = $this->user_id;
-		
+		$user_id = $this->input->post('user_id',TRUE);
         $where = array(
             'user_id' => $user_id
         );
