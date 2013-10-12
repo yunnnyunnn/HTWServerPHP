@@ -433,12 +433,12 @@
             }
             
             
-            
+            $share_comment_time = date("Y-m-d H:i:s");
             $data = array(
                           'user_id'=>$user_id,
                           'share_id'=>$share_id,
                           'share_comment_content'=>$share_comment_content,
-                          'share_comment_time'=>date("Y-m-d H:i:s"),
+                          'share_comment_time'=> $share_comment_time,
                           );
             
             $result = $this->share_comment_model->insert_share_comment($data);
@@ -537,7 +537,7 @@
             
             
             echo json_encode(array('msg' => 'comment succesfully saved',
-                                    'status' => 'success'));
+                                    'status' => 'success','share_comment_time' =>  $share_comment_time));
         }
         
 
