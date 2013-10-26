@@ -322,11 +322,17 @@
                         unlink($destination);
                     }else{
                         //echo "Something went wrong while uploading your thumb... sorry.";
+                        echo json_encode(array('msg' => 'photo not uploaded',
+                                               'status' => 'fail'));
+                        return;
                     }
                     
                     
                 }else{
                     //echo "Something went wrong while uploading your file... sorry.";
+                    echo json_encode(array('msg' => 'photo not uploaded',
+                                           'status' => 'fail'));
+                    return;
                 }
             }
             
