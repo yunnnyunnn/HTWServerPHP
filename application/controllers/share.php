@@ -487,6 +487,7 @@
             
             
             // 開始制作通知
+			$notification_id = '';
             foreach ($receiver_array as $receiver) {
                 $data = array (
                 'user_id_sender' => $user_id,
@@ -497,7 +498,7 @@
                 'notification_is_record' => 0,
                 );
                 
-                $result = $this->notification_model->insert_notification($data);
+                $notification_id = $this->notification_model->insert_notification($data);
 
             }
             /////////////////////////////////
@@ -530,7 +531,7 @@
                    
                 }
                 else if ($device_token['device_type'] == 2) { // android推播
-                    $payload = $this->android_push_notification_maker->make_payload('0', $share_id, $user_nickname,$share_comment_content);
+                    $payload = $this->android_push_notification_maker->make_payload('0', $share_id, $user_nickname,$notification_id,$share_comment_content);
 					$data  = array(
 								   'registration_id' => $device_token['device_token'],
 								   'pqa_payload' => $payload,
@@ -629,6 +630,7 @@
             }
             
             // 開始制作通知
+			$notification_id = '';
             foreach ($receiver_array as $receiver) {
                 $data = array (
                                'user_id_sender' => $user_id,
@@ -639,7 +641,7 @@
                                'notification_is_record' => 0,
                                );
                 
-                $result = $this->notification_model->insert_notification($data);
+                $notification_id = $this->notification_model->insert_notification($data);
                 
             }
             
@@ -680,11 +682,11 @@
                     
                 }
                 else if ($device_token['device_type'] == 2) { // android推播
-                    $payload = $this->android_push_notification_maker->make_payload('1', $share_id, $user_nickname);
+                    $payload = $this->android_push_notification_maker->make_payload('1', $share_id, $user_nickname,$notification_id);
 					$data  = array(
 								   'registration_id' => $device_token['device_token'],
 								   'pqa_payload' => $payload,
-								   'pqa_time_queued' => date("Y-m-d H:i:s")
+								   'pqa_time_queued' => date("Y-m-d H:i:s"),
 								   );
 					$result = $this->push_queue_android_model->insert_push_queue_android($data);
                 }
