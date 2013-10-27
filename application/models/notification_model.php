@@ -8,7 +8,14 @@ class Notification_model extends CI_Model
 	
 	function insert_notification($data)
 	{
-		return $this->db->insert('notification',$data); 
+		$result = $this->db->insert('notification',$data); 
+		if($result == TRUE)
+		{
+			return $this->db->insert_id();
+		}else
+		{
+			return false;
+		}
 	}
 	
 	function get_notification($where,$limit=0,$offset=0)

@@ -366,6 +366,7 @@ class Question extends My_Controller {
                     }
                     
                     // 開始制作通知
+					$notification_id = '';
                     foreach ($available_notification_receiver as $receiver) {
                         $data = array (
                                        'user_id_sender' => $user_id,
@@ -376,7 +377,7 @@ class Question extends My_Controller {
                                        'notification_is_record' => 0,
                                        );
                         
-                        $result = $this->notification_model->insert_notification($data);
+                        $notification_id = $this->notification_model->insert_notification($data);
                         
                     }
                     
@@ -420,11 +421,11 @@ class Question extends My_Controller {
                             
                         }
                         else if ($device_token['device_type'] == 2) { // android推播
-                            $payload = $this->android_push_notification_maker->make_payload('5', $question_id, $user_nickname);
+                            $payload = $this->android_push_notification_maker->make_payload('5', $question_id, $user_nickname,$notification_id);
 							$data  = array(
 										   'registration_id' => $device_token['device_token'],
 										   'pqa_payload' => $payload,
-										   'pqa_time_queued' => date("Y-m-d H:i:s")
+										   'pqa_time_queued' => date("Y-m-d H:i:s"),
 										   );
 							$result = $this->push_queue_android_model->insert_push_queue_android($data);
                         }
@@ -555,6 +556,7 @@ class Question extends My_Controller {
                 }
                 
                 // 開始制作通知
+				$notification_id = '';
                 foreach ($receiver_array as $receiver) {
                     $data = array (
                                    'user_id_sender' => $user_id,
@@ -565,7 +567,7 @@ class Question extends My_Controller {
                                    'notification_is_record' => 0,
                                    );
                     
-                    $result = $this->notification_model->insert_notification($data);
+                    $notification_id = $this->notification_model->insert_notification($data);
                     
                 }
                 
@@ -607,11 +609,11 @@ class Question extends My_Controller {
                         
                     }
                     else if ($device_token['device_type'] == 2) { // android推播        
-                        $payload = $this->android_push_notification_maker->make_payload('2', $question_id, $user_nickname);
+                        $payload = $this->android_push_notification_maker->make_payload('2', $question_id, $user_nickname,$notification_id);
 						$data  = array(
 							'registration_id' => $device_token['device_token'],
 							'pqa_payload' => $payload,
-							'pqa_time_queued' => date("Y-m-d H:i:s")
+							'pqa_time_queued' => date("Y-m-d H:i:s"),
 						);
 						$result = $this->push_queue_android_model->insert_push_queue_android($data);   
                     }
@@ -694,6 +696,7 @@ class Question extends My_Controller {
                 }
                 
                 // 開始制作通知
+				$notification_id = '';
                 if ($sender&&$receiver&&$question_id) {
                     $data = array (
                                    'user_id_sender' => $sender,
@@ -704,7 +707,7 @@ class Question extends My_Controller {
                                    'notification_is_record' => 0,
                                    );
                     
-                    $result = $this->notification_model->insert_notification($data);
+                    $notification_id = $this->notification_model->insert_notification($data);
                 }
                 
                 
@@ -746,11 +749,11 @@ class Question extends My_Controller {
                         
                     }
                     else if ($device_token['device_type'] == 2) { // android推播
-						$payload = $this->android_push_notification_maker->make_payload('3', $question_id, $user_nickname);
+						$payload = $this->android_push_notification_maker->make_payload('3', $question_id, $user_nickname,$notification_id);
 						$data  = array(
 							'registration_id' => $device_token['device_token'],
 							'pqa_payload' => $payload,
-							'pqa_time_queued' => date("Y-m-d H:i:s")
+							'pqa_time_queued' => date("Y-m-d H:i:s"),
 						);
 						$result = $this->push_queue_android_model->insert_push_queue_android($data);   
                     }
@@ -886,6 +889,7 @@ class Question extends My_Controller {
                         }
                         
                         // 開始制作通知
+						$notification_id = '';
                         if ($receiver&&$question_id&&$receiver!=$user_id) {
                             $data = array (
                                            'user_id_sender' => $user_id,
@@ -896,7 +900,7 @@ class Question extends My_Controller {
                                            'notification_is_record' => 0,
                                            );
                             
-                            $result = $this->notification_model->insert_notification($data);
+                            $notification_id = $this->notification_model->insert_notification($data);
                         }
                         
                         
@@ -937,11 +941,11 @@ class Question extends My_Controller {
                                 
                             }
                             else if ($device_token['device_type'] == 2) { // android推播
-                                $payload = $this->android_push_notification_maker->make_payload('4', $question_id, $user_nickname);
+                                $payload = $this->android_push_notification_maker->make_payload('4', $question_id, $user_nickname,$notification_id);
 								$data  = array(
 									'registration_id' => $device_token['device_token'],
 									'pqa_payload' => $payload,
-									'pqa_time_queued' => date("Y-m-d H:i:s")
+									'pqa_time_queued' => date("Y-m-d H:i:s"),
 								);
 								$result = $this->push_queue_android_model->insert_push_queue_android($data); 
                             }
