@@ -425,7 +425,7 @@ class Question extends My_Controller {
 							$data  = array(
 										   'registration_id' => $device_token['device_token'],
 										   'pqa_payload' => $payload,
-										   'pqa_time_queued' => date("Y-m-d H:i:s"),
+										   'pqa_time_queued' => date("Y-m-d H:i:s")
 										   );
 							$result = $this->push_queue_android_model->insert_push_queue_android($data);
                         }
@@ -613,7 +613,7 @@ class Question extends My_Controller {
 						$data  = array(
 							'registration_id' => $device_token['device_token'],
 							'pqa_payload' => $payload,
-							'pqa_time_queued' => date("Y-m-d H:i:s"),
+							'pqa_time_queued' => date("Y-m-d H:i:s")
 						);
 						$result = $this->push_queue_android_model->insert_push_queue_android($data);   
                     }
@@ -753,7 +753,7 @@ class Question extends My_Controller {
 						$data  = array(
 							'registration_id' => $device_token['device_token'],
 							'pqa_payload' => $payload,
-							'pqa_time_queued' => date("Y-m-d H:i:s"),
+							'pqa_time_queued' => date("Y-m-d H:i:s")
 						);
 						$result = $this->push_queue_android_model->insert_push_queue_android($data);   
                     }
@@ -945,7 +945,7 @@ class Question extends My_Controller {
 								$data  = array(
 									'registration_id' => $device_token['device_token'],
 									'pqa_payload' => $payload,
-									'pqa_time_queued' => date("Y-m-d H:i:s"),
+									'pqa_time_queued' => date("Y-m-d H:i:s")
 								);
 								$result = $this->push_queue_android_model->insert_push_queue_android($data); 
                             }

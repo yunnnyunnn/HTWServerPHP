@@ -411,6 +411,35 @@ class User extends My_Controller {
             return;
         }
     }
-	
+	function signout()
+    {
+		$user_id = $this->user_id;
+        $status = '';
+		$msg = '';
+        $device_id = $this->input->post('device_id',TRUE);
+        
+        if (empty($device_id)||!is_numeric($device_id)) {
+            $msg = 'wrong device';
+			$status = 'fail';
+        }
+        else 
+		{
+            $where = array(
+				'device_id'=>$device_id,
+				'user_id'=>$user_id
+			);
+            if ($this->device_model->delete_device($where)) {
+                $msg = 'sign out success';
+                $status = 'ok';
+            }
+            else {
+                $msg = 'db wrong when signing out';
+                $status = 'fail';
+            } 
+        }
+        $echo_data['status'] = $status;
+		$echo_data['msg'] = $msg;
+		echo json_encode($echo_data);
+    }
 	
 }
