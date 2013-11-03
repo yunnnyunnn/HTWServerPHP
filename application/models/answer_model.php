@@ -7,6 +7,13 @@ class Answer_model extends CI_Model
 		parent::_construct();
 	}
 	
+	function get_answer_without_user($field='*',$where)
+	{	
+		$this->db->order_by('answer_time','ASC');	
+		$this->db->select($field);
+		return $this->db->where($where)->get('answer');
+	}
+	
 	function get_answer($field='*',$where)
 	{	
 		$this->db->order_by('answer_time','ASC');	
