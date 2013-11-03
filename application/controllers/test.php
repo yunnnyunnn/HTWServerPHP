@@ -10,6 +10,7 @@ class Test extends CI_Controller {
 $this->load->model('notification_model');
 $this->load->model('location_log_model');
 $this->load->model('share_model');
+$this->load->model('answer_model');
             $this->load->model('share_comment_model');
             $this->load->model('share_likes_model');
 	}
@@ -125,7 +126,44 @@ $this->load->model('share_model');
 								 'status' => 'success'
 								 ));
 	  }
+function test_set_best_answer()
+{
+	 $answer_id = 1;
+	$where = array('answer_id' => $answer_id);
+			//
+			$is_best_answer_set = FALSE;
+			$one_answer = $this->answer_model->get_answer_without_user(array('question_id'),$where);
+			if($one_answer->num_rows()>0)
+			{
+				$where = array('question_id' => $one_answer->row()->question_id);
+				$answers = $this->answer_model->get_answer_without_user(array('answer_id','is_best_answer'),$where);
+				
+				foreach($answers->result() as $each_answer)
+				{
 
+					if($each_answer->is_best_answer == 1)
+					{
+						$is_best_answer_set = TRUE;
+						break;
+					}		 
+				}
+			}
+			else
+			{
+				$status = 'fail';
+				$msg = "the answer is not exist.";
+				echo json_encode(array('status' => $status , 'msg' => $msg));
+				return;
+			}
+			if($is_best_answer_set == TRUE)
+			{
+				$status = 'fail';
+				$msg = "best answer is set.";
+				echo json_encode(array('status' => $status , 'msg' => $msg));
+				return;
+			}
+			echo "haha";
+}
 	
 	function test_image_compress()
 	{
