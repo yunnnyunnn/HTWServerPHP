@@ -175,7 +175,53 @@ class Question extends My_Controller {
 		echo json_encode(array('status'=>$status,'msg' => $msg,'count'=>$count,'result' => $result));
 		*/
 	}
-    
+	
+    public function get_specific_questions() 
+	{
+		$status = 'success';
+		$msg = 'get question ok';
+		$qid_array = array();
+		$question_id_json = $this->input->post('question_id_json', TRUE);
+	 	if(isset($_POST["question_id_json"]))
+		{
+			$qid_array = json_decode($question_id_json,TRUE);
+		}
+		$questions = array();
+		foreach($qid_array as $specific)
+		{
+			$where = array();
+			$where['question_id'] = $specific['question_id'];
+			$field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
+			$query = $this->question_model->get_question($field,$where);
+			$count = $query->num_rows();
+			if($count>0)
+			{
+				$one_question = $query->row();
+				$question_id = $one_question->question_id;
+				$answer_where = array('question_id'=>$question_id);
+				$answer_field = array('answer.*','user.user_nickname', 'timediff(answer.answer_time, now()) as answer_timediff');			
+				$answer = $this->answer_model->get_answer($answer_field,$answer_where);	
+				$answer_row = $answer->result();
+				foreach($answer_row as $ans)
+				{
+					$answer_scores_where = array();
+					$answer_scores_field = array('*');
+					$answer_scores_where['answer_id'] = $ans->answer_id;
+					$answer_scores = $this->answer_scores_model->get_answer_scores($answer_scores_field,$answer_scores_where);
+					$ans->answer_scores = $answer_scores->result();
+				}
+				$one_question->answer = $answer_row;
+				$answer->free_result();			
+				$questions[] = $one_question;
+			}
+			else
+			{
+				$status = 'fail';
+				$msg = 'no results.';
+			}		
+		}
+		echo json_encode(array('status'=>$status,'msg' => $msg,'result' => $questions));
+	}
     public function get_user_around_question()
     {
         $question_latitude = $this->input->post('question_latitude',TRUE);
