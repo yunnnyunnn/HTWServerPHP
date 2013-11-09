@@ -462,7 +462,7 @@ class Question extends My_Controller {
                         }
                         else if ($device_token['device_type'] == 3) { // windows phone推播
                             
-                            $result= $this->wp_push_notification_maker->send_toast('天氣如何?' ,$user_nickname.'想詢問你那邊的天氣狀況','/question_detail_page.xaml?question_id='.$question_id.'' ,2,$device_token['device_token']);
+                            $result= $this->wp_push_notification_maker->send_toast('Howeather?' ,$user_nickname.'wants to know your local weather','/question_detail_page.xaml?question_id='.$question_id.'' ,2,$device_token['device_token']);
                            
                             
                         }
@@ -650,7 +650,7 @@ class Question extends My_Controller {
                     }
                     else if ($device_token['device_type'] == 3) { // windows phone推播
                         
-                        $result= $this->wp_push_notification_maker->send_toast('天氣如何?' ,$user_nickname.'回答了你的天氣詢問','/question_detail_page.xaml?question_id='.$question_id.'' ,2,$device_token['device_token']);
+                        $result= $this->wp_push_notification_maker->send_toast('Howeahter?' ,$user_nickname.'answered your question!','/question_detail_page.xaml?question_id='.$question_id.'' ,2,$device_token['device_token']);
                         
                         
                     }
@@ -822,7 +822,7 @@ class Question extends My_Controller {
                     }
                     else if ($device_token['device_type'] == 3) { // windows phone推播
                         
-                          $result= $this->wp_push_notification_maker->send_toast('天氣如何?' ,$user_nickname.'將你的答案選為最佳解答','/question_detail_page.xaml?question_id='.$question_id.'' ,2,$device_token['device_token']);
+                          $result= $this->wp_push_notification_maker->send_toast('Howeather?' ,$user_nickname.'chose your answer as the best answer!','/question_detail_page.xaml?question_id='.$question_id.'' ,2,$device_token['device_token']);
                        
                         
                     }
@@ -1014,7 +1014,7 @@ class Question extends My_Controller {
                             }
                             else if ($device_token['device_type'] == 3) { // windows phone推播
                                 
-                                $result= $this->wp_push_notification_maker->send_toast('天氣如何?' ,$user_nickname.'對你的答案表示贊同','/question_detail_page.xaml?question_id='.$question_id.'' ,2,$device_token['device_token']);
+                                $result= $this->wp_push_notification_maker->send_toast('Howeather?' ,$user_nickname.'agreed on your answer!','/question_detail_page.xaml?question_id='.$question_id.'' ,2,$device_token['device_token']);
                                
                                 
                             }
