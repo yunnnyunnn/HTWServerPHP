@@ -526,7 +526,7 @@
                 }
                 else if ($device_token['device_type'] == 3) { // windows phone推播
                                    
-                    $result= $this->wp_push_notification_maker->send_toast('Howeather?' ,$user_nickname.'left comment on share:'.$share_comment_content,'/all_share_page.xaml?type=detail&amp;share_id='.$share_id.'' ,2,$device_token['device_token']);
+                    $result= $this->wp_push_notification_maker->send_toast('Howeather' ,$user_nickname.'left comment on share:'.$share_comment_content,'/all_share_page.xaml?type=detail&amp;share_id='.$share_id.'' ,2,$device_token['device_token']);
                     //$result= $this->wp_push_notification_maker->send_toast('toast','message','',$device_token['device_token']);
                    
                 }
@@ -677,7 +677,7 @@
                 else if ($device_token['device_type'] == 3) { // windows phone推播
                     
                     $device_token['device_token'];
-                    $result= $this->wp_push_notification_maker->send_toast('Howeather?' ,$user_nickname.'liked your share!','/all_share_page.xaml?type=detail&amp;share_id='.$share_id.'' ,2,$device_token['device_token']);
+                    $result= $this->wp_push_notification_maker->send_toast('Howeather' ,$user_nickname.'liked your share!','/all_share_page.xaml?type=detail&amp;share_id='.$share_id.'' ,2,$device_token['device_token']);
 
                     
                 }
