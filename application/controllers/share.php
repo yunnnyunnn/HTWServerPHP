@@ -368,7 +368,7 @@
 
             
             echo json_encode(array('msg' => 'insert share ok',
-                                   'status' => 'success'));
+                                   'status' => 'success','share_photo_url'=>$fileName));
         }
         
         public function delete_share()
