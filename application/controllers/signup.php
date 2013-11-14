@@ -24,6 +24,52 @@ class Signup extends CI_Controller {
 		$this->load->view('signup_view');
 	}
 	
+    /*
+    public function change_user_password()
+    {
+        $msg = '';
+		$status = '';
+		$echo_data = array();
+        
+        $user_email = $this->input->post('user_email',TRUE);
+		$new_user_password = $this->input->post('new_user_password',TRUE);
+        
+        if (!isset($_POST["user_email"])||!isset($_POST["new_user_password"])) {
+            $status = 'fail';
+            $msg = 'missing post value';
+        }else {
+            
+            $where = array(
+            
+            'user_email'=>$user_email
+            
+            );
+            $data = array(
+            
+            'user_password'=>md5($new_user_password)
+            
+            );
+            
+            $result = $this->user_model->update_user($where, $data);
+            if ($result){
+                $status = 'ok';
+                $msg = 'change password successfully';
+
+            }
+            else {
+                $status = 'fail';
+                $msg = 'something went wrong when updating database';
+
+            }
+            
+            
+        }
+        
+        $echo_data['status'] = $status;
+		$echo_data['msg'] = $msg;
+		echo json_encode($echo_data);
+    }
+    */
     public function transfer_posts_from_old_server_to_new()
     {
         $msg = '';
