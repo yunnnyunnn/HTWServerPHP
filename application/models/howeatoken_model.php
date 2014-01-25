@@ -1,10 +1,10 @@
 <?php
 
-class Howeatoken_model extends CI_Model
+class Howeatoken_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
 	function get_howeatoken($where)

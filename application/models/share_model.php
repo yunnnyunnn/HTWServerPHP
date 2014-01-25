@@ -1,10 +1,10 @@
 <?php
 
-class Share_model extends CI_Model
+class Share_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
     

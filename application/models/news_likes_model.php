@@ -1,9 +1,9 @@
 <?php
-class News_likes_model extends CI_Model
+class News_likes_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
 	function insert_like($news_like_array)

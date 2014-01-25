@@ -1,9 +1,9 @@
 <?php
-class News_model extends CI_Model
+class News_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
 	function insert_news($news_data_array)

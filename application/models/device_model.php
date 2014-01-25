@@ -1,10 +1,10 @@
 <?php
 
-class Device_model extends CI_Model
+class Device_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
 	function get_device($where, $field = '*')

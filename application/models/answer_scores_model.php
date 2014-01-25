@@ -1,10 +1,10 @@
 <?php
 
-class Answer_scores_model extends CI_Model
+class Answer_scores_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
 	function get_answer_scores($field = '*' ,$where)

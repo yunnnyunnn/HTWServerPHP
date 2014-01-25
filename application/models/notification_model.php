@@ -1,9 +1,9 @@
 <?php
-class Notification_model extends CI_Model
+class Notification_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
 	function insert_notification($data)

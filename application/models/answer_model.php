@@ -1,10 +1,10 @@
 <?php
 
-class Answer_model extends CI_Model
+class Answer_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
 	function get_answer_without_user($field='*',$where)

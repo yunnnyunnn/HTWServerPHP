@@ -1,10 +1,10 @@
 <?php
 
-class Location_log_model extends CI_Model
+class Location_log_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
     
     function insert_location_log($data)

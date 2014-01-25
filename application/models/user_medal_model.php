@@ -1,10 +1,10 @@
 <?php
 
-class User_medal_model extends CI_Model
+class User_medal_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
 	function get_user_medal($field , $where)

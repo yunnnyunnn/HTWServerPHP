@@ -15,6 +15,8 @@ $this->load->model('answer_model');
 	$this->load->model('answer_scores_model');
             $this->load->model('share_comment_model');
             $this->load->model('share_likes_model');
+        $this->load->model('test_model');
+
 	}
 	public function index()
 	{
@@ -32,6 +34,12 @@ $this->load->model('answer_model');
 		//echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
 	
 	}
+    
+    function current_time()
+    {
+        echo json_encode($this->test_model->get_time()->row());
+    }
+    
     function get_notification_count()
 	{
 		$user_id = 1363440781;

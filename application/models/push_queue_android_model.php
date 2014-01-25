@@ -1,10 +1,10 @@
 <?php
 
-class Push_queue_android_model extends CI_Model
+class Push_queue_android_model extends My_Model
 {
-	function _construct()
+	function __construct()
 	{
-		parent::_construct();
+		parent::__construct();
 	}
 	
         
