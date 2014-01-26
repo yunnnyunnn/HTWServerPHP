@@ -129,6 +129,13 @@
 
             }
             
+            // 如果有指定作者
+            $get_share_user_id = $this->input->post('user_id', TRUE);
+            if (isset($_POST["user_id"]))
+            {
+                $where['user.user_id'] = $get_share_user_id;
+            }
+            
             //$field = 'user_id, share_id, share_content, share_weather_type, share_photo_url, share_latitude, share_longitude, timediff(share_time, now()) as share_time, (select user_nickname from user where user_id = share.user_id) as user_nickname';
             $field = array('*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');
             $query = $this->share_model->get_share($where, $field, $share_count);
