@@ -9,10 +9,11 @@ class Share_likes_model extends My_Model
 	
     
     
-    function get_share_likes($where)
+    function get_share_likes($where,$field = '*')
     {
-        $this->db->select('share_likes_id, share_id, user_id, (select user_nickname from user where user_id = share_likes.user_id) as user_nickname');
-        
+        //$this->db->select('share_likes_id, share_id, user_id, (select user_nickname from user where user_id = share_likes.user_id) as user_nickname');
+        $this->db->join('user','share_likes.user_id = user.user_id');
+        $this->db->select($field);
 		return $this->db->where($where)->get('share_likes');
     }
     

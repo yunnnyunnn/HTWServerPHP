@@ -78,24 +78,25 @@
             }
             
             //$field = 'user_id, share_id, share_content, share_weather_type, share_photo_url, share_latitude, share_longitude, timediff(share_time, now()) as share_time, (select user_nickname from user where user_id = share.user_id) as user_nickname';
-            $field = array('*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');
+            $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname','user.user_medal','user.user_id');
             
             $query = $this->share_model->get_share($where, $field);
             
             $shares = $query->result();
             
             // 這邊開始將每一篇的comment抓下來
+            $sc_field = array('share_comment.*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname','user.user_medal','user.user_id');
+            $sl_field = array('share_likes.*', 'user.user_nickname','user.user_medal','user.user_id');
+
             foreach($shares as $share)
             {
                 $share_id = $share->share_id;
                 $where_sub = array('share_id'=>$share_id);
-                
-                $field = array('*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
-
-                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $field);
+                         
+                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $sc_field);
                 $share->share_comment = $query_comment->result();
                 
-                $query_like = $this->share_likes_model->get_share_likes($where_sub);
+                $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
                 $share->share_likes = $query_like->result();
             }
             
@@ -137,23 +138,24 @@
             }
             
             //$field = 'user_id, share_id, share_content, share_weather_type, share_photo_url, share_latitude, share_longitude, timediff(share_time, now()) as share_time, (select user_nickname from user where user_id = share.user_id) as user_nickname';
-            $field = array('*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');
+            $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname','user.user_medal','user.user_id');
             $query = $this->share_model->get_share($where, $field, $share_count);
             
             $shares = $query->result();
             
             // 這邊開始將每一篇的comment抓下來
+            $sc_field = array('share_comment.*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname','user.user_medal','user.user_id');
+            $sl_field = array('share_likes.*', 'user.user_nickname','user.user_medal','user.user_id');
+
             foreach($shares as $share)
             {
                 $share_id = $share->share_id;
                 $where_sub = array('share_id'=>$share_id);
-                
-                $field = array('*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
 
-                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $field);
+                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $sc_field);
                 $share->share_comment = $query_comment->result();
-                
-                $query_like = $this->share_likes_model->get_share_likes($where_sub);
+                        
+                $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
                 $share->share_likes = $query_like->result();
             }
             
@@ -182,23 +184,25 @@
             $share_count = 1;
             
             
-            $field = array('*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');
+            $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname','user.user_medal','user.user_id');
             $query = $this->share_model->get_share($where, $field, $share_count);
             
             $shares = $query->result();
             
             // 這邊開始將每一篇的comment抓下來
+               
+            $sc_field = array('share_comment.*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname','user.user_medal','user.user_id');
+            $sl_field = array('share_likes.*', 'user.user_nickname','user.user_medal','user.user_id');
+  
             foreach($shares as $share)
             {
                 $share_id = $share->share_id;
                 $where_sub = array('share_id'=>$share_id);
-                
-                $field = array('*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
-                
-                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $field);
+             
+                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $sc_field);
                 $share->share_comment = $query_comment->result();
                 
-                $query_like = $this->share_likes_model->get_share_likes($where_sub);
+                $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
                 $share->share_likes = $query_like->result();
             }
             
@@ -212,41 +216,41 @@
         
 		public function get_specific_shares() 
 		{
-		  $sid_array = array();
-		  $share_id_json = $this->input->post('share_id_json', TRUE);
-		  if(isset($_POST["share_id_json"]))
-		  {
-			  $sid_array = json_decode($share_id_json,TRUE);
-		  }
-		  $shares = array();
-		  foreach($sid_array as $specific)
-		  {
-			  $where = array();
-			  $share_count = 1;
-			  $where['share_id'] = $specific['share_id'];
-			  
-			  $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');		
-			  $query = $this->share_model->get_share($where, $field, $share_count);	
+		    $sid_array = array();
+		    $share_id_json = $this->input->post('share_id_json', TRUE);
+		    if(isset($_POST["share_id_json"]))
+		    {
+		 	   $sid_array = json_decode($share_id_json,TRUE);
+		    }
+		    $shares = array();
+            $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');	
+            $sc_field = array('share_comment.*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
+            $sl_field = array('share_likes.*', 'user.user_nickname','user.user_medal','user.user_id');
+		   foreach($sid_array as $specific)
+		   {
+			   $where = array();
+			   $share_count = 1;
+			   $where['share_id'] = $specific['share_id'];
+	 	
+			   $query = $this->share_model->get_share($where, $field, $share_count);	
 			 
-			  if($query->num_rows()>0)
-			  {
-				  $one_share = $query->row();
-				  $share_id = $one_share->share_id;
+			   if($query->num_rows()>0)
+			   {
+			 	  $one_share = $query->row();
+			 	  $share_id = $one_share->share_id;
 				  $where_sub = array('share_id'=>$share_id);
 				 
-				  $field = array('share_comment.*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname');
-				  
-				  $query_comment = $this->share_comment_model->get_share_comment($where_sub, $field);
+				  $query_comment = $this->share_comment_model->get_share_comment($where_sub, $sc_field);
 				  $one_share->share_comment = $query_comment->result();
 	
-				  $query_like = $this->share_likes_model->get_share_likes($where_sub);			
+				  $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);			
 				  $one_share->share_likes = $query_like->result();
 				
 				  $shares[] = $one_share;
-			  }  
-		  }
+			   }  
+		   }
 		  // 將最後結果送出
-		  echo json_encode(array('result' => $shares,
+		   echo json_encode(array('result' => $shares,
 								 'msg' => 'get share ok',
 								 'status' => 'success'
 								 ));
