@@ -9,15 +9,18 @@ class Share_comment_model extends My_Model
 	
     
     
-    function get_share_comment($where, $field = '*')
+    function get_share_comment($where, $field = '*',$limit=25,$offset=0)
     {
-        $this->db->order_by('share_comment_time','ASC');
+        $this->db->order_by('share_comment_time','DESC');
         $this->db->join('user','share_comment.user_id = user.user_id');
-
         $this->db->select($field);
-		return $this->db->where($where)->get('share_comment');
+		return $this->db->where($where)->get('share_comment',$limit,$offset);
     }
     
+    function get_share_comment_count($where)
+    {
+		return $this->db->where($where)->count_all_results('share_comment');
+    }
     
     function insert_share_comment($data)
     {

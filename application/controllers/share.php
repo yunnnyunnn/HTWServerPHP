@@ -95,9 +95,11 @@
                          
                 $query_comment = $this->share_comment_model->get_share_comment($where_sub, $sc_field);
                 $share->share_comment = $query_comment->result();
+                $share->share_comment_count = $this->share_comment_model->get_share_comment_count($where_sub);
                 
                 $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
                 $share->share_likes = $query_like->result();
+                $share->share_likes_count = $this->share_likes_model->get_share_likes_count($where_sub);
             }
             
             // 將最後結果送出
@@ -154,9 +156,11 @@
 
                 $query_comment = $this->share_comment_model->get_share_comment($where_sub, $sc_field);
                 $share->share_comment = $query_comment->result();
-                        
+                $share->share_comment_count = $this->share_comment_model->get_share_comment_count($where_sub);
+                
                 $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
                 $share->share_likes = $query_like->result();
+                $share->share_likes_count = $this->share_likes_model->get_share_likes_count($where_sub);
             }
             
             // 將最後結果送出
@@ -179,7 +183,7 @@
                 
                 $where['share_id'] = $share_id_max;
             }
-            
+             $where['share_id'] = '1';
             
             $share_count = 1;
             
@@ -201,9 +205,11 @@
              
                 $query_comment = $this->share_comment_model->get_share_comment($where_sub, $sc_field);
                 $share->share_comment = $query_comment->result();
+                $share->share_comment_count = $this->share_comment_model->get_share_comment_count($where_sub);
                 
                 $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
                 $share->share_likes = $query_like->result();
+                $share->share_likes_count = $this->share_likes_model->get_share_likes_count($where_sub);
             }
             
             // 將最後結果送出
@@ -242,11 +248,13 @@
 				 
 				  $query_comment = $this->share_comment_model->get_share_comment($where_sub, $sc_field);
 				  $one_share->share_comment = $query_comment->result();
-	
-				  $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);			
+	              $one_share->share_comment_count = $this->share_comment_model->get_share_comment_count($where_sub);
+				  
+                  $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);			
 				  $one_share->share_likes = $query_like->result();
-				
-				  $shares[] = $one_share;
+				  $one_share->share_likes_count = $this->share_likes_model->get_share_likes_count($where_sub);
+				  
+                   $shares[] = $one_share;
 			   }  
 		   }
 		  // 將最後結果送出
