@@ -590,7 +590,7 @@
             
             
             $data = array(
-                          'user_id'=>$user_id,
+                          'user.user_id'=>$user_id,
                           'share_id'=>$share_id,
                           );
             
@@ -602,6 +602,11 @@
                                       'status' => 'fail'));
                 return;
             }
+            
+            $data = array(
+                          'user_id'=>$user_id,
+                          'share_id'=>$share_id,
+                          );
             
             $result = $this->share_likes_model->insert_share_likes($data);
 
