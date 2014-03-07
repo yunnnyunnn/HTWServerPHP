@@ -7,7 +7,7 @@ class Share_likes_model extends My_Model
 		parent::__construct();
 	}
 	
-    function get_share_likes($where,$field = '*',$limit=25,$offset=0)
+    function get_share_likes($where,$field = '*',$limit=100,$offset=0)
     {
         //$this->db->select('share_likes_id, share_id, user_id, (select user_nickname from user where user_id = share_likes.user_id) as user_nickname');
         $this->db->order_by('share_likes_id','DESC');
