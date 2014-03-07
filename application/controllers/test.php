@@ -7,6 +7,7 @@ class Test extends CI_Controller {
 		parent::__construct();
 		 $this->load->model('user_model');
         $this->load->library('image_manipulation');
+        $this->load->library('rsa_util');
 $this->load->model('notification_model');
 $this->load->model('location_log_model');
 $this->load->model('share_model');
@@ -30,10 +31,22 @@ $this->load->model('answer_model');
 		echo '<br/>'; 
 		echo $user_email;
 		echo '<br/>'; 
-		
+
 		//echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
-	
+
 	}
+    
+    function rsa_test($data='default')
+    {      
+        echo $data;
+        echo '<br/>'; 
+        $encrypted = $this->rsa_util->public_encrypt($data);
+        echo $encrypted;
+        echo '<br/>'; 
+        $decrypted = $this->rsa_util->priv_decrypt($encrypted);
+        echo $decrypted;
+        echo '<br/>'; 
+    }
     
     function current_time()
     {
