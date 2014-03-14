@@ -35,7 +35,7 @@
         {
             
             // 如果什麼都沒有傳，就全部抓
-            
+             $user_id = $this->user_id;
             $where = array();
             
             // 如果有傳時間限制
@@ -100,6 +100,9 @@
                 $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
                 $share->share_likes = $query_like->result();
                 $share->share_likes_count = $this->share_likes_model->get_share_likes_count($where_sub);
+                
+                $where_sub['user_id'] = $user_id;
+                $share->is_user_like_share = $this->share_likes_model->get_share_likes_count($where_sub);
             }
             
             // 將最後結果送出
@@ -112,7 +115,7 @@
         
         public function get_share_stream() {
             // 如果什麼都沒有傳，就全部抓
-            
+             $user_id = $this->user_id;
             $where = array();
             
             // 指定這次抓的串流從哪一篇開始
@@ -161,6 +164,9 @@
                 $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
                 $share->share_likes = $query_like->result();
                 $share->share_likes_count = $this->share_likes_model->get_share_likes_count($where_sub);
+                
+                 $where_sub['user_id'] = $user_id;
+                $share->is_user_like_share = $this->share_likes_model->get_share_likes_count($where_sub);
             }
             
             // 將最後結果送出
@@ -173,7 +179,7 @@
         
         
         public function get_one_share() {
-            
+             $user_id = $this->user_id;
             $where = array();
             
             // 指定這次抓的串流從哪一篇開始
@@ -209,6 +215,9 @@
                 $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
                 $share->share_likes = $query_like->result();
                 $share->share_likes_count = $this->share_likes_model->get_share_likes_count($where_sub);
+                
+                  $where_sub['user_id'] = $user_id;
+                $share->is_user_like_share = $this->share_likes_model->get_share_likes_count($where_sub);
             }
             
             // 將最後結果送出
@@ -221,6 +230,7 @@
         
 		public function get_specific_shares() 
 		{
+             $user_id = $this->user_id;
 		    $sid_array = array();
 		    $share_id_json = $this->input->post('share_id_json', TRUE);
 		    if(isset($_POST["share_id_json"]))
@@ -253,6 +263,9 @@
 				  $one_share->share_likes = $query_like->result();
 				  $one_share->share_likes_count = $this->share_likes_model->get_share_likes_count($where_sub);
 				  
+                     $where_sub['user_id'] = $user_id;
+                $one_share->is_user_like_share = $this->share_likes_model->get_share_likes_count($where_sub);
+                   
                    $shares[] = $one_share;
 			   }  
 		   }

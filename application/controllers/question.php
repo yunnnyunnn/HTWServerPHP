@@ -43,6 +43,7 @@ class Question extends My_Controller {
 	public function get_question()
 	{
 		//echo date("Y-m-d H:i:s").'<br/>';
+        $user_id = $this->user_id;
 		$status = '';
 		$msg = '';
 		$question_rows = '';
@@ -79,6 +80,8 @@ class Question extends My_Controller {
         }
         
 		$field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
+        $answer_field = array('answer.*','user.user_nickname', 'timediff(answer.answer_time, now()) as answer_timediff');
+        $answer_scores_field = array('answer_scores.*', 'user.user_nickname','user.user_medal','user.user_id');
 		$query = $this->question_model->get_question($field,$where);
 		$count = $query->num_rows();
 		if($count>0)
@@ -86,9 +89,8 @@ class Question extends My_Controller {
 			$status = 'ok';
 			$msg = 'get question successfully.';
 			$answer_where = array();
-			$answer_field = array('answer.*','user.user_nickname', 'timediff(answer.answer_time, now()) as answer_timediff');
+          
 			$answer_scores_where = array();
-			$answer_scores_field = array('*');
 			$question_rows = $query->result();
 			foreach($question_rows as $row)
 			{
@@ -100,6 +102,9 @@ class Question extends My_Controller {
 					$answer_scores_where['answer_id'] = $ans->answer_id;
 					$answer_scores = $this->answer_scores_model->get_answer_scores($answer_scores_field,$answer_scores_where);
 					$ans->answer_scores = $answer_scores->result();
+                    $ans->answer_scores_count = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);	
+                    $answer_scores_where['user_id'] = $user_id;
+                    $ans->is_user_accept_answer = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);
 				}
 				$row->answer = $answer_row;
 				$answer->free_result();
@@ -178,6 +183,7 @@ class Question extends My_Controller {
 	
     public function get_specific_questions() 
 	{
+        $user_id = $this->user_id;
 		$status = 'success';
 		$msg = 'get question ok';
 		$qid_array = array();
@@ -187,11 +193,14 @@ class Question extends My_Controller {
 			$qid_array = json_decode($question_id_json,TRUE);
 		}
 		$questions = array();
+        $field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
+        $answer_field = array('answer.*','user.user_nickname', 'timediff(answer.answer_time, now()) as answer_timediff');
+        $answer_scores_field = array('answer_scores.*', 'user.user_nickname','user.user_medal','user.user_id');
 		foreach($qid_array as $specific)
 		{
 			$where = array();
 			$where['question_id'] = $specific['question_id'];
-			$field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
+			
 			$query = $this->question_model->get_question($field,$where);
 			$count = $query->num_rows();
 			if($count>0)
@@ -199,16 +208,17 @@ class Question extends My_Controller {
 				$one_question = $query->row();
 				$question_id = $one_question->question_id;
 				$answer_where = array('question_id'=>$question_id);
-				$answer_field = array('answer.*','user.user_nickname', 'timediff(answer.answer_time, now()) as answer_timediff');			
+					
 				$answer = $this->answer_model->get_answer($answer_field,$answer_where);	
 				$answer_row = $answer->result();
 				foreach($answer_row as $ans)
 				{
-					$answer_scores_where = array();
-					$answer_scores_field = array('*');
-					$answer_scores_where['answer_id'] = $ans->answer_id;
+					$answer_scores_where = array('answer_id'=>$ans->answer_id);
 					$answer_scores = $this->answer_scores_model->get_answer_scores($answer_scores_field,$answer_scores_where);
 					$ans->answer_scores = $answer_scores->result();
+                    $ans->answer_scores_count = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);	
+                    $answer_scores_where['user_id'] = $user_id;
+                    $ans->is_user_accept_answer = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);
 				}
 				$one_question->answer = $answer_row;
 				$answer->free_result();			
