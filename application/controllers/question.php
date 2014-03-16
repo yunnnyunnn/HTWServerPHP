@@ -101,9 +101,8 @@ class Question extends My_Controller {
 				{
 					$answer_scores_where['answer_id'] = $ans->answer_id;
 					$answer_scores = $this->answer_scores_model->get_answer_scores($answer_scores_field,$answer_scores_where);
-					$ans->answer_scores = $answer_scores->result();
-                    $ans->answer_scores_count = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);	
-                    $answer_scores_where['user_id'] = $user_id;
+					$ans->answer_scores = $answer_scores->result();        
+                    $answer_scores_where['answer_scores.user_id'] = $user_id;
                     $ans->is_user_accept_answer = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);
 				}
 				$row->answer = $answer_row;
@@ -215,9 +214,8 @@ class Question extends My_Controller {
 				{
 					$answer_scores_where = array('answer_id'=>$ans->answer_id);
 					$answer_scores = $this->answer_scores_model->get_answer_scores($answer_scores_field,$answer_scores_where);
-					$ans->answer_scores = $answer_scores->result();
-                    $ans->answer_scores_count = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);	
-                    $answer_scores_where['user_id'] = $user_id;
+					$ans->answer_scores = $answer_scores->result();            
+                    $answer_scores_where['answer_scores.user_id'] = $user_id;
                     $ans->is_user_accept_answer = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);
 				}
 				$one_question->answer = $answer_row;
