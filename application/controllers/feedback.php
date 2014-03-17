@@ -11,12 +11,43 @@ class Feedback extends My_Controller {
 		
 
 	}
-	public function index()
+		public function index()
 	{
 		//
 		
 		//$this->get_one_user();
+		
+			$data['title']="後台管理";	
+			$type = $this->uri->segment(3);
+			
+			 $where = array('device_type'=>'1');
+		
+	
+		
+		switch($type){
+			case'1':
+				$where = array(
+						'device_type' => 1
+					);
+					break;					
+			case'2':
+				$where = array(
+						'device_type' => 2
+					);
+					break;
+			case'3':
+				$where = array(
+						'device_type' =>3
+					);
+					break;			
+			
+		}	
+		
+		$data['feedbackquery'] = $this->feedback_model->get_feedback_backstage($where); 
+		$this->load->view('feedback_view', $data);
+		
 	}
+    
     
     public function insert_feedback() {
         

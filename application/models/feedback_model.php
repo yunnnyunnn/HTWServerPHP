@@ -35,6 +35,29 @@ class Feedback_model extends My_Model
 		else
             return FALSE;
     }
+	
+		/*03/02 edit by allan*/
+	function get_feedback_backstage($where, $field = '*', $limit = 0, $offset = 0)
+    {     
+		
+		
+		
+		$this->db->order_by('feedback_time','DESC');
+        $this->db->join('user','feedback.user_id = user.user_id')->join('device','feedback.user_id = device.user_id');
+      
+        $this->db->select($field);
+        if ($limit !=0)
+        {
+            return $this->db->where($where)->get('feedback', $limit, $offset);
+
+        }
+        else
+        {
+            return $this->db->where($where)->get('feedback');
+   
+        }
+        
+    }
     
     
 }
