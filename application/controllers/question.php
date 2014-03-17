@@ -887,7 +887,7 @@ class Question extends My_Controller {
 				);
 				$update = FALSE;
 				$field = array('answer_scores_id');
-				$where = array('user_id' => $user_id,'answer_id' => $answer_id);
+				$where = array('answer_scores.user_id' => $user_id,'answer_id' => $answer_id);
 				$query = $this->answer_scores_model->get_answer_scores($field , $where);
 				if($query->num_rows()>0)
 				{
