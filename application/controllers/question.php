@@ -106,6 +106,8 @@ class Question extends My_Controller {
                     $ans->is_user_accept_answer = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);
 				}
 				$row->answer = $answer_row;
+                $answer_where['is_best_answer'] = 1;
+                $row->is_best_answer_set = $this->answer_model->get_answer_count($answer_where);
 				$answer->free_result();
 			}
 		}
@@ -219,6 +221,8 @@ class Question extends My_Controller {
                     $ans->is_user_accept_answer = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);
 				}
 				$one_question->answer = $answer_row;
+                $answer_where['is_best_answer'] = 1;
+                $one_question->is_best_answer_set = $this->answer_model->get_answer_count($answer_where);
 				$answer->free_result();			
 				$questions[] = $one_question;
 			}

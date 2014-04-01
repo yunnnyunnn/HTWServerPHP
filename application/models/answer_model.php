@@ -22,6 +22,11 @@ class Answer_model extends My_Model
 		return $this->db->where($where)->get('answer');
 	}
 	
+    function get_answer_count($where)
+    {
+        return $this->db->where($where)->count_all_results('answer');
+    }
+    
 	function insert_answer($data)
 	{
 		$this->db->insert('answer',$data);
