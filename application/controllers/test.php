@@ -17,7 +17,7 @@ $this->load->model('answer_model');
             $this->load->model('share_comment_model');
             $this->load->model('share_likes_model');
         $this->load->model('test_model');
-
+ 
 	}
 	public function index()
 	{
@@ -35,7 +35,16 @@ $this->load->model('answer_model');
 		//echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
 
 	}
-    
+    function reset_password()
+    {
+         $howeatoken = 'testoken';
+       $params = array('key' => 'testoken','iv'=>'howeather');
+        $this->load->library('DES', $params);
+        $password = '123456';
+        $password_encrypt = $this->des->encrypt($password);
+    echo $password_encrypt;
+    }
+        
     function rsa_test($data='default')
     {      
         echo $data;
