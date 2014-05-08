@@ -31,19 +31,11 @@ $this->load->model('answer_model');
 		echo '<br/>'; 
 		echo $user_email;
 		echo '<br/>'; 
-
+echo md5('4QxBn14Pjf172f16QtV7Q0lJ9SnX5m0j4gw6W5I1l33r3rIe0B44j680r',TRUE);
 		//echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
 
 	}
-    function reset_password()
-    {
-         $howeatoken = 'testoken';
-       $params = array('key' => 'testoken','iv'=>'howeather');
-        $this->load->library('DES', $params);
-        $password = '123456';
-        $password_encrypt = $this->des->encrypt($password);
-    echo $password_encrypt;
-    }
+   
         
     function rsa_test($data='default')
     {      

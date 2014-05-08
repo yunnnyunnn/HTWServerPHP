@@ -462,7 +462,7 @@ class User extends My_Controller {
         $password_again_encrypt = $this->input->post('password_again',TRUE);
         if($password_encrypt&&$password_again_encrypt)
         {
-            $params = array('key' => $howeatoken);
+            $params = array('key' => md5($howeatoken,TRUE));
             $this->load->library('DES', $params);
             $password = $this->des->decrypt($password_encrypt);
             $password_again = $this->des->decrypt($password_again_encrypt);

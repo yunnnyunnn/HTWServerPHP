@@ -6,11 +6,8 @@ class DES
 	var $iv;
 	public function __construct($params = array()) {
 		$this->key = $params['key'];
-		if (isset($params['iv']) == false) {
-			$this->iv = $params['key'];
-		} else {
-			$this->iv = $params['iv'];
-		}
+        $iv_size = mcrypt_get_iv_size(MCRYPT_TRIPLEDES, MCRYPT_MODE_CBC);
+        $this->iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 	}
 	
 	public function encrypt($str) {
