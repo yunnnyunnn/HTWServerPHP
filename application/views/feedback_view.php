@@ -7,14 +7,14 @@
 <link rel="stylesheet" type="text/css" href="http://howeather.com/howeather/source/bootstrap/css/bootstrap.css" />
 <style>
 body {
-	height: 100%;
+	
 	margin: 0px;
 	padding: 0px;
 	min-width: 1000px;
-	overflow: hidden;
+	
 }
 html {
-	height: 100%;
+	
 }
 h1,h2,h3{
 	margin:0;
@@ -64,7 +64,7 @@ $(document).ready(function(e) {
     
 $('#select').change(function(){
 var a = $(this).val();
-		location.href = 'http://127.0.0.1/HTWServerPHP/index.php/feedback/index/'+a+'?howeatoken=De6d8371d1w3T7IbJh2Yfycavi0I4h2GPP9Au20d4OD3A3aWCMzH4RT3h';  
+		location.href = 'http://howeather.com/HTWServerPHP/index.php/feedback/index/'+a+'?howeatoken=De6d8371d1w3T7IbJh2Yfycavi0I4h2GPP9Au20d4OD3A3aWCMzH4RT3h';  
 
 });
 	
@@ -106,7 +106,8 @@ var a = $(this).val();
         </tr>
     </thead>
     <tbody>
-		<?php  foreach($feedbackquery->result() as $row){?>
+		<?php $tempcontent='';  foreach($feedbackquery->result() as $row){
+			$content=$row->feedback_content ;     if($content==$tempcontent){$tempcontent =$content;  continue;}else{?>
             <tr>       
                     <th><?php echo $row->user_nickname; ?></th>           
                     <th><?php echo $row->feedback_content; ?></th>
@@ -116,7 +117,10 @@ var a = $(this).val();
                     elseif ($device==2){echo 'android';} 
                     else{ echo 'window phone' ;} ?></th>           
             </tr>
-         <?php }?>
+         <?php  $tempcontent =$content;} 
+		 
+		 }?>
+      
      </tbody>
 </table>
 
