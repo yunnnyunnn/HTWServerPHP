@@ -36,6 +36,11 @@ echo md5('4QxBn14Pjf172f16QtV7Q0lJ9SnX5m0j4gw6W5I1l33r3rIe0B44j680r',TRUE);
 
 	}
    
+    public function get_block_share()
+    {
+        $query = $this->share_model->get_block_share();
+        print_r($query->result());
+    }
         
     function rsa_test($data='default')
     {      
