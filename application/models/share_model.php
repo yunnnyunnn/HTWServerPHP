@@ -52,4 +52,19 @@ class Share_model extends My_Model
             return FALSE;
     }
     
+    function get_block_share()
+    {
+        
+        $this->db->select('FLOOR(share.share_latitude) AS lat');
+        $this->db->select('FLOOR(share.share_longitude) AS lng');
+        $this->db->select('s.*');
+        $this->db->select_max('share.share_time');
+        $this->db->group_by(array("lat", "lng")); 
+        // $this->db->where('share.share_time', 'max_time')
+        $this->db->join('share AS s','share.share_time = s.share_time','left');
+        $query = $this->db->get('share');
+        return $query;
+    }
+    
+    
 }
