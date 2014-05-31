@@ -31,6 +31,99 @@
         
 ////////////////以下為對share本身的操作/////////////////
         
+        public function get_share_preview_on_map()
+        {
+            // get the request sender's user_id
+            $user_id = $this->user_id;
+            $where = array();
+            
+            // prevent from not sending post value
+            if(!isset($_POST["screen_icon_width_ratio"]) OR !isset($_POST["screen_icon_height_ratio"]) OR !isset($_POST["latDelta"]) OR !isset($_POST["longDelta"]))
+            {
+                echo json_encode(array('msg' => 'post value not set',
+                                       'status' => 'fail'));
+                return;
+            }
+            $screen_icon_width_ratio = $this->input->post('screen_icon_width_ratio', TRUE);
+            $screen_icon_height_ratio = $this->input->post('screen_icon_height_ratio', TRUE);
+            $latDelta = $this->input->post('latDelta', TRUE);
+            $longDelta = $this->input->post('longDelta', TRUE);
+            
+            // calculate the minimum distance which should be exist between each two shares
+            $latDelta_minimum_distance = $latDelta/$screen_icon_width_ratio;
+            $longDelta_minimum_distance = $longDelta/$screen_icon_height_ratio;
+            
+            // if there's a time limit
+            $share_time = $this->input->post('share_time', TRUE);
+            
+            if($share_time)
+            {
+                
+                $where['share_time >='] = date('Y-m-d H:i:s', strtotime($share_time));
+            }
+            
+            // if you only want to get sepcific user's shares
+            $get_share_user_id = $this->input->post('user_id', TRUE);
+            if (isset($_POST["user_id"]))
+            {
+                $where['user.user_id'] = $get_share_user_id;
+            }
+            
+            // if there's area limit
+            $share_latitude_max = $this->input->post('share_latitude_max', TRUE);
+            $share_latitude_min = $this->input->post('share_latitude_min', TRUE);
+            $share_longitude_max = $this->input->post('share_longitude_max', TRUE);
+            $share_longitude_min = $this->input->post('share_longitude_min', TRUE);
+            if(isset($_POST["share_latitude_max"]) && isset($_POST["share_latitude_min"]) && isset($_POST["share_longitude_max"]) && isset($_POST["share_longitude_min"]))
+            {
+                
+                $where['share_latitude <='] = $share_latitude_max;
+                $where['share_latitude >='] = $share_latitude_min;
+                $where['share_longitude <='] = $share_longitude_max;
+                $where['share_longitude >='] = $share_longitude_min;
+            }
+            
+            $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname','user.user_medal','user.user_id');
+            $query = $this->share_model->get_share($where, $field);
+            
+            $shares = $query->result();
+            
+            $share_preview = array();
+            
+            foreach($shares as $share)
+            {
+                
+                $found = FALSE;
+                foreach($share_preview as $stored_share)
+                {
+                    $latDelta_between = abs($share->share_latitude - $stored_share->share_latitude);
+                    $longDelta_between = abs($share->share_longitude - $stored_share->share_longitude);
+                    
+                    if ($latDelta_between < $latDelta_minimum_distance && $longDelta_between < $longDelta_minimum_distance)
+                    {
+                        $found = TRUE;
+                        $stored_share->child_shares[] = $share->share_id;
+                        break;
+                    }
+                    
+                }
+                
+                if(!$found){
+                    $share->child_shares = array();
+                    $share_preview[] = $share;
+                }
+            }
+            
+            
+            // send the final
+            echo json_encode(array('constraints' => $where,
+                                   'result' => $share_preview,
+                                   'msg' => 'get share preview on map ok',
+                                   'status' => 'success'
+                                   ));
+            
+        }
+        
         public function get_share()
         {
             
@@ -60,7 +153,6 @@
                 $where['share_longitude <='] = $share_longitude_max;
                 $where['share_longitude >='] = $share_longitude_min;
             }
-            
             
             // 如果有指定作者
             $get_share_user_id = $this->input->post('user_id', TRUE);
