@@ -110,6 +110,7 @@
                 
                 if(!$found){
                     $share->child_shares = array();
+                    ######add selves share_id into child_shares######
                     $share_preview[] = $share;
                 }
             }
@@ -122,6 +123,58 @@
                                    'status' => 'success'
                                    ));
             
+        }
+        
+        public function get_shares_by_share_id()
+        {
+            $user_id = $this->user_id;
+            $where = array();
+            
+            // get a list of share_id which we will use to get shares
+            if(!isset($_POST["share_ids"]))
+            {
+                echo json_encode(array('msg' => 'post value not set',
+                                       'status' => 'fail'));
+                return;
+            }
+            
+            $share_ids_json = $this->input->post('share_ids', TRUE);
+            $share_ids = json_decode($share_ids_json, TRUE);
+            
+            
+            $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname','user.user_medal','user.user_id');
+            $query = $this->share_model->get_share_where_in('share.share_id', $share_ids, $field);
+            
+            $shares = $query->result();
+            
+            // start attaching comments and likes
+            
+            $sc_field = array('share_comment.*', 'timediff(share_comment_time, now()) as share_comment_timediff', 'user.user_nickname','user.user_medal','user.user_id');
+            $sl_field = array('share_likes.*', 'user.user_nickname','user.user_medal','user.user_id');
+            
+            foreach($shares as $share)
+            {
+                $share_id = $share->share_id;
+                $where_sub = array('share_id'=>$share_id);
+                
+                $query_comment = $this->share_comment_model->get_share_comment($where_sub, $sc_field);
+                $share->share_comment = $query_comment->result();
+                $share->share_comment_count = $this->share_comment_model->get_share_comment_count($where_sub);
+                
+                $query_like = $this->share_likes_model->get_share_likes($where_sub,$sl_field);
+                $share->share_likes = $query_like->result();
+                $share->share_likes_count = $this->share_likes_model->get_share_likes_count($where_sub);
+                
+                $where_sub['user_id'] = $user_id;
+                $share->is_user_like_share = $this->share_likes_model->get_share_likes_count($where_sub);
+            }
+            
+            // 將最後結果送出
+            echo json_encode(array('constraints' => $share_ids,
+                                   'result' => $shares,
+                                   'msg' => 'get share ok',
+                                   'status' => 'success'
+                                   ));
         }
         
         public function get_share()
@@ -270,6 +323,8 @@
         }
         
         
+        
+        ###this method should be combined with get_shares_by_share_id###
         public function get_one_share() {
              $user_id = $this->user_id;
             $where = array();

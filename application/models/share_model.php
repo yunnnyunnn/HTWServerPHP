@@ -27,6 +27,25 @@ class Share_model extends My_Model
         }
         
     }
+    
+    function get_share_where_in($where_field, $where_in, $field = '*', $limit = 0, $offset = 0)
+    {
+        $this->db->order_by('share_time','DESC');
+        $this->db->join('user','share.user_id = user.user_id');
+        
+        $this->db->select($field);
+        if ($limit !=0)
+        {
+            return $this->db->where_in($where_field, $where_in)->get('share', $limit, $offset);
+            
+        }
+        else
+        {
+            return $this->db->where_in($where_field, $where_in)->get('share');
+            
+        }
+        
+    }
         
     function insert_share($data)
     {
