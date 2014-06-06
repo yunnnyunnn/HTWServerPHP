@@ -428,11 +428,25 @@ class User extends My_Controller {
             return;
         }
         
-        $where = array(
-                       'post_id' => $post_id,
-                       'notification_type' => $notification_type,
-                       'user_id_receiver' => $user_id
-                       );
+        
+        $where = array();
+        
+        if ($notification_type < 2) // shares notification
+        {
+            $where = array(
+                           'post_id' => $post_id,
+                           'notification_type <' => 2,
+                           'user_id_receiver' => $user_id
+                           );
+        }
+        else { // questions notification
+            $where = array(
+                           'post_id' => $post_id,
+                           'notification_type >=' => 2,
+                           'user_id_receiver' => $user_id
+                           );
+        }
+        
         
         $data = array(
                       'notification_is_record' => $notification_is_record
