@@ -287,6 +287,22 @@
                 $where['user.user_id'] = $get_share_user_id;
             }
             
+            
+            // if there's area limit
+            $share_latitude_max = $this->input->post('share_latitude_max', TRUE);
+            $share_latitude_min = $this->input->post('share_latitude_min', TRUE);
+            $share_longitude_max = $this->input->post('share_longitude_max', TRUE);
+            $share_longitude_min = $this->input->post('share_longitude_min', TRUE);
+            if(isset($_POST["share_latitude_max"]) && isset($_POST["share_latitude_min"]) && isset($_POST["share_longitude_max"]) && isset($_POST["share_longitude_min"]))
+            {
+                
+                $where['share_latitude <='] = $share_latitude_max;
+                $where['share_latitude >='] = $share_latitude_min;
+                $where['share_longitude <='] = $share_longitude_max;
+                $where['share_longitude >='] = $share_longitude_min;
+            }
+            
+            
             //$field = 'user_id, share_id, share_content, share_weather_type, share_photo_url, share_latitude, share_longitude, timediff(share_time, now()) as share_time, (select user_nickname from user where user_id = share.user_id) as user_nickname';
             $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname','user.user_medal','user.user_id');
             $query = $this->share_model->get_share($where, $field, $share_count);
