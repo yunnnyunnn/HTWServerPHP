@@ -35,6 +35,15 @@ class Notification_model extends My_Model
         }
 		
 	}
+    
+    function get_notification_with_answer($where_in)
+    {
+        $this->db->join('answer', 'answer.question_id = notification.post_id AND answer.user_id = notification.user_id_receiver', 'left');
+        $this->db->select('COUNT( notification_id ) AS total_notification, COUNT( answer_id ) AS total_answer');
+        $this->db->where('notification.notification_type', 5);
+        $this->db->where_in('notification.user_id_receiver', $where_in);
+        return $this->db->get('notification');
+    }
 	
 	function get_notifitcation_count($where)
 	{
