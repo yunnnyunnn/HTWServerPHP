@@ -371,10 +371,13 @@ class Question extends My_Controller {
         $answer_rate = $this->answer_model->get_total_answer_rate()->result();
         $answer_rate = $answer_rate[0];
         
+        $user_coins = $this->user_model->get_user('user_money', array('user_id'=>$this->user_id))->result();
+        $user_coins = $user_coins[0];
+        
         $status = 'ok';
         $msg = 'get user around question ok';
         
-		echo json_encode(array('status'=>$status,'msg' => $msg,'result' => array('available_notification_receiver' =>count($available_notification_receiver), 'answer_rate' => $answer_rate->answer_rate)));
+		echo json_encode(array('status'=>$status,'msg' => $msg,'result' => array('available_notification_receiver' =>count($available_notification_receiver), 'answer_rate' => $answer_rate->answer_rate, 'user_coins' => $user_coins->user_money)));
         
         
     }
