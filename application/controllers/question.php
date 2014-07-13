@@ -369,12 +369,12 @@ class Question extends My_Controller {
         */
         
         $answer_rate = $this->answer_model->get_total_answer_rate()->result();
-        
+        $answer_rate = $answer_rate[0];
         
         $status = 'ok';
         $msg = 'get user around question ok';
         
-		echo json_encode(array('status'=>$status,'msg' => $msg,'result' => array('available_notification_receiver' =>count($available_notification_receiver), 'answer_rate' => $answer_rate)));
+		echo json_encode(array('status'=>$status,'msg' => $msg,'result' => array('available_notification_receiver' =>count($available_notification_receiver), 'answer_rate' => $answer_rate->answer_rate)));
         
         
     }
