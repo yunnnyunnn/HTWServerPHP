@@ -356,7 +356,7 @@ class Question extends My_Controller {
             }
         }
         
-        
+        /*
         //$available_user_id = array(1379545893, 47100); test only
         
         $answer_rate_data = $this->notification_model->get_notification_with_answer($available_user_id)->result();
@@ -366,6 +366,10 @@ class Question extends My_Controller {
         $answer_rate_data = $answer_rate_data[0];
         
         $answer_rate = $answer_rate_data->total_answer/$answer_rate_data->total_notification;
+        */
+        
+        $answer_rate = $this->answer_model->get_total_answer_rate()->result();
+        
         
         $status = 'ok';
         $msg = 'get user around question ok';

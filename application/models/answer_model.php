@@ -21,6 +21,11 @@ class Answer_model extends My_Model
 		$this->db->select($field);
 		return $this->db->where($where)->get('answer');
 	}
+    
+    function get_total_answer_rate()
+    {
+        return $this->db->query('SELECT ((SELECT COUNT( DISTINCT question_id )FROM answer WHERE question_id IN (SELECT DISTINCT question_id FROM question LEFT JOIN notification ON question.question_id = notification.post_id WHERE notification.notification_type =5 ) ) / (SELECT COUNT( DISTINCT question_id ) AS question_count FROM question LEFT JOIN notification ON question.question_id = notification.post_id WHERE notification.notification_type =5 )) as answer_rate');
+    }
 	
     function get_answer_count($where)
     {
