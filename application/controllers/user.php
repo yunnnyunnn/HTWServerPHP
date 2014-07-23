@@ -62,7 +62,7 @@ class User extends My_Controller {
             $msg='update user coins fail';
         }
         
-        echo json_encode(array('status' => $status,'msg'=>$msg ));
+        echo json_encode(array('status' => $status,'msg'=>$msg, 'user_money'=>$user_money));
 
     }
     
