@@ -21,6 +21,51 @@ class User extends My_Controller {
 		//$this->get_one_user();
 	}
 
+    
+    public function user_bought_coins() {
+        
+        
+        if(!isset($_POST["coins_amount"]))
+        {
+            //echo $this->user_id;
+            echo json_encode(array('msg' => 'coins_amount post value not set',
+                                   'status' => 'fail'));
+            return;
+        }
+        
+        $coins_amount = $this->input->post('coins_amount', TRUE);
+        $user_id = $this->user_id;
+        
+        
+        $field = array('user_money');
+        $where = array('user_id'=>$user_id);
+        $user_data=$this->user_model->get_user($field,$where);
+        
+        if($user_data->num_rows() == 0) {
+            return FALSE;
+        }
+        
+        $user_money = $user_data->row()->user_money;
+        
+        $user_money = $user_money + $coins_amount;
+
+        $updatefield=array('user_money' => $user_money );
+		
+        if ($this->user_model->update_user($where,$updatefield)) {
+            
+            $status='ok';
+            $msg='update user coins success';
+            
+        }
+        else {
+            $status='fail';
+            $msg='update user coins fail';
+        }
+        
+        echo json_encode(array('status' => $status,'msg'=>$msg ));
+
+    }
+    
   public function update_user_status()
   {
      $status = '';
