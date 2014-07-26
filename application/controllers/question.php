@@ -79,6 +79,16 @@ class Question extends My_Controller {
             
         }
         
+        // if want question by user
+
+        if(isset($_POST["question_user_id"]))
+        {
+            
+            $question_user_id = $this->input->post('question_user_id', TRUE);
+            $where['question.user_id'] = $question_user_id;
+            
+        }
+        
 		$field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
         $answer_field = array('answer.*','user.user_nickname', 'timediff(answer.answer_time, now()) as answer_timediff');
         $answer_scores_field = array('answer_scores.*', 'user.user_nickname','user.user_medal','user.user_id');
@@ -182,6 +192,42 @@ class Question extends My_Controller {
 		*/
 	}
 	
+    
+    public function get_question_preview_by_user() {
+        
+        $user_id = $this->user_id;
+		$status = '';
+		$msg = '';
+
+        $where = array(
+        'question.user_id' => $user_id
+        );
+        
+        $field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff', '(select count(*) from answer where answer.question_id = question.question_id) as answer_count', 'exists(select * from answer where answer.question_id = question.question_id and answer.is_best_answer = 1) as has_best_answer');
+		$query = $this->question_model->get_question($field,$where);
+
+        $count = $query->num_rows();
+        
+        
+		if($count>0)
+		{
+			$status = 'ok';
+			$msg = 'get question preview by user successfully.';
+            $question_rows = $query->result();
+
+		}
+		else
+		{
+			$status = 'ok';
+			$msg = 'no results.';
+            
+            $question_rows = '';
+            
+		}
+		echo json_encode(array('status'=>$status,'msg' => $msg,'result' => $question_rows));
+        
+    }
+    
     public function get_specific_questions() 
 	{
         $user_id = $this->user_id;
