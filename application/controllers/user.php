@@ -12,7 +12,7 @@ class User extends My_Controller {
         $this->load->model('location_log_model');
         $this->load->model('device_model');
         $this->load->model('notification_model');
-
+      
 	}
 	public function index()
 	{
@@ -511,47 +511,7 @@ class User extends My_Controller {
         }
     }
     
-    public function reset_password()
-    {
-        $status = '';
-		$msg = '';
-        $user_id = $this->user_id;
-        $howeatoken = $this->input->get('howeatoken', TRUE);
-        $password_encrypt = $this->input->post('password',TRUE);
-        $password_again_encrypt = $this->input->post('password_again',TRUE);
-        if($password_encrypt&&$password_again_encrypt)
-        {
-            $params = array('key' => md5($howeatoken,TRUE));
-            $this->load->library('DES', $params);
-            $password = $this->des->decrypt($password_encrypt);
-            $password_again = $this->des->decrypt($password_again_encrypt);
-            if($password == $password_again)
-            {
-                $reset = $this->user_model->update_user(array('user_id'=>$user_id),array('user_password'=>md5($password)));
-                if($reset)
-                {
-                      $status='ok';
-                      $msg = 'Password Reset Successfully';
-                }
-                else
-                {
-                      $status='fail';
-                      $msg = 'Password Reset Error : Database error';
-                }
-            }
-			else
-            {
-                $status='fail';
-                $msg = 'Password Reset Error : Password is not match';
-			}	
-        }
-        else
-        {
-            $status='fail';
-            $msg = 'Password Reset Error : Please enter password';
-        }
-        echo json_encode(array('msg'=>$msg,'status'=>$status));
-    }
+ 
     
 	function signout()
     {
