@@ -61,6 +61,54 @@ class Password extends CI_Controller {
         echo json_encode(array('msg' => $msg, 'status' => $status , 'user_email' =>$user_email ));
     }
     
+    public function reset_request()
+    {
+        $status = '';
+		$msg = '';
+        $user_email = $this->input->post('user_email',TRUE);
+        if(filter_var($user_email, FILTER_VALIDATE_EMAIL) == false)
+        {
+            $status = 'fail';
+            $msg = 'invalid email';
+            echo json_encode(array('msg' => $msg,
+                                   'status' => $status));
+            return;
+        }
+        
+        $field = array('user_id');
+        $where_data = array('user.user_email'=>$user_email);
+		$user_data = $this->user_model->get_user($field,$where_data);
+        if($user_data->num_rows()>0)
+		{
+            $user_id = $user_data->row()->user_id;
+            
+            $delete_where = array('user_id' => $user_id , 'end_datetime' => NULL);
+            $this->password_reset_request_model->delete_password_reset_request($delete_where);
+            $dt_now = date('Y-m-d H:i:s');
+            $prr_token = md5(strtotime($dt_now).$user_id.uniqid("",true));
+            
+            $prr_data = array('user_id' => $user_id , 'token' => $prr_token , 'requested_datetime' => $dt_now);
+            $result = $this->password_reset_request_model->insert_password_reset_request( $prr_data);
+            if($result)
+            {
+                $status = 'ok';
+                $msg = 'new password reset request finished';
+            }
+            else
+            {
+                $status = 'fail';
+                $msg = 'new password reset request fail';
+            }
+        }
+        else
+        {
+            $status = 'fail';
+            $msg = 'user is not exist';
+        }
+        
+        echo json_encode(array('msg' => $msg, 'status' => $status ));
+    }
+    
     public function reset_password()
     {
         $status = '';
