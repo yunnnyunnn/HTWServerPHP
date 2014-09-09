@@ -45,6 +45,6 @@ class Answer_model extends My_Model
 	
 	function delete_answer($where)
 	{
-		return $this->db->where($where)->update('answer');	
+		return $this->db->where($where)->delete('answer');	
 	}
 }
