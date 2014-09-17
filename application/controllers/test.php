@@ -8,18 +8,17 @@ class Test extends CI_Controller {
 		 $this->load->model('user_model');
         $this->load->library('image_manipulation');
         $this->load->library('rsa_util');
-$this->load->model('notification_model');
-$this->load->model('location_log_model');
-$this->load->model('share_model');
-$this->load->model('question_model');
-$this->load->model('answer_model');
+        $this->load->model('notification_model');
+        $this->load->model('location_log_model');
+        $this->load->model('share_model');
+        $this->load->model('question_model');
+        $this->load->model('answer_model');
         $this->load->model('device_model');
-
-	$this->load->model('answer_scores_model');
-            $this->load->model('share_comment_model');
-            $this->load->model('share_likes_model');
+	    $this->load->model('answer_scores_model');
+        $this->load->model('share_comment_model');
+        $this->load->model('share_likes_model');
         $this->load->model('test_model');
- 
+        $this->load->library('mailer');
 	}
 	public function index()
 	{
@@ -37,7 +36,20 @@ echo md5('4QxBn14Pjf172f16QtV7Q0lJ9SnX5m0j4gw6W5I1l33r3rIe0B44j680r',TRUE);
 		//echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
 
 	}
-   
+    
+    public function send_mail()
+    {
+        $to = 'success@simulator.amazonses.com';
+        
+        $subject = 'test mail';
+        $body = 'hihi';
+        $result = $this->mailer->send_mail($to,$subject,$body);
+      if($result)
+          echo 'success';
+        else
+            echo 'fail';
+    }
+    
     public function get_block_share()
     {
         $query = $this->share_model->get_block_share();
