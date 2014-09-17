@@ -13,23 +13,23 @@ class Mailer {
  
         $this->mail->IsSMTP(); // telling the class to use SMTP		
         $this->mail->CharSet    = "utf-8";                  // 一定要設定 CharSet 才能正確處理中文
-        $this->mail->SMTPDebug  = 0;                     // enables SMTP debug information
+        $this->mail->SMTPDebug  = 1;                     // enables SMTP debug information
         $this->mail->SMTPAuth   = true;                  // enable SMTP authentication
-        $this->mail->SMTPSecure = "ssl";                 // sets the prefix to the servier
-        $this->mail->Host       = "smtp.gmail.com";      // sets GMAIL as the SMTP server
-        $this->mail->Port       = 465;                   // set the SMTP port for the GMAIL server
-        $this->mail->Username   = "";// GMAIL username
-        $this->mail->Password   = "";       // GMAIL password   
+        $this->mail->SMTPSecure = "tls";                 // sets the prefix to the servier
+        $this->mail->Host       = "email-smtp.us-east-1.amazonaws.com";      // sets AWS as the SMTP server
+        $this->mail->Port       = 587;                   // set the SMTP port for the GMAIL server
+        $this->mail->Username   = "AKIAI5DMYPZIXHKIOMHQ";// SES username
+        $this->mail->Password   = "AkgRdaU6+hlqBc2kh2CpnpFJUx8WPSW+VdY+N6umRTGk";       // SES password   
 		 
     }
  
-    public function send_mail($to,$to_name,$subject,$body){
+    public function send_mail($to,$subject,$body){
         try{
 			$from_name = 'HoWeather';
-			$from = '';
-            $this->mail->AddAddress($to, $to_name);	
+			$from = 'hydra200238@gmail.com';
+            $this->mail->AddAddress($to);	
 			$this->mail->FromName = $from_name;
-   			$this->mail->From = '"'.$from.'"';	
+   			$this->mail->From = $from;	
 			//$this->mail->SetFrom('"'.$from.'"', $from_name);
   			$this->mail->AddReplyTo($from, $from_name);       		
             $this->mail->Subject = $subject;
