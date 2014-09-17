@@ -18,8 +18,8 @@ class Mailer {
         $this->mail->SMTPSecure = "tls";                 // sets the prefix to the servier
         $this->mail->Host       = "email-smtp.us-east-1.amazonaws.com";      // sets AWS as the SMTP server
         $this->mail->Port       = 587;                   // set the SMTP port for the GMAIL server
-        $this->mail->Username   = "AKIAI5DMYPZIXHKIOMHQ";// SES username
-        $this->mail->Password   = "AkgRdaU6+hlqBc2kh2CpnpFJUx8WPSW+VdY+N6umRTGk";       // SES password   
+        $this->mail->Username   = "";// SES username
+        $this->mail->Password   = "";       // SES password   
 		 
     }
  
