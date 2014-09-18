@@ -42,30 +42,7 @@ class DES
         return mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $crypted, MCRYPT_MODE_CBC, $this->iv); 
     } 
     
-    /** 
-     * PHP PBKDF2 Implementation. 
-     * 
-     * For more information see: http://www.ietf.org/rfc/rfc2898.txt 
-     * 
-     * @param string $p                password 
-     * @param string $s                salt 
-     * @param integer $c                iteration count (use 1000 or higher) 
-     * @param integer $dkl        derived key length 
-     * @param string $algo        hash algorithm 
-     * @return string                        derived key of correct length 
-     */ 
-    private function PBKDF2($p, $s, $c, $dkl, $algo = 'sha1') { 
-            $kb = ceil($dkl / strlen(hash($algo, null, true))); 
-            $dk = ''; 
-            for($block = 1; $block <= $kb; ++$block) { 
-                    $ib = $b = hash_hmac($algo, $s.pack('N', $block), $p, true); 
-                    for($i = 1; $i < $c; ++$i) 
-                            $ib ^= ($b = hash_hmac($algo, $b, $p, true)); 
-                    $dk.= $ib; 
-            } 
-            return substr($dk, 0, $dkl); 
-    } 
-
+   
     
 //	private function pkcs5Pad($text, $blocksize) {
 //		$pad = $blocksize - (strlen($text) % $blocksize);
