@@ -55,7 +55,16 @@ echo md5('4QxBn14Pjf172f16QtV7Q0lJ9SnX5m0j4gw6W5I1l33r3rIe0B44j680r',TRUE);
         $query = $this->share_model->get_block_share();
         print_r($query->result());
     }
-        
+     
+    function des_test()
+    {
+       
+        $this->load->library('DES');
+        $password = "12345678";
+        $password_encrypt = $this->des->encrypt($password,"c390fbfb9525ca8f4f41882d3ca56e00");
+        print($password_encrypt);
+    }
+    
     function rsa_test($data='default')
     {      
         echo $data;

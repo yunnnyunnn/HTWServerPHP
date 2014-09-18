@@ -18,6 +18,11 @@ class Password_reset_request_model extends My_Model
         return $this->db->where($where)->get('password_reset_request');
     }
     
+    function update_password_reset_request($where,$data)
+    {
+        return $this->db->where($where)->update('password_reset_request',$data);	
+    }
+    
     function delete_password_reset_request($where)
     {
         return $this->db->where($where)->delete('password_reset_request');	
