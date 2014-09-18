@@ -109,39 +109,55 @@ class Password extends CI_Controller {
         echo json_encode(array('msg' => $msg, 'status' => $status ));
     }
     
+     
     public function reset_password()
     {
         $status = '';
 		$msg = '';
         $user_id = $this->input->post('user_id',TRUE); 
-        $howeatoken = $this->input->get('howeatoken', TRUE);
         $password_encrypt = $this->input->post('password',TRUE);
         $password_again_encrypt = $this->input->post('password_again',TRUE);
+       //$iv = $this->input->post('iv',TRUE);       
         if($password_encrypt&&$password_again_encrypt)
         {
-            $params = array('key' => md5($howeatoken,TRUE));
-            $this->load->library('DES', $params);
-            $password = $this->des->decrypt($password_encrypt);
-            $password_again = $this->des->decrypt($password_again_encrypt);
-            if($password == $password_again)
+            $where = array('user_id' => $user_id, 'end_datetime' => NULL);
+            $query = $this->password_reset_request_model->get_password_reset_request($where);
+            if($query->num_rows()>0)
             {
-                $reset = $this->user_model->update_user(array('user_id'=>$user_id),array('user_password'=>md5($password)));
-                if($reset)
+                $prr_token = $query->row()->token;
+                $key = md5($prr_token);
+                $iv = substr($prr_token,0,16);
+                $params = array('iv' => $iv);
+                $this->load->library('DES',$params);
+                $password = $this->des->decrypt($password_encrypt,$key);
+                $password_again = $this->des->decrypt($password_again_encrypt,$key);
+                if($password == $password_again)
                 {
-                      $status='ok';
-                      $msg = 'Password Reset Successfully';
+                    $result = $this->user_model->update_user(array('user_id'=>$user_id),array('user_password'=>md5($password)));
+                    if($result)
+                    {
+                        $status='ok';
+                        $msg = 'Password Reset Successfully';
+                        $update_data = array('end_datetime' => date('Y-m-d H:i:s'));
+                        $this->password_reset_request_model->update_password_reset_request($where, $update_data);
+                    }
+                    else
+                    {
+                        $status='fail';
+                        $msg = 'Password Reset Error : Database error';
+                    }
                 }
                 else
                 {
-                      $status='fail';
-                      $msg = 'Password Reset Error : Database error';
+                    $status='fail';
+                    $msg = 'Password Reset Error : Password is not match';
                 }
             }
-			else
+            else
             {
                 $status='fail';
-                $msg = 'Password Reset Error : Password is not match';
-			}	
+                $msg = 'no pending request';
+            }
         }
         else
         {
@@ -150,6 +166,8 @@ class Password extends CI_Controller {
         }
         echo json_encode(array('msg'=>$msg,'status'=>$status));
     }
+    
+    
 
 
 
