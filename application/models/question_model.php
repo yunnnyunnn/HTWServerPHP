@@ -14,6 +14,25 @@ class Question_model extends My_Model
 		$this->db->select($field);
 		return $this->db->where($where)->get('question');
 	}
+    
+    function get_question_where_in($where_field, $where_in, $field = '*', $limit = 0, $offset = 0)
+    {
+        $this->db->order_by('question.question_time','DESC');
+        $this->db->join('user','question.user_id = user.user_id');
+        
+        $this->db->select($field);
+        if ($limit !=0)
+        {
+            return $this->db->where_in($where_field, $where_in)->get('question', $limit, $offset);
+            
+        }
+        else
+        {
+            return $this->db->where_in($where_field, $where_in)->get('question');
+            
+        }
+        
+    }
 	
 	function get_question_with_answer($where)
 	{

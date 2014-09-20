@@ -275,9 +275,76 @@ class Question extends My_Controller {
                                'status' => 'success'
                                ));
         
-        #####start from here######
 
         
+    }
+    
+    public function get_questions_by_question_id() {
+        
+        $user_id = $this->user_id;
+        $where = array();
+        
+        // get a list of question_id which we will use to get questions
+        if(!isset($_POST["question_ids"]))
+        {
+            echo json_encode(array('msg' => 'post value not set',
+                                   'status' => 'fail'));
+            return;
+        }
+        
+        $question_ids_json = $this->input->post('question_ids', TRUE);
+        $question_ids = json_decode($question_ids_json, TRUE);
+        
+        $field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
+        $answer_field = array('answer.*','user.user_nickname', 'timediff(answer.answer_time, now()) as answer_timediff');
+        $answer_scores_field = array('answer_scores.*', 'user.user_nickname','user.user_medal','user.user_id');
+        
+        
+        $query = $this->question_model->get_question_where_in('question.question_id', $question_ids, $field);
+        
+        $count = $query->num_rows();
+        if($count>0)
+        {
+            $status = 'ok';
+            $msg = 'get question by id successfully.';
+            
+            $question_rows = $query->result();
+            foreach($question_rows as $row)
+            {
+                $answer_where = array('question_id'=>$row->question_id);
+                //$answer_where['question_id'] = $row->question_id;
+                $answer = $this->answer_model->get_answer($answer_field,$answer_where);
+                $answer_row = $answer->result();
+                foreach($answer_row as $ans)
+                {
+                    $answer_scores_where = array('answer_id'=>$ans->answer_id);
+                    //$answer_scores_where['answer_id'] = $ans->answer_id;
+                    $answer_scores = $this->answer_scores_model->get_answer_scores($answer_scores_field,$answer_scores_where);
+                    $ans->answer_scores = $answer_scores->result();
+                    $answer_scores_where['answer_scores.user_id'] = $user_id;
+                    $ans->is_user_accept_answer = $this->answer_scores_model->get_answer_scores_count($answer_scores_where);
+                }
+                $row->answer = $answer_row;
+                $answer_where['is_best_answer'] = 1;
+                $best_answer_count = $this->answer_model->get_answer_count($answer_where);
+                if ($best_answer_count>0) {
+                    $row->is_best_answer_set = 1;
+                }
+                else {
+                    $row->is_best_answer_set = 0;
+
+                }
+                
+                $answer->free_result();
+            }
+        }
+        else
+        {
+            $status = 'fail';
+            $msg = 'no results.';
+        }
+        echo json_encode(array('status'=>$status,'msg' => $msg,'result' => $question_rows));
+
     }
     
     public function get_question_preview_by_user() {
