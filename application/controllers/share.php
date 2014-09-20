@@ -110,7 +110,6 @@
                 
                 if(!$found){
                     $share->child_shares = array();
-                    ######add selves share_id into child_shares######
                     $share_preview[] = $share;
                 }
             }

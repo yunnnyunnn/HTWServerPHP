@@ -192,6 +192,93 @@ class Question extends My_Controller {
 		*/
 	}
 	
+    public function get_question_preview_on_map() {
+        
+        // get the request sender's user_id
+        $user_id = $this->user_id;
+        $where = array();
+        
+        // prevent from not sending post value
+        if(!isset($_POST["screen_icon_width_ratio"]) OR !isset($_POST["screen_icon_height_ratio"]) OR !isset($_POST["latDelta"]) OR !isset($_POST["longDelta"]))
+        {
+            echo json_encode(array('msg' => 'post value not set',
+                                   'status' => 'fail'));
+            return;
+        }
+        $screen_icon_width_ratio = $this->input->post('screen_icon_width_ratio', TRUE);
+        $screen_icon_height_ratio = $this->input->post('screen_icon_height_ratio', TRUE);
+        $latDelta = $this->input->post('latDelta', TRUE);
+        $longDelta = $this->input->post('longDelta', TRUE);
+        
+        // calculate the minimum distance which should be exist between each two shares
+        $latDelta_minimum_distance = $latDelta/$screen_icon_width_ratio;
+        $longDelta_minimum_distance = $longDelta/$screen_icon_height_ratio;
+        
+        // if there's a timelimit
+        $question_time_limit = $this->input->post('question_time',TRUE);
+        $time = date('Y-m-d H:i:s', strtotime($question_time_limit));
+		$where = array(
+                       'question_time >' => $time,
+                       );
+        
+        // if there's area limit
+        $question_latitude_max = $this->input->post('question_latitude_max', TRUE);
+        $question_latitude_min = $this->input->post('question_latitude_min', TRUE);
+        $question_longitude_max = $this->input->post('question_longitude_max', TRUE);
+        $question_longitude_min = $this->input->post('question_longitude_min', TRUE);
+        if(isset($_POST["question_latitude_max"]) && isset($_POST["question_latitude_min"]) && isset($_POST["question_longitude_max"]) && isset($_POST["question_longitude_min"]))
+        {
+            
+            $where['question_latitude <='] = $question_latitude_max;
+            $where['question_latitude >='] = $question_latitude_min;
+            $where['question_longitude <='] = $question_longitude_max;
+            $where['question_longitude >='] = $question_longitude_min;
+        }
+        
+        $field = array('question.*','user.user_nickname', 'timediff(question.question_time, now()) as question_timediff');
+        $query = $this->question_model->get_question($field,$where);
+        
+        $questions = $query->result();
+
+        $questions_preview = array();
+        
+        
+        foreach($questions as $question)
+        {
+            
+            $found = FALSE;
+            foreach($questions_preview as $stored_question)
+            {
+                $latDelta_between = abs($question->question_latitude - $stored_question->question_latitude);
+                $longDelta_between = abs($question->question_longitude - $stored_question->question_longitude);
+                
+                if ($latDelta_between < $latDelta_minimum_distance && $longDelta_between < $longDelta_minimum_distance)
+                {
+                    $found = TRUE;
+                    $stored_question->child_questions[] = $question->question_id;
+                    break;
+                }
+                
+            }
+            
+            if(!$found){
+                $question->child_questions = array();
+                $questions_preview[] = $question;
+            }
+        }
+        
+        
+        // send the final
+        echo json_encode(array('constraints' => $where,
+                               'result' => $questions_preview,
+                               'msg' => 'get question preview on map ok',
+                               'status' => 'success'
+                               ));
+        
+        #####start from here######
+
+        
+    }
     
     public function get_question_preview_by_user() {
         
