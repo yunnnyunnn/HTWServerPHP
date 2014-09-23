@@ -372,7 +372,7 @@ class Question extends My_Controller {
 		}
 		else
 		{
-			$status = 'ok';
+			$status = 'fail';
 			$msg = 'no results.';
             
             $question_rows = '';
