@@ -16,10 +16,10 @@ class Mailer {
         $this->mail->SMTPDebug  = 1;                     // enables SMTP debug information
         $this->mail->SMTPAuth   = true;                  // enable SMTP authentication
         $this->mail->SMTPSecure = "tls";                 // sets the prefix to the servier
-        $this->mail->Host       = "email-smtp.us-east-1.amazonaws.com";      // sets AWS as the SMTP server
+        $this->mail->Host       = "smtp.gmail.com";//"email-smtp.us-east-1.amazonaws.com";      // sets AWS as the SMTP server
         $this->mail->Port       = 587;                   // set the SMTP port for the GMAIL server
-        $this->mail->Username   = "";// SES username
-        $this->mail->Password   = "";       // SES password   
+        $this->mail->Username   = "support@howeather.com";// SES username
+        $this->mail->Password   = "isthererain";       // SES password   
 		 
     }
  

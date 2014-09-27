@@ -39,7 +39,7 @@ echo md5('4QxBn14Pjf172f16QtV7Q0lJ9SnX5m0j4gw6W5I1l33r3rIe0B44j680r',TRUE);
     
     public function send_mail()
     {
-        $to = 'success@simulator.amazonses.com';
+        $to = '102356021@nccu.edu.tw';
         
         $subject = 'test mail';
         $body = 'hihi';
