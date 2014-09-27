@@ -19,7 +19,7 @@ class Mailer {
         $this->mail->Host       = "smtp.gmail.com";//"email-smtp.us-east-1.amazonaws.com";      // sets AWS as the SMTP server
         $this->mail->Port       = 587;                   // set the SMTP port for the GMAIL server
         $this->mail->Username   = "support@howeather.com";// SES username
-        $this->mail->Password   = "isthererain";       // SES password   
+        $this->mail->Password   = "xxxxx";       // SES password   
         $this->mail->IsHTML(true);
     }
  
