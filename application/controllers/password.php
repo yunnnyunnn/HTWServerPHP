@@ -7,6 +7,7 @@ class Password extends CI_Controller {
 		parent::__construct();	
         $this->load->model('password_reset_request_model');
         $this->load->model('user_model');
+        $this->load->library('mailer');
     }
 
    //check user password reset request
@@ -91,8 +92,20 @@ class Password extends CI_Controller {
             $result = $this->password_reset_request_model->insert_password_reset_request( $prr_data);
             if($result)
             {
-                $status = 'ok';
-                $msg = 'new password reset request finished';
+                $to = $user_email;
+                $subject = 'test mail';
+                $body = 'hihi';
+                $result = $this->mailer->send_mail($to,$subject,$body);
+                if($result)
+                {
+                    $status = 'ok';
+                    $msg = 'new password reset request finished';
+                }
+                else
+                {
+                    $status = 'fail';
+                    $msg = 'send reset mail fail.';
+                }
             }
             else
             {
