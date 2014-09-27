@@ -20,7 +20,7 @@ class Mailer {
         $this->mail->Port       = 587;                   // set the SMTP port for the GMAIL server
         $this->mail->Username   = "support@howeather.com";// SES username
         $this->mail->Password   = "isthererain";       // SES password   
-		 
+        $this->mail->IsHTML(true);
     }
  
     public function send_mail($to,$subject,$body){
