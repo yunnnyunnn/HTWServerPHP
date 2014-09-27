@@ -93,8 +93,9 @@ class Password extends CI_Controller {
             if($result)
             {
                 $to = $user_email;
-                $subject = 'test mail';
-                $body = 'hihi';
+                $subject = 'Howeather Password';
+                $body = '<p><b>Forgot your password ?</b>Reset it below.</p>
+                <p><a href="http://howeather.com/password/#/reset/'.$user_id.'/'.$prr_token.'">Reset password</a></p>';
                 $result = $this->mailer->send_mail($to,$subject,$body);
                 if($result)
                 {
