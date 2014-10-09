@@ -275,7 +275,7 @@
 		   echo json_encode(array('result' => $shares,
 								 'msg' => 'get share ok',
 								 'status' => 'success',
-                                 'test'=>$share_id_json  
+                               
 								 ));
 	  }
 		
