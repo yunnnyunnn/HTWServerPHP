@@ -11,20 +11,22 @@ class Feedback extends My_Controller {
 		
 
 	}
-		public function index()
+	
+	public function index()
 	{
-		//
-		
 		//$this->get_one_user();
 		
 			$data['title']="後台管理";	
 			$type = $this->uri->segment(3);
 			
-			 $where = array('device_type'=>'1');
-		
-	
+			
 		
 		switch($type){
+			case'0':
+				$where = array(
+						
+					);
+					break;	
 			case'1':
 				$where = array(
 						'device_type' => 1
@@ -40,12 +42,15 @@ class Feedback extends My_Controller {
 						'device_type' =>3
 					);
 					break;			
-			
+			default:
+				$where = array(
+						
+					);
+					break;	
 		}	
 		
 		$data['feedbackquery'] = $this->feedback_model->get_feedback_backstage($where); 
-		$this->load->view('feedback_view', $data);
-		
+		$this->load->view('feedback_view', $data);		
 	}
     
     
@@ -70,6 +75,7 @@ class Feedback extends My_Controller {
                       'feedback_content'=>$feedback_content,
                       'feedback_time'=>date("Y-m-d H:i:s"),
                       );
+
         
         $result = $this->feedback_model->insert_feedback($data);
         

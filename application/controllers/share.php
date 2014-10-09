@@ -235,7 +235,9 @@
 		    $share_id_json = $this->input->post('share_id_json', TRUE);
 		    if(isset($_POST["share_id_json"]))
 		    {
+               
 		 	   $sid_array = json_decode($share_id_json,TRUE);
+
 		    }
 		    $shares = array();
             $field = array('share.*', 'timediff(share_time, now()) as share_timediff', 'user.user_nickname');	
@@ -272,7 +274,8 @@
 		  // 將最後結果送出
 		   echo json_encode(array('result' => $shares,
 								 'msg' => 'get share ok',
-								 'status' => 'success'
+								 'status' => 'success',
+                                 'test'=>$share_id_json  
 								 ));
 	  }
 		

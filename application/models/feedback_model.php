@@ -53,8 +53,7 @@ class Feedback_model extends My_Model
         }
         else
         {
-            return $this->db->where($where)->get('feedback');
-   
+            return $this->db->where($where)->get('feedback');   
         }
         
     }

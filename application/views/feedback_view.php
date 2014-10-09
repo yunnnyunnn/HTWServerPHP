@@ -100,6 +100,7 @@ var a = $(this).val();
     <thead>
    		<tr>
             <th width='20%'>姓名</th>
+            <th width='20%'>信箱</th>
             <th width='40%'>內容</th>
             <th width='10%'>時間</th>
             <th width='10%'>裝置</th>
@@ -109,7 +110,8 @@ var a = $(this).val();
 		<?php $tempcontent='';  foreach($feedbackquery->result() as $row){
 			$content=$row->feedback_content ;     if($content==$tempcontent){$tempcontent =$content;  continue;}else{?>
             <tr>       
-                    <th><?php echo $row->user_nickname; ?></th>           
+                    <th><?php echo $row->user_nickname; ?></th> 
+                     <th><?php echo $row->user_email; ?></th>            
                     <th><?php echo $row->feedback_content; ?></th>
                     <th><?php echo $row->feedback_time; ?></th> 
                     <th><?php $device = $row->device_type; 
