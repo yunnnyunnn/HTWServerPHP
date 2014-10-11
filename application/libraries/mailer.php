@@ -25,8 +25,8 @@ class Mailer {
  
     public function send_mail($to,$subject,$body){
         try{
-			$from_name = 'HoWeather';
-			$from = 'hydra200238@gmail.com';
+			$from_name = 'Howeather';
+			$from = 'support@howeather.com';
             $this->mail->AddAddress($to);	
 			$this->mail->FromName = $from_name;
    			$this->mail->From = $from;	
