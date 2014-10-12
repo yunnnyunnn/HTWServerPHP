@@ -17,7 +17,9 @@ class Signup extends CI_Controller {
 			$this->load->model('share_model');
 			$this->load->model('device_model');
 			$this->load->model('howeatoken_model');
-		}
+            $this->load->library('facebook_verification');
+
+        }
 	}
 	public function index()
 	{
@@ -134,6 +136,237 @@ class Signup extends CI_Controller {
 		$echo_data['msg'] = $msg;
 		echo json_encode($echo_data);
     }
+    
+    public function login_with_other_service() {
+        
+        $msg = '';
+        $status = '';
+        $echo_data = array();
+        
+        // 1. confirm service type
+        $service_type = $this->input->post('service_type',TRUE);
+        if ($service_type == 0) { // 0 = facebook
+            
+            // 2. verify with this service
+            $fb_token = $this->input->post('fb_token',TRUE);
+            $fb_id = $this->input->post('fb_id',TRUE);
+
+            $result_email = $this->facebook_verification->verify_token_with_facebook($fb_token, $fb_id);
+            
+            if ($result_email) {
+                
+                // 3. check if email valid
+                $user_email = $this->input->post('user_email',TRUE);
+                if(filter_var($user_email, FILTER_VALIDATE_EMAIL))
+                {
+                    
+                    // 4. check if email used
+                    $field = array('*');
+                    $query = $this->user_model->get_user($field ,array('user_email'=>$user_email));
+                    if($query->num_rows()>0) // login without password
+                    {
+                        
+                        $device_type = $this->input->post('device_type',TRUE);
+                        if(empty($device_type)||!is_numeric($device_type))
+                        {
+                            $msg = 'wrong device';
+                            $status = 'fail';
+                        }
+                        else
+                        {
+                            
+                            if($device_type == '1' || $device_type == '2' || $device_type == '3')
+                            {
+                                $user_id = $query->row()->user_id;
+                                $status = 'ok';
+                                $msg = 'sign in successfully';
+                                $echo_data['user_id'] = $user_id;
+                                $echo_data['user_nickname'] = $query->row()->user_nickname;
+                                
+                                
+                                ///howeatoken
+                                $howeatoken = NULL;
+                                $num = 57 ;
+                                for ($i=1;$i<=$num;$i=$i+1)
+                                {
+                                    $c=rand(1,3);
+                                    if($c==1){$a=rand(97,122);$b=chr($a);}
+                                    if($c==2){$a=rand(65,90);$b=chr($a);}
+                                    if($c==3){$b=rand(0,9);}
+                                    $howeatoken=$howeatoken.$b;
+                                }
+                                $howeatoken_data = array(
+                                                         'howeatoken' => md5($howeatoken),
+                                                         'user_id' => $user_id
+                                                         );
+                                if($this->howeatoken_model->insert_howeatoken($howeatoken_data))
+                                {
+                                    $echo_data['howeatoken'] = $howeatoken;
+                                }
+                                ///
+                                $device_data = array();
+                                $device_data['device_token'] = '';
+                                $device_data['user_id'] = $user_id;
+                                $device_data['device_type'] = $device_type;
+                                
+                                $device_id = $this->device_model->insert_device($device_data);
+                                if($device_id>0)
+                                {
+                                    $echo_data['device_id'] = $device_id;
+                                }
+                                else
+                                {
+                                    $msg = 'Sign in fail : Database Error';
+                                    $status = 'fail';
+                                }
+                            }
+                            else {
+                                $msg = 'other device';
+                                $status = 'fail';
+                            }
+
+                            
+                        }
+
+                        
+                    }
+                    else { // sign up without password
+                        
+                        $device_type = $this->input->post('device_type',TRUE);
+                        if(empty($device_type)||!is_numeric($device_type))
+                        {
+                            $msg = 'wrong device';
+                            $status = 'fail';
+                        }
+                        else {
+                            
+                            $user_nickname = $this->input->post('user_nickname',TRUE);
+                            
+                            $device_data = array();
+                            $user_data = array();
+                            $validate = FALSE;
+                            $user_data['user_email'] = $user_email;
+                            $user_data['user_nickname'] = $user_nickname;
+                            if($device_type == '1' || $device_type == '2' || $device_type == '3')
+                            {
+                                
+                                $user_password = $fb_id; // use fb id first because token might be too long
+                                $user_data['user_password'] = md5($user_password);
+                                $device_token = $this->input->post('device_token',TRUE);
+                                $device_data['device_token'] = $device_token;
+                
+                                
+                                $user_id = time();
+
+                                
+                                $where_data = array('user_id' => $user_id);
+                                $query = $this->user_model->get_user($field ,$where_data);
+                                $count = $query->num_rows();
+                                if($count>0)
+                                    $user_id = $user_id.$count;
+                                
+                                $user_data['user_id'] = $user_id;
+                                $user_data['user_medal'] = 0;
+                                $user_data['user_money'] = 3;
+                                
+                                if($this->user_model->insert_user($user_data))
+                                {
+                                    
+                                    $user_exp = 0;
+
+                                    $this->check_and_insert_user_medal($user_id, $user_exp);
+                                    
+                                    
+                                    $device_data['user_id'] = $user_id;
+                                    $device_data['device_type'] = $device_type;
+                                    $echo_data['user_id'] = $user_id;
+                                    ///howeatoken
+                                    $howeatoken = NULL;
+                                    $num = 57 ;
+                                    for ($i=1;$i<=$num;$i=$i+1)
+                                    {
+                                        $c=rand(1,3);
+                                        if($c==1){$a=rand(97,122);$b=chr($a);}
+                                        if($c==2){$a=rand(65,90);$b=chr($a);}
+                                        if($c==3){$b=rand(0,9);}
+                                        $howeatoken=$howeatoken.$b;
+                                    }
+                                    $howeatoken_data = array(
+                                                             'howeatoken' => md5($howeatoken),
+                                                             'user_id' => $user_id
+                                                             );
+                                    if($this->howeatoken_model->insert_howeatoken($howeatoken_data))
+                                    {
+                                        $echo_data['howeatoken'] = $howeatoken;
+                                    }
+                                    ///
+                                    $device_id = $this->device_model->insert_device($device_data);
+                                    if($device_id>0)
+                                    {
+                                        $echo_data['device_id'] = $device_id;
+                                        $msg = 'Sign Up OK';
+                                        $status = 'ok';
+                                        //							$session = array(
+                                        //								'user_id'=>$user_id ,
+                                        //								'user_email' => $user_email ,
+                                        //								'token' => md5(uniqid(rand(), TRUE))
+                                        //							);
+                                        //							$this->session->set_userdata($session);
+                                    }
+                                    else
+                                    {
+                                        $msg = 'Sign Up fail : Database Error';
+                                        $status = 'fail';
+                                    }
+                                }
+                                else
+                                {
+                                    $msg = 'Sign Up fail : Database Error';
+                                    $status = 'fail';
+                                }
+                                
+                                
+                            }
+                            else
+                            {
+                                $msg = 'other device';
+                                $status = 'fail';
+                            }
+                            
+                        }
+                        
+                        
+                        
+                        
+                    }
+                    
+                    
+                    
+                }
+                else {
+                    $msg = 'E-mail is not valid';
+                    $status = 'fail';
+                }
+                
+                
+            }
+            else {
+                $status = 'fail';
+                $msg = 'verification failed with facebook';
+            }
+            
+        }
+        else {
+            $status = 'ok';
+            $msg = 'other service';
+        }
+        
+        $echo_data['status'] = $status;
+        $echo_data['msg'] = $msg;
+        echo json_encode($echo_data);
+
+    }
+    
     
 	public function signup_service()
 	{

@@ -19,6 +19,8 @@ class Test extends CI_Controller {
         $this->load->model('share_likes_model');
         $this->load->model('test_model');
         $this->load->library('mailer');
+        $this->load->library('facebook_verification');
+
 	}
 	public function index()
 	{
@@ -48,6 +50,27 @@ echo md5('4QxBn14Pjf172f16QtV7Q0lJ9SnX5m0j4gw6W5I1l33r3rIe0B44j680r',TRUE);
           echo 'success';
         else
             echo 'fail';
+    }
+    
+    public function verify_token_with_facebook() {
+        $fb_token = 'CAADWFoltcm8BAAQvraoZCZAGCUslVfAdObNZBY0dony5e5ZB2zm1SZCzRKQ7gFX8NGMc6Dc5m9UIAi2VPF5WmBhUx1aomcgtwQacYBoAk3k4wb0QDmGsxuQgeiqAWoihhqERMYCm9D9Er93ZBxyZAytKHvjwKqpHiECDLYtuVDCZAhOLQg1oydHtPpkVMcyZBrxgZAgQvreuOhVG3w5t5STL4ZCT24dH85zY0Wx0rRf85uV5rhd11JsdqVX';
+        $fb_id = '100000217202994';
+        
+        $result = $this->facebook_verification->verify_token_with_facebook($fb_token, $fb_id);
+        
+        if ($result) {
+            
+            echo $result;
+            
+        }
+        else {
+            
+            
+            echo 'verification failed';
+
+            
+        }
+        
     }
     
     public function get_block_share()

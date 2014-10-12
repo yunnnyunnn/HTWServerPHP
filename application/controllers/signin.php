@@ -16,6 +16,7 @@ class Signin extends CI_Controller {
 			$this->load->model('share_model');
 			$this->load->model('device_model');
 			$this->load->model('howeatoken_model');
+
 		}
 	}
 	public function index()
