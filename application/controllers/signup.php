@@ -180,6 +180,7 @@ class Signup extends CI_Controller {
                                 $user_id = $query->row()->user_id;
                                 $status = 'ok';
                                 $msg = 'sign in successfully';
+                                $echo_data['login_type'] = 0; // 0 as login
                                 $echo_data['user_id'] = $user_id;
                                 $echo_data['user_nickname'] = $query->row()->user_nickname;
                                 
@@ -304,6 +305,7 @@ class Signup extends CI_Controller {
                                     if($device_id>0)
                                     {
                                         $echo_data['device_id'] = $device_id;
+                                        $echo_data['login_type'] = 1; // 1 as sign up
                                         $msg = 'Sign Up OK';
                                         $status = 'ok';
                                         //							$session = array(
