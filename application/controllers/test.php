@@ -34,9 +34,13 @@ class Test extends CI_Controller {
 		echo '<br/>'; 
 		echo $user_email;
 		echo '<br/>'; 
+        $user_id = '123';
+        $prr_token = '4QxBn14Pjf172f16QtV7Q0lJ9SnX5m0j4gw6W5I1l33r3rIe0B44j680r';
 echo md5('4QxBn14Pjf172f16QtV7Q0lJ9SnX5m0j4gw6W5I1l33r3rIe0B44j680r',TRUE);
 		//echo json_encode(array('Hello'=>date("Y-m-d H:i:s"),'price' => QUESTION_PUSH_PRICE ));
-
+ $body = strtr(file_get_contents('./file/password_reset_mail_tmpl.html',true), 
+                              array('%var%' =>'http://howeather.com/password/#/reset/'.$user_id.'/'.$prr_token));
+        echo $body;
 	}
     
     public function send_mail()
