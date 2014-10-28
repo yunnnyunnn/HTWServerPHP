@@ -8,6 +8,7 @@
             parent::__construct();
             $this->load->model('user_model');
             $this->load->model('share_model');
+            $this->load->model('share_report_model');
             $this->load->model('share_comment_model');
             $this->load->model('share_likes_model');
             $this->load->model('notification_model');
@@ -30,6 +31,64 @@
 /////////////////////////////////////////////////////
         
 ////////////////以下為對share本身的操作/////////////////
+        
+        public function user_report_share(){
+            
+            
+            // get the request sender's user_id
+            $user_id = $this->user_id;
+            
+            // prevent from not sending post value
+            if(!isset($_POST["report_type"]) OR !isset($_POST["share_id"]))
+            {
+                echo json_encode(array('msg' => 'post value not set',
+                                       'status' => 'fail'));
+                return;
+            }
+            
+            $report_type = $this->input->post('report_type', TRUE); // 1. spam 2. porn/violent
+            $share_id = $this->input->post('share_id', TRUE);
+            
+            
+            $data = array(
+                          'share_report.user_id'=>$user_id,
+                          'share_report.share_id'=>$share_id,
+                          'share_report.share_report_type'=>$report_type,
+
+                          );
+            
+            // 先檢查是否已經加過喜歡了，如果有的話就不給加
+            $duplicateChecker = $this->share_report_model->get_share_report($data);
+            if($duplicateChecker->num_rows()>0)
+            {
+                echo json_encode(array('msg' => 'insert share report more than once',
+                                       'status' => 'fail'));
+                return;
+            }
+            
+            $share_report_time = date("Y-m-d H:i:s");
+            $data = array(
+                          'user_id'=>$user_id,
+                          'share_id'=>$share_id,
+                          'share_report_type' =>$report_type,
+                          'share_report_time' =>$share_report_time
+                          );
+            
+            if($this->share_report_model->insert_share_report($data)) {
+                
+                echo json_encode(array('msg' => 'insert share report ok',
+                                       'status' => 'success'));
+
+            }
+            else
+            {
+                echo json_encode(array('msg' => 'insert share report DB wrong',
+                                       'status' => 'fail'));
+
+            }
+            
+            
+        }
         
         public function get_share_preview_on_map()
         {
