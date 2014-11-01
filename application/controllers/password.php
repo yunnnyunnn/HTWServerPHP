@@ -161,7 +161,7 @@ class Password extends CI_Controller {
                 {
                     if($password == $password_again)
                     {
-                        $result = $this->user_model->update_user(array('user_id'=>$user_id),array('user_password'=>md5($password)));
+                        $result = $this->user_model->update_user(array('user_id'=>$user_id),array('user_password'=>md5(trim($password))));
                         if($result)
                         {
                             $status='ok';
